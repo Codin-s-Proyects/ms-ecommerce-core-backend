@@ -26,9 +26,9 @@ repositories {
 }
 
 flyway {
-    url = System.getenv("FLYWAY_URL") ?: "jdbc:postgresql://localhost:5432/postgres"
-    user = System.getenv("FLYWAY_USER") ?: "postgres"
-    password = System.getenv("FLYWAY_PASSWORD") ?: "postgres"
+    url = System.getenv("FLYWAY_URL")
+    user = System.getenv("FLYWAY_USER")
+    password = System.getenv("FLYWAY_PASSWORD")
     schemas = arrayOf("public")
     locations = arrayOf("classpath:db/migration")
     baselineOnMigrate = true
