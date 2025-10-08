@@ -50,16 +50,19 @@ dependencies {
     implementation("org.flywaydb:flyway-database-postgresql")
 
     // --- JWT (jjwt) ---
-    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+    implementation("io.jsonwebtoken:jjwt:0.12.3")
 
     // --- Security crypto (Argon2) ---
     implementation("org.springframework.security:spring-security-crypto")
+    implementation("org.bouncycastle:bcprov-jdk18on:1.76")
 
     // --- Lombok ---
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
+
+    // --- Swagger OpenAPI ---
+    implementation("org.springframework:spring-webmvc:6.2.3")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
     // --- Test ---
     testImplementation("org.springframework.boot:spring-boot-starter-test")

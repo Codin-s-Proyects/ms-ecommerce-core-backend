@@ -2,10 +2,14 @@ package codin.msbackendcore.iam.domain.model.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "user_roles", schema = "iam")
 public class UserRole {
