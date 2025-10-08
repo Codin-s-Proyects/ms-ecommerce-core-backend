@@ -9,6 +9,7 @@ import codin.msbackendcore.iam.domain.model.entities.UserRole;
 import codin.msbackendcore.iam.domain.services.UserDomainService;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.RoleRepository;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
+import codin.msbackendcore.shared.infrastructure.utils.Constants;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,7 +40,7 @@ public class UserDomainServiceImpl implements UserDomainService {
                 .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{command.role()}, "role"));
 
         UserRole userRole = new UserRole();
-        userRole.setAssignedBy(user.getId());
+        userRole.setAssignedBy(Constants.ADMIN_ASSIGNED);
         userRole.setUser(user);
         userRole.setRole(role);
 

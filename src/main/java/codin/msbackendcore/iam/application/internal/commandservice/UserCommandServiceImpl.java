@@ -5,18 +5,19 @@ import codin.msbackendcore.iam.domain.model.commands.SignUpCommand;
 import codin.msbackendcore.iam.domain.model.entities.User;
 import codin.msbackendcore.iam.domain.model.valueobjects.CredentialType;
 import codin.msbackendcore.iam.domain.model.valueobjects.UserType;
+import codin.msbackendcore.iam.domain.services.AuditLogDomainService;
 import codin.msbackendcore.iam.domain.services.UserCommandService;
 import codin.msbackendcore.iam.domain.services.UserDomainService;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.CredentialRepository;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.RoleRepository;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.UserRepository;
-import codin.msbackendcore.shared.domain.exceptions.AuthenticatedException;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
-import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import codin.msbackendcore.shared.infrastructure.utils.CommonUtils;
+import codin.msbackendcore.shared.infrastructure.utils.Constants;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -27,16 +28,18 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final RoleRepository roleRepository;
 
     private final UserDomainService userDomainService;
+    private final AuditLogDomainService auditLogDomainService;
 
     public UserCommandServiceImpl(
             UserRepository userRepository,
             CredentialRepository credentialRepository,
-            UserDomainService userDomainService, RoleRepository roleRepository
+            UserDomainService userDomainService, RoleRepository roleRepository, AuditLogDomainService auditLogDomainService
     ) {
         this.userRepository = userRepository;
         this.credentialRepository = credentialRepository;
         this.userDomainService = userDomainService;
         this.roleRepository = roleRepository;
+        this.auditLogDomainService = auditLogDomainService;
     }
 
     @Transactional
@@ -59,6 +62,8 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     public Optional<User> handle(SignUpCommand command) {
 
+        //TODO: ADD TENANT VALIDATIONS
+
         if (!CommonUtils.isValidEnum(CredentialType.class, command.type())) {
             throw new BadRequestException("error.bad_request", new String[]{command.type()}, "type");
         }
@@ -78,6 +83,17 @@ public class UserCommandServiceImpl implements UserCommandService {
         User user = userDomainService.registerNewUser(command);
 
         userRepository.save(user);
+
+        auditLogDomainService.recordAction(
+                user.getTenantId(),
+                Constants.ADMIN_ASSIGNED,
+                user.getId(),
+                "USER_SIGNUP",
+                Map.of(
+                        "type", command.type(),
+                        "identifier", command.identifier()
+                )
+        );
 
         return Optional.of(user);
     }

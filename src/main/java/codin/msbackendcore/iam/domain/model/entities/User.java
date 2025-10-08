@@ -5,11 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -35,14 +38,14 @@ public class User {
     @Column(name = "mfa_enabled", nullable = false)
     private boolean mfaEnabled = false;
 
-    @Lob
+    @Column(name = "mfa_secret", columnDefinition = "bytea")
     private byte[] mfaSecret;
 
     private Instant lastLogin;
 
-    @Column(columnDefinition = "jsonb", nullable = false)
-    @NotNull
-    private String meta = "{}";
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "meta", columnDefinition = "jsonb", nullable = false)
+    private Map<String, Object> meta = new HashMap<>();
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
