@@ -12,6 +12,8 @@ import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import codin.msbackendcore.shared.infrastructure.utils.Constants;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class UserDomainServiceImpl implements UserDomainService {
 
@@ -24,7 +26,7 @@ public class UserDomainServiceImpl implements UserDomainService {
     }
 
     @Override
-    public User registerNewUser(SignUpCommand command) {
+    public User registerNewUser(SignUpCommand command, UUID systemUserId) {
         User user = new User();
         user.setTenantId(command.tenantId());
         user.setUserType(command.userType());
@@ -40,7 +42,7 @@ public class UserDomainServiceImpl implements UserDomainService {
                 .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{command.role()}, "role"));
 
         UserRole userRole = new UserRole();
-        userRole.setAssignedBy(Constants.ADMIN_ASSIGNED);
+        userRole.setAssignedBy(systemUserId);
         userRole.setUser(user);
         userRole.setRole(role);
 

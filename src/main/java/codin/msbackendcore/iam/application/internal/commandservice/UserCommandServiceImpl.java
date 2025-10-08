@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserCommandServiceImpl implements UserCommandService {
@@ -80,13 +81,18 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new BadRequestException("error.not_found", new String[]{command.role()}, "role");
         }
 
-        User user = userDomainService.registerNewUser(command);
+        UUID systemUserId = userRepository.findSystemUserIdByTenantId(command.tenantId())
+                .orElseThrow(
+                        () -> new BadRequestException("error.not_found", new String[]{command.tenantId().toString()}, "tenantId")
+                );
+
+        User user = userDomainService.registerNewUser(command, systemUserId);
 
         userRepository.save(user);
 
         auditLogDomainService.recordAction(
                 user.getTenantId(),
-                Constants.ADMIN_ASSIGNED,
+                systemUserId,
                 user.getId(),
                 "USER_SIGNUP",
                 Map.of(
