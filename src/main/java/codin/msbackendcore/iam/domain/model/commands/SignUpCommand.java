@@ -5,7 +5,8 @@ import java.util.UUID;
 public record SignUpCommand(
         UUID tenantId,
         String userType,
+        String type,
         String identifier,
-        String password,
-        boolean isPrimary
+        String secretHash,
+        String role
 ) {}

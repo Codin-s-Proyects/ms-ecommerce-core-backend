@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,12 +32,15 @@ public class AuthController {
     }
 
     @Operation(summary = "Registro de usuario", description = "Registra un nuevo usuario en el sistema")
-    @ApiResponse(responseCode = "200", description = "Usuario registrado exitosamente")
+    @ApiResponse(responseCode = "201", description = "Usuario registrado exitosamente")
     @ApiResponse(responseCode = "400", description = "Datos inválidos o usuario ya existente")
-
     @PostMapping("/signup")
     public ResponseEntity<Void> signup(@Valid @RequestBody SignUpRequest req) {
-        return ResponseEntity.ok().build();
+        var signUpCommand = req.toCommand();
+
+        userCommandService.handle(signUpCommand);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Operation(summary = "Login de usuario", description = "Autentica un usuario con email o username")

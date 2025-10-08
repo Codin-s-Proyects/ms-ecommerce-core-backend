@@ -29,7 +29,7 @@ public class UserRole {
     private Role role;
 
     @Column(name = "assigned_by")
-    private UUID assignedByUserId;
+    private UUID assignedBy;
 
     @Column(name = "assigned_at", nullable = false)
     private Instant assignedAt;
