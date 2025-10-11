@@ -42,7 +42,7 @@ public class RefreshTokenDomainServiceImpl implements RefreshTokenDomainService 
 
         refreshTokenRepository.save(refreshToken);
 
-        refreshToken.setTokenHash(refreshAccessToken);
+        refreshToken.setPlainToken(refreshAccessToken);
 
         return refreshToken;
     }

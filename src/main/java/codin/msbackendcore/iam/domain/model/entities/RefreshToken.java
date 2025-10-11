@@ -33,6 +33,9 @@ public class RefreshToken {
     @NotBlank
     private String tokenHash;
 
+    @Transient
+    private String plainToken;
+
     private Instant issuedAt;
     private Instant expiresAt;
     private boolean revoked = false;
