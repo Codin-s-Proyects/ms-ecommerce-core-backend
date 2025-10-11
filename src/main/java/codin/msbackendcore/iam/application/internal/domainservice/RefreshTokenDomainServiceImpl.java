@@ -3,16 +3,12 @@ package codin.msbackendcore.iam.application.internal.domainservice;
 import codin.msbackendcore.iam.application.internal.outboundservices.hashing.HashingService;
 import codin.msbackendcore.iam.application.internal.outboundservices.token.TokenService;
 import codin.msbackendcore.iam.domain.model.entities.RefreshToken;
-import codin.msbackendcore.iam.domain.model.entities.Session;
 import codin.msbackendcore.iam.domain.model.entities.User;
 import codin.msbackendcore.iam.domain.services.RefreshTokenDomainService;
-import codin.msbackendcore.iam.domain.services.SessionDomainService;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.RefreshTokenRepository;
-import codin.msbackendcore.iam.infrastructure.persistence.jpa.SessionRepository;
 import codin.msbackendcore.shared.infrastructure.utils.Constants;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Service
