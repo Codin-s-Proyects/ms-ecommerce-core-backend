@@ -1,8 +1,7 @@
 package codin.msbackendcore.iam.infrastructure.authorization.sfs.configuration;
 
 import codin.msbackendcore.iam.infrastructure.authorization.sfs.pipeline.BearerAuthorizationRequestFilter;
-import codin.msbackendcore.iam.infrastructure.hashing.bcrypt.Argon2idHashingService;
-import codin.msbackendcore.iam.infrastructure.hashing.bcrypt.BCryptHashingService;
+import codin.msbackendcore.iam.infrastructure.hashing.bcrypt.HashingAdapter;
 import codin.msbackendcore.iam.infrastructure.token.jwt.BearerTokenService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -29,9 +28,20 @@ public class WebSecurityConfiguration {
 
     private final UserDetailsService userDetailsService;
     private final BearerTokenService tokenService;
-    private final Argon2idHashingService hashingService;
+    private final HashingAdapter hashingService;
 
     private final AuthenticationEntryPoint unauthorizedRequestHandler;
+
+    public WebSecurityConfiguration(
+            @Qualifier("defaultUserDetailsService") UserDetailsService userDetailsService,
+            BearerTokenService tokenService, @Qualifier("argon2Adapter") HashingAdapter hashingAdapter,
+            AuthenticationEntryPoint authenticationEntryPoint) {
+
+        this.userDetailsService = userDetailsService;
+        this.tokenService = tokenService;
+        this.hashingService = hashingAdapter;
+        this.unauthorizedRequestHandler = authenticationEntryPoint;
+    }
 
     @Bean
     public BearerAuthorizationRequestFilter authorizationRequestFilter() {
@@ -79,16 +89,5 @@ public class WebSecurityConfiguration {
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authorizationRequestFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
-    }
-
-    public WebSecurityConfiguration(
-            @Qualifier("defaultUserDetailsService") UserDetailsService userDetailsService,
-            BearerTokenService tokenService, Argon2idHashingService hashingService,
-            AuthenticationEntryPoint authenticationEntryPoint) {
-
-        this.userDetailsService = userDetailsService;
-        this.tokenService = tokenService;
-        this.hashingService = hashingService;
-        this.unauthorizedRequestHandler = authenticationEntryPoint;
     }
 }
