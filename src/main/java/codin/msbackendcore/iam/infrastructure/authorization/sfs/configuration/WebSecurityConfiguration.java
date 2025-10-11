@@ -1,6 +1,7 @@
 package codin.msbackendcore.iam.infrastructure.authorization.sfs.configuration;
 
 import codin.msbackendcore.iam.infrastructure.authorization.sfs.pipeline.BearerAuthorizationRequestFilter;
+import codin.msbackendcore.iam.infrastructure.hashing.bcrypt.Argon2idHashingService;
 import codin.msbackendcore.iam.infrastructure.hashing.bcrypt.BCryptHashingService;
 import codin.msbackendcore.iam.infrastructure.token.jwt.BearerTokenService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,7 +29,7 @@ public class WebSecurityConfiguration {
 
     private final UserDetailsService userDetailsService;
     private final BearerTokenService tokenService;
-    private final BCryptHashingService hashingService;
+    private final Argon2idHashingService hashingService;
 
     private final AuthenticationEntryPoint unauthorizedRequestHandler;
 
@@ -82,7 +83,7 @@ public class WebSecurityConfiguration {
 
     public WebSecurityConfiguration(
             @Qualifier("defaultUserDetailsService") UserDetailsService userDetailsService,
-            BearerTokenService tokenService, BCryptHashingService hashingService,
+            BearerTokenService tokenService, Argon2idHashingService hashingService,
             AuthenticationEntryPoint authenticationEntryPoint) {
 
         this.userDetailsService = userDetailsService;

@@ -40,21 +40,21 @@ public class TokenServiceImpl implements BearerTokenService {
         return buildTokenWithDefaultParameters(authentication.getName(), jwtExpiration);
     }
 
-    public String generateToken(String username) {
-        return buildTokenWithDefaultParameters(username, jwtExpiration);
+    public String generateToken(String identifier) {
+        return buildTokenWithDefaultParameters(identifier, jwtExpiration);
     }
 
     @Override
-    public String generateRefreshToken(String username) {
-        return buildTokenWithDefaultParameters(username, refreshExpiration);
+    public String generateRefreshToken(String identifier) {
+        return buildTokenWithDefaultParameters(identifier, refreshExpiration);
     }
 
-    private String buildTokenWithDefaultParameters(String username, long expirationDays) {
+    private String buildTokenWithDefaultParameters(String identifier, long expirationDays) {
         var issuedAt = new Date();
         var expiration = new Date(issuedAt.getTime() + expirationDays * 24L * 60L * 60L * 1000L);
         var key = getSigningKey();
         return Jwts.builder()
-                .subject(username)
+                .subject(identifier)
                 .issuedAt(issuedAt)
                 .expiration(expiration)
                 .signWith(key)

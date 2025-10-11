@@ -1,4 +1,4 @@
-package codin.msbackendcore.iam.application.internal.dto;
+package codin.msbackendcore.iam.interfaces.dto;
 
 import codin.msbackendcore.iam.domain.model.commands.SignUpCommand;
 import jakarta.validation.constraints.NotBlank;

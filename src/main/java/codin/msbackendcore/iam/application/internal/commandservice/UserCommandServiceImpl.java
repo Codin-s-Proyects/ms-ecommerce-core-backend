@@ -1,19 +1,19 @@
 package codin.msbackendcore.iam.application.internal.commandservice;
 
+import codin.msbackendcore.iam.application.internal.dto.SignInResult;
+import codin.msbackendcore.iam.application.internal.outboundservices.token.TokenService;
 import codin.msbackendcore.iam.domain.model.commands.SignInCommand;
 import codin.msbackendcore.iam.domain.model.commands.SignUpCommand;
 import codin.msbackendcore.iam.domain.model.entities.User;
 import codin.msbackendcore.iam.domain.model.valueobjects.CredentialType;
 import codin.msbackendcore.iam.domain.model.valueobjects.UserType;
-import codin.msbackendcore.iam.domain.services.AuditLogDomainService;
-import codin.msbackendcore.iam.domain.services.UserCommandService;
-import codin.msbackendcore.iam.domain.services.UserDomainService;
+import codin.msbackendcore.iam.domain.services.*;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.CredentialRepository;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.RoleRepository;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.UserRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
+import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import codin.msbackendcore.shared.infrastructure.utils.CommonUtils;
-import codin.msbackendcore.shared.infrastructure.utils.Constants;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -30,33 +30,55 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserDomainService userDomainService;
     private final AuditLogDomainService auditLogDomainService;
+    private final SessionDomainService sessionDomainService;
+    private final RefreshTokenDomainService refreshTokenDomainService;
+    private final TokenService tokenService;
 
     public UserCommandServiceImpl(
             UserRepository userRepository,
             CredentialRepository credentialRepository,
-            UserDomainService userDomainService, RoleRepository roleRepository, AuditLogDomainService auditLogDomainService
+            UserDomainService userDomainService, RoleRepository roleRepository, AuditLogDomainService auditLogDomainService, SessionDomainService sessionDomainService, RefreshTokenDomainService refreshTokenDomainService, TokenService tokenService
     ) {
         this.userRepository = userRepository;
         this.credentialRepository = credentialRepository;
         this.userDomainService = userDomainService;
         this.roleRepository = roleRepository;
         this.auditLogDomainService = auditLogDomainService;
+        this.sessionDomainService = sessionDomainService;
+        this.refreshTokenDomainService = refreshTokenDomainService;
+        this.tokenService = tokenService;
     }
 
     @Transactional
     @Override
-    public Optional<User> handle(SignInCommand command) {
-//        var credential = credentialRepository.findByIdentifier(command.identifier())
-//                .orElseThrow(() ->
-//                        new NotFoundException("error.not_found", new String[]{command.identifier()}, "identifier")
-//                );
-//
-//        if (!command.hashingService().matches(command.password(), credential.getSecretHash())) {
-//            throw new AuthenticatedException("error.authorization.password", new String[]{}, "password");
-//        }
-//
-//        return Optional.of(credential.getUser());
-        return Optional.of(new User());
+    public Optional<SignInResult> handle(SignInCommand command) {
+
+        var credential = credentialRepository.findByIdentifier(command.identifier())
+                .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{command.identifier()}, "identifier"));
+
+        var user = userRepository.findByIdAndTenantId(credential.getUser().getId(), command.tenantId())
+                .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{command.tenantId().toString()}, "tenantId"));
+
+        if (!userDomainService.isPasswordValid(credential, command.password())) {
+            throw new BadRequestException("error.authorization", new String[]{command.password()}, "password");
+        }
+
+        var session = sessionDomainService.createSession(user, command.ip(), command.deviceInfo());
+
+        var refreshToken = refreshTokenDomainService.createRefreshToken(command.tenantId(), user, command.deviceInfo(), command.identifier());
+
+        var accessToken = tokenService.generateToken(command.identifier());
+
+        userDomainService.updateUserLastLogin(user);
+
+        return Optional.of(
+                new SignInResult(
+                        user.getId(),
+                        user.getUserType(),
+                        accessToken,
+                        refreshToken.getTokenHash(),
+                        session.getId()
+                ));
     }
 
     @Transactional
@@ -88,7 +110,6 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         User user = userDomainService.registerNewUser(command, systemUserId);
 
-        userRepository.save(user);
 
         auditLogDomainService.recordAction(
                 user.getTenantId(),
@@ -103,4 +124,5 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         return Optional.of(user);
     }
+
 }

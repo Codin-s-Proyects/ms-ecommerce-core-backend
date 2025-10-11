@@ -1,16 +1,23 @@
 package codin.msbackendcore.iam.infrastructure.hashing.bcrypt.services;
 
-import codin.msbackendcore.iam.infrastructure.hashing.bcrypt.BCryptHashingService;
+import codin.msbackendcore.iam.infrastructure.hashing.bcrypt.Argon2idHashingService;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class HashingServiceImpl implements BCryptHashingService {
+public class HashingServiceImpl implements Argon2idHashingService {
 
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final Argon2PasswordEncoder passwordEncoder;
 
     public HashingServiceImpl() {
-        this.passwordEncoder = new BCryptPasswordEncoder();
+        this.passwordEncoder = new Argon2PasswordEncoder(
+                16,
+                32,
+                1,
+                2,
+                4
+        );
     }
 
     @Override

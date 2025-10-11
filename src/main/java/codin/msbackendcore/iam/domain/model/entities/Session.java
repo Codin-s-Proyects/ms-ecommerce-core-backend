@@ -2,10 +2,16 @@ package codin.msbackendcore.iam.domain.model.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "sessions", schema = "iam")
 public class Session {
@@ -25,6 +31,8 @@ public class Session {
 
     private String deviceInfo;
 
+    @JdbcTypeCode(SqlTypes.INET)
+    @Column(name = "ip", columnDefinition = "inet")
     private String ip;
 
     @Column(nullable = false)
