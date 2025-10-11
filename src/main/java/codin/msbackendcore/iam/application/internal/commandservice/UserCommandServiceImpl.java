@@ -76,7 +76,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                         user.getId(),
                         user.getUserType(),
                         accessToken,
-                        refreshToken.getTokenHash(),
+                        refreshToken.getPlainToken(),
                         session.getId()
                 ));
     }

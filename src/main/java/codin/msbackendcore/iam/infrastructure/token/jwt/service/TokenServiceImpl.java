@@ -51,7 +51,7 @@ public class TokenServiceImpl implements BearerTokenService {
 
     private String buildTokenWithDefaultParameters(String identifier, long expirationDays) {
         var issuedAt = new Date();
-        var expiration = new Date(issuedAt.getTime() + expirationDays * 24L * 60L * 60L * 1000L);
+        var expiration = new Date(issuedAt.getTime() + expirationDays);
         var key = getSigningKey();
         return Jwts.builder()
                 .subject(identifier)
