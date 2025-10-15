@@ -10,7 +10,9 @@ import codin.msbackendcore.iam.domain.model.valueobjects.UserType;
 import codin.msbackendcore.iam.domain.services.*;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.CredentialRepository;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.RoleRepository;
+import codin.msbackendcore.iam.infrastructure.persistence.jpa.SessionRepository;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.UserRepository;
+import codin.msbackendcore.shared.domain.exceptions.AuthenticatedException;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import codin.msbackendcore.shared.infrastructure.utils.CommonUtils;
@@ -21,12 +23,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static codin.msbackendcore.shared.infrastructure.utils.Constants.MAX_ACTIVE_SESSIONS;
+
 @Service
 public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
     private final CredentialRepository credentialRepository;
     private final RoleRepository roleRepository;
+    private final SessionRepository sessionRepository;
 
     private final UserDomainService userDomainService;
     private final AuditLogDomainService auditLogDomainService;
@@ -36,11 +41,12 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     public UserCommandServiceImpl(
             UserRepository userRepository,
-            CredentialRepository credentialRepository,
+            CredentialRepository credentialRepository, SessionRepository sessionRepository,
             UserDomainService userDomainService, RoleRepository roleRepository, AuditLogDomainService auditLogDomainService, SessionDomainService sessionDomainService, RefreshTokenDomainService refreshTokenDomainService, TokenService tokenService
     ) {
         this.userRepository = userRepository;
         this.credentialRepository = credentialRepository;
+        this.sessionRepository = sessionRepository;
         this.userDomainService = userDomainService;
         this.roleRepository = roleRepository;
         this.auditLogDomainService = auditLogDomainService;
@@ -52,7 +58,6 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Transactional
     @Override
     public Optional<SignInResult> handle(SignInCommand command) {
-
         var credential = credentialRepository.findByIdentifier(command.identifier())
                 .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{command.identifier()}, "identifier"));
 
