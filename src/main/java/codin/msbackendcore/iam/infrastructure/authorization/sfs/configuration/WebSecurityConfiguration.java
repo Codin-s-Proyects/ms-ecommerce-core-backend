@@ -85,7 +85,7 @@ public class WebSecurityConfiguration {
                                         "/swagger-ui/**", "/swagger-resources/**", "/webjars/**", "/actuator/**", "/health", "/status/**", "/")
                                 .permitAll()
                                 .anyRequest()
-                                .authenticated());
+                                .permitAll());
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authorizationRequestFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
