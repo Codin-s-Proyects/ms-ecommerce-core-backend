@@ -1,7 +1,9 @@
 package codin.msbackendcore.iam.interfaces.rest.controller;
 
+import codin.msbackendcore.iam.domain.model.commands.RefreshTokenCommand;
 import codin.msbackendcore.iam.domain.services.UserCommandService;
 import codin.msbackendcore.iam.interfaces.dto.AuthResponse;
+import codin.msbackendcore.iam.interfaces.dto.RefreshTokenRequest;
 import codin.msbackendcore.iam.interfaces.dto.SignInRequest;
 import codin.msbackendcore.iam.interfaces.dto.SignUpRequest;
 import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
@@ -44,6 +46,22 @@ public class AuthController {
     @PostMapping("/sign-in")
     public ResponseEntity<AuthResponse> signIn(@Valid @RequestBody SignInRequest req) {
         var command = req.toCommand();
+        var result = userCommandService.handle(command)
+                .orElseThrow(() -> new ServerErrorException("error.server_error", new String[]{}));
+
+        var response = new AuthResponse(
+                result.userId(),
+                result.accessToken(),
+                result.refreshToken(),
+                result.userType()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        var command = request.toCommand();
         var result = userCommandService.handle(command)
                 .orElseThrow(() -> new ServerErrorException("error.server_error", new String[]{}));
 

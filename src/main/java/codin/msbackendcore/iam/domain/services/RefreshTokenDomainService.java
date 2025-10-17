@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface RefreshTokenDomainService {
     RefreshToken createRefreshToken(UUID tenantId, User user, String deviceInfo, String identifier);
+    RefreshToken useRefreshToken(UUID userId, String plainRefreshToken, UUID tenantId, String deviceInfo);
 }

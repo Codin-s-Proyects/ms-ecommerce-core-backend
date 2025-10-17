@@ -2,16 +2,14 @@ package codin.msbackendcore.iam.application.internal.commandservice;
 
 import codin.msbackendcore.iam.application.internal.dto.SignInResult;
 import codin.msbackendcore.iam.application.internal.outboundservices.token.TokenService;
+import codin.msbackendcore.iam.domain.model.commands.RefreshTokenCommand;
 import codin.msbackendcore.iam.domain.model.commands.SignInCommand;
 import codin.msbackendcore.iam.domain.model.commands.SignUpCommand;
 import codin.msbackendcore.iam.domain.model.entities.User;
 import codin.msbackendcore.iam.domain.model.valueobjects.CredentialType;
 import codin.msbackendcore.iam.domain.model.valueobjects.UserType;
 import codin.msbackendcore.iam.domain.services.*;
-import codin.msbackendcore.iam.infrastructure.persistence.jpa.CredentialRepository;
-import codin.msbackendcore.iam.infrastructure.persistence.jpa.RoleRepository;
-import codin.msbackendcore.iam.infrastructure.persistence.jpa.SessionRepository;
-import codin.msbackendcore.iam.infrastructure.persistence.jpa.UserRepository;
+import codin.msbackendcore.iam.infrastructure.persistence.jpa.*;
 import codin.msbackendcore.shared.domain.exceptions.AuthenticatedException;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
@@ -31,7 +29,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final UserRepository userRepository;
     private final CredentialRepository credentialRepository;
     private final RoleRepository roleRepository;
-    private final SessionRepository sessionRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private final UserDomainService userDomainService;
     private final AuditLogDomainService auditLogDomainService;
@@ -41,12 +39,12 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     public UserCommandServiceImpl(
             UserRepository userRepository,
-            CredentialRepository credentialRepository, SessionRepository sessionRepository,
+            CredentialRepository credentialRepository, RefreshTokenRepository refreshTokenRepository,
             UserDomainService userDomainService, RoleRepository roleRepository, AuditLogDomainService auditLogDomainService, SessionDomainService sessionDomainService, RefreshTokenDomainService refreshTokenDomainService, TokenService tokenService
     ) {
         this.userRepository = userRepository;
         this.credentialRepository = credentialRepository;
-        this.sessionRepository = sessionRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
         this.userDomainService = userDomainService;
         this.roleRepository = roleRepository;
         this.auditLogDomainService = auditLogDomainService;
@@ -128,6 +126,26 @@ public class UserCommandServiceImpl implements UserCommandService {
         );
 
         return Optional.of(user);
+    }
+
+    @Transactional
+    @Override
+    public Optional<SignInResult> handle(RefreshTokenCommand command) {
+//        var newRefreshToken = refreshTokenDomainService.validateAndRotate(
+//                command.userId(), command.refreshToken(), command.tenantId(), command.deviceInfo()
+//        );
+//
+//        var identifier = newRefreshToken.getUser().getPrimaryCredential().getIdentifier();
+//        var accessToken = tokenService.generateToken(identifier);
+//
+//        return new AuthResponse(
+//                newRefreshToken.getUser().getId(),
+//                accessToken,
+//                newRefreshToken.getPlainToken(),
+//                newRefreshToken.getUser().getUserType()
+//        );
+
+        return Optional.empty();
     }
 
 }
