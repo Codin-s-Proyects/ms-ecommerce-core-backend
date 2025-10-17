@@ -23,8 +23,18 @@ CREATE TABLE core.tenants
     slug       citext UNIQUE NOT NULL,
     name       text          NOT NULL,
     plan       text          NOT NULL DEFAULT 'free',
-    settings   jsonb         NOT NULL DEFAULT '{}'::jsonb,
     created_at timestamptz   NOT NULL DEFAULT now()
+);
+
+CREATE TABLE core.tenant_settings
+(
+    id              uuid PRIMARY KEY     DEFAULT uuid_generate_v4(),
+    tenant_id       uuid        NOT NULL REFERENCES core.tenants (id) ON DELETE CASCADE,
+    image_prompt    TEXT,
+    composer_prompt TEXT,
+    created_at      timestamptz NOT NULL DEFAULT now(),
+    updated_at      timestamptz NOT NULL DEFAULT now(),
+    UNIQUE (tenant_id)
 );
 
 -- ======================
