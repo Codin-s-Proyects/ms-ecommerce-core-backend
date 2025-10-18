@@ -9,8 +9,10 @@ import codin.msbackendcore.iam.domain.model.entities.User;
 import codin.msbackendcore.iam.domain.model.valueobjects.CredentialType;
 import codin.msbackendcore.iam.domain.model.valueobjects.UserType;
 import codin.msbackendcore.iam.domain.services.*;
-import codin.msbackendcore.iam.infrastructure.persistence.jpa.*;
-import codin.msbackendcore.shared.domain.exceptions.AuthenticatedException;
+import codin.msbackendcore.iam.infrastructure.persistence.jpa.CredentialRepository;
+import codin.msbackendcore.iam.infrastructure.persistence.jpa.RefreshTokenRepository;
+import codin.msbackendcore.iam.infrastructure.persistence.jpa.RoleRepository;
+import codin.msbackendcore.iam.infrastructure.persistence.jpa.UserRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import codin.msbackendcore.shared.infrastructure.utils.CommonUtils;
@@ -20,8 +22,6 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
-import static codin.msbackendcore.shared.infrastructure.utils.Constants.MAX_ACTIVE_SESSIONS;
 
 @Service
 public class UserCommandServiceImpl implements UserCommandService {

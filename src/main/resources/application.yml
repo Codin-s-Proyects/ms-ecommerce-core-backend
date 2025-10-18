@@ -18,5 +18,11 @@ jwt:
   jwtExpiration: ${SPRING_SECURITY_JWT_EXPIRATION}
   refreshExpiration: ${SPRING_SECURITY_REFRESH_EXPIRATION}
 
+openai:
+  api-key: ${OPENAI_API_KEY:}
+  base-url: https://api.openai.com/v1
+  model: text-embedding-3-small
+  timeout-ms: 10000
+
 server:
   forward-headers-strategy: native

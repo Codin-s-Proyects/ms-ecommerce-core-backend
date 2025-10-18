@@ -69,6 +69,10 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:postgresql") // testcontainers
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // OpenAI
+    implementation ("org.springframework.boot:spring-boot-starter-webflux")
+
 }
 
 tasks.withType<Test> {
