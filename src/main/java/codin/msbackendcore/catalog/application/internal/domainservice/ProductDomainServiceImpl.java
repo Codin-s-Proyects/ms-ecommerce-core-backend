@@ -32,14 +32,6 @@ public class ProductDomainServiceImpl implements ProductDomainService {
     @Transactional
     @Override
     public Product createProduct(Product product) {
-        // Persist product (variants are cascade persist if set)
-        Product saved = productRepository.save(product);
-
-        // For each variant generate embedding and persist in search
-        for (ProductVariant variant : saved.getVariants()) {
-            // ensure variant is attached to saved product
-            embeddingDomainService.generateAndSaveEmbedding(saved.getTenantId(), variant);
-        }
-        return saved;
+        return productRepository.save(product);
     }
 }
