@@ -6,6 +6,7 @@ import codin.msbackendcore.catalog.domain.model.events.ProductCreatedEvent;
 import codin.msbackendcore.catalog.domain.services.ProductCommandService;
 import codin.msbackendcore.catalog.domain.services.ProductDomainService;
 import codin.msbackendcore.shared.domain.events.SimpleDomainEventPublisher;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         this.eventPublisher = eventPublisher;
     }
 
+    @Transactional
     @Override
     public Product createProduct(Product product) {
         Product saved = productDomainService.createProduct(product);

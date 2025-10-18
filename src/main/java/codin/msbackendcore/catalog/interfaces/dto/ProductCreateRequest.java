@@ -9,6 +9,7 @@ import java.util.UUID;
 public record ProductCreateRequest(
         @NotNull UUID tenantId,
         @NotBlank String name,
+        @NotBlank String slug,
         String description,
         List<VariantRequest> variants
 ) {

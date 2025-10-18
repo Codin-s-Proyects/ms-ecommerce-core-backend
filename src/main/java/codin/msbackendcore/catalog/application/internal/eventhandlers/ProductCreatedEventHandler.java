@@ -30,6 +30,7 @@ public class ProductCreatedEventHandler {
         for (UUID variantId : event.variantIds()) {
             variantRepository.findById(variantId).ifPresent(variant -> {
                 try {
+                    System.out.println("Execute ProductCreated Event Handler for variant " + variantId);
                     embeddingService.generateAndSaveEmbedding(event.tenantId(), variant);
                 } catch (Exception ex) {
                     // 🚨 Importante: el error en embeddings no debe romper el flujo principal.
