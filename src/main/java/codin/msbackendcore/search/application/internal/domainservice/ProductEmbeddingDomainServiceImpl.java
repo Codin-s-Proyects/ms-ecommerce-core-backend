@@ -28,11 +28,6 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
         repo.upsertEmbedding(tenantId, variant.getId(), vector, metadata);
     }
 
-    @Override
-    public float[] embedText(String text) {
-        return openAI.embed(text);
-    }
-
     private String buildTextForVariant(ProductVariant variant) {
         var p = variant.getProduct();
         return (p.getName() == null ? "" : p.getName()) + " "

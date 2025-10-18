@@ -17,20 +17,32 @@ public class Category {
     @GeneratedValue
     private UUID id;
 
-    @NotNull
+    @Column(name = "tenant_id", nullable = false)
     private UUID tenantId;
 
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Category parent;
+
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String name;
 
+    @Column(columnDefinition = "citext", nullable = false)
+    private String slug;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
+    @Column(name = "updated_at", nullable = false, updatable = false)
+    private Instant updatedAt;
+
     @PrePersist
     void prePersist() {
         this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
     }
 }
 
