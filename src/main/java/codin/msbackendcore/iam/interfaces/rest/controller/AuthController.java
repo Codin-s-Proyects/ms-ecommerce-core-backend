@@ -1,6 +1,5 @@
 package codin.msbackendcore.iam.interfaces.rest.controller;
 
-import codin.msbackendcore.iam.domain.model.commands.RefreshTokenCommand;
 import codin.msbackendcore.iam.domain.services.UserCommandService;
 import codin.msbackendcore.iam.interfaces.dto.AuthResponse;
 import codin.msbackendcore.iam.interfaces.dto.RefreshTokenRequest;
