@@ -5,24 +5,19 @@ CREATE SCHEMA IF NOT EXISTS catalog;
 CREATE SCHEMA IF NOT EXISTS search;
 
 -- =========================================
--- EXTENSIONES NECESARIAS
--- =========================================
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "citext";
-
--- =========================================
 -- CATEGORIES
 -- =========================================
 CREATE TABLE catalog.categories
 (
-    id          uuid PRIMARY KEY       DEFAULT uuid_generate_v4(),
-    tenant_id   uuid          NOT NULL REFERENCES core.tenants (id) ON DELETE CASCADE,
+    id          uuid PRIMARY KEY     DEFAULT uuid_generate_v4(),
+    tenant_id   uuid        NOT NULL REFERENCES core.tenants (id) ON DELETE CASCADE,
     parent_id   uuid REFERENCES catalog.categories (id),
-    name        text          NOT NULL,
-    slug        citext UNIQUE NOT NULL,
+    name        text        NOT NULL,
+    slug        citext      NOT NULL,
     description text,
-    created_at  timestamptz   NOT NULL DEFAULT now(),
-    updated_at  timestamptz   NOT NULL DEFAULT now()
+    created_at  timestamptz NOT NULL DEFAULT now(),
+    updated_at  timestamptz NOT NULL DEFAULT now(),
+    UNIQUE (tenant_id, slug)
 );
 
 -- =========================================
@@ -30,13 +25,14 @@ CREATE TABLE catalog.categories
 -- =========================================
 CREATE TABLE catalog.brands
 (
-    id          uuid PRIMARY KEY       DEFAULT uuid_generate_v4(),
-    tenant_id   uuid          NOT NULL REFERENCES core.tenants (id) ON DELETE CASCADE,
-    name        text          NOT NULL,
-    slug        citext UNIQUE NOT NULL,
+    id          uuid PRIMARY KEY     DEFAULT uuid_generate_v4(),
+    tenant_id   uuid        NOT NULL REFERENCES core.tenants (id) ON DELETE CASCADE,
+    name        text        NOT NULL,
+    slug        citext      NOT NULL,
     description text,
     logo_url    text,
-    created_at  timestamptz   NOT NULL DEFAULT now()
+    created_at  timestamptz NOT NULL DEFAULT now(),
+    UNIQUE (tenant_id, slug)
 );
 
 -- =========================================
@@ -92,6 +88,7 @@ CREATE TABLE catalog.attribute_values
 CREATE TABLE catalog.category_attributes
 (
     id                   uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id            uuid    NOT NULL REFERENCES core.tenants (id) ON DELETE CASCADE,
     category_id          uuid    NOT NULL REFERENCES catalog.categories (id) ON DELETE CASCADE,
     attribute_id         uuid    NOT NULL REFERENCES catalog.attributes (id) ON DELETE CASCADE,
     is_variant_attribute boolean NOT NULL DEFAULT true,
@@ -104,6 +101,7 @@ CREATE TABLE catalog.category_attributes
 CREATE TABLE catalog.product_attributes
 (
     id           uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id    uuid NOT NULL REFERENCES core.tenants (id) ON DELETE CASCADE,
     product_id   uuid NOT NULL REFERENCES catalog.products (id) ON DELETE CASCADE,
     attribute_id uuid NOT NULL REFERENCES catalog.attributes (id) ON DELETE CASCADE,
     value        text,
@@ -116,6 +114,7 @@ CREATE TABLE catalog.product_attributes
 CREATE TABLE catalog.product_variants
 (
     id         uuid PRIMARY KEY     DEFAULT uuid_generate_v4(),
+    tenant_id  uuid        NOT NULL REFERENCES core.tenants (id) ON DELETE CASCADE,
     product_id uuid        NOT NULL REFERENCES catalog.products (id) ON DELETE CASCADE,
     sku        text UNIQUE NOT NULL,
     name       text        NOT NULL,
@@ -139,26 +138,73 @@ CREATE TABLE search.product_embeddings
     created_at         timestamptz  NOT NULL DEFAULT now()
 );
 
--- Index para búsquedas vectoriales
-CREATE INDEX idx_product_embeddings_vector
-    ON search.product_embeddings
-        USING ivfflat (vector vector_cosine_ops)
+-- =========================================
+-- INDEXES
+-- =========================================
+CREATE INDEX idx_categories_tenant ON catalog.categories (tenant_id);
+CREATE INDEX idx_products_tenant ON catalog.products (tenant_id);
+CREATE INDEX idx_variants_tenant ON catalog.product_variants (tenant_id);
+CREATE INDEX idx_embeddings_tenant ON search.product_embeddings (tenant_id);
+CREATE INDEX idx_embeddings_vector_cosine
+    ON search.product_embeddings USING ivfflat (vector vector_cosine_ops)
     WITH (lists = 100);
 
 -- =========================================
--- COMMENTS (documentación SQL)
+-- TRIGGERS
 -- =========================================
-COMMENT ON SCHEMA catalog IS 'Gestión de productos, variantes, atributos y categorías';
-COMMENT ON SCHEMA search IS 'Embeddings vectoriales para búsqueda semántica';
+CREATE OR REPLACE FUNCTION set_updated_at()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-COMMENT ON TABLE catalog.products IS 'Productos base por tenant';
-COMMENT ON TABLE catalog.product_variants IS 'Variantes de producto con atributos dinámicos';
-COMMENT ON TABLE catalog.category_attributes IS 'Define qué atributos aplican a cada categoría';
-COMMENT ON TABLE search.product_embeddings IS 'Embeddings vectoriales de productos/variantes para búsquedas semánticas';
+CREATE TRIGGER trg_products_updated
+    BEFORE UPDATE
+    ON catalog.products
+    FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER trg_variants_updated
+    BEFORE UPDATE
+    ON catalog.product_variants
+    FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
 
 -- =========================================
--- RLS (seguridad multi-tenant)
+-- RLS POLICIES
 -- =========================================
+ALTER TABLE catalog.categories
+    ENABLE ROW LEVEL SECURITY;
+CREATE POLICY p_categories_tenant ON catalog.categories
+    USING (tenant_id = current_setting('app.tenant_id')::uuid);
+
+ALTER TABLE catalog.attributes
+    ENABLE ROW LEVEL SECURITY;
+CREATE POLICY p_attributes_tenant ON catalog.attributes
+    USING (tenant_id = current_setting('app.tenant_id')::uuid);
+
+ALTER TABLE catalog.attribute_values
+    ENABLE ROW LEVEL SECURITY;
+CREATE POLICY p_attribute_values_tenant ON catalog.attribute_values
+    USING (
+    attribute_id IN (SELECT id
+                     FROM catalog.attributes
+                     WHERE tenant_id = current_setting('app.tenant_id')::uuid)
+    );
+
+ALTER TABLE catalog.category_attributes
+    ENABLE ROW LEVEL SECURITY;
+CREATE POLICY p_category_attributes_tenant ON catalog.category_attributes
+    USING (tenant_id = current_setting('app.tenant_id')::uuid);
+
+ALTER TABLE catalog.product_attributes
+    ENABLE ROW LEVEL SECURITY;
+CREATE POLICY p_product_attributes_tenant ON catalog.product_attributes
+    USING (tenant_id = current_setting('app.tenant_id')::uuid);
+
 ALTER TABLE catalog.products
     ENABLE ROW LEVEL SECURITY;
 CREATE POLICY p_products_tenant ON catalog.products
@@ -167,11 +213,7 @@ CREATE POLICY p_products_tenant ON catalog.products
 ALTER TABLE catalog.product_variants
     ENABLE ROW LEVEL SECURITY;
 CREATE POLICY p_product_variants_tenant ON catalog.product_variants
-    USING (
-    product_id IN (SELECT id
-                   FROM catalog.products
-                   WHERE tenant_id = current_setting('app.tenant_id')::uuid)
-    );
+    USING (tenant_id = current_setting('app.tenant_id')::uuid);
 
 ALTER TABLE search.product_embeddings
     ENABLE ROW LEVEL SECURITY;
