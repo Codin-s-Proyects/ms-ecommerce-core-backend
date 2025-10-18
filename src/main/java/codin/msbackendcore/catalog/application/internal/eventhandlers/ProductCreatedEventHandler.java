@@ -3,8 +3,6 @@ package codin.msbackendcore.catalog.application.internal.eventhandlers;
 import codin.msbackendcore.catalog.domain.model.events.ProductCreatedEvent;
 import codin.msbackendcore.catalog.infrastructure.persistence.jpa.ProductVariantRepository;
 import codin.msbackendcore.search.domain.services.ProductEmbeddingDomainService;
-import jakarta.transaction.Transactional;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;

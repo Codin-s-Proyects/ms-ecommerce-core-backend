@@ -1,7 +1,6 @@
 package codin.msbackendcore.iam.interfaces.dto;
 
 import codin.msbackendcore.iam.domain.model.commands.RefreshTokenCommand;
-import codin.msbackendcore.iam.domain.model.commands.SignInCommand;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
