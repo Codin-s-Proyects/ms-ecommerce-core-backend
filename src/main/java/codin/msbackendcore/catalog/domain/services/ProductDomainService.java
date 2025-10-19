@@ -1,7 +1,12 @@
 package codin.msbackendcore.catalog.domain.services;
 
+import codin.msbackendcore.catalog.domain.model.entities.Brand;
+import codin.msbackendcore.catalog.domain.model.entities.Category;
 import codin.msbackendcore.catalog.domain.model.entities.Product;
 
+import java.util.Map;
+import java.util.UUID;
+
 public interface ProductDomainService {
-    Product createProduct(Product product);
+    Product createProduct(UUID tenantId, Category category, Brand brand, String name, String description, Map<String, Object> meta);
 }

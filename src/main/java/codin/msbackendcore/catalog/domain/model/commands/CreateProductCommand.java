@@ -8,7 +8,6 @@ public record CreateProductCommand(
     UUID categoryId,
     UUID brandId,
     String name,
-    String slug,
     String description,
     Map<String, Object> meta
 ) {

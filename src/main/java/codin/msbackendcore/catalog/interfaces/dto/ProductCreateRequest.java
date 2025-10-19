@@ -1,24 +1,28 @@
 package codin.msbackendcore.catalog.interfaces.dto;
 
+import codin.msbackendcore.catalog.domain.model.commands.CreateProductCommand;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.math.BigDecimal;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public record ProductCreateRequest(
         @NotNull UUID tenantId,
+        UUID categoryId,
+        UUID brandId,
         @NotBlank String name,
-        @NotBlank String slug,
         String description,
-        List<VariantRequest> variants
+        Map<String, Object> meta
 ) {
-    public record VariantRequest(
-            @NotBlank String sku,
-            @NotBlank String name,
-            String attributes,
-            BigDecimal retailPrice,
-            BigDecimal wholesalePrice
-    ) {}
+    public CreateProductCommand toCommand() {
+        return new CreateProductCommand(
+                tenantId,
+                categoryId,
+                brandId,
+                name,
+                description,
+                meta
+        );
+    }
 }

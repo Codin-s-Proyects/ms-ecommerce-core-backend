@@ -9,5 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, UUID> {
+    Boolean existsByNameAndTenantId(String name, UUID tenantId);
     List<Product> findByTenantId(UUID tenantId);
 }

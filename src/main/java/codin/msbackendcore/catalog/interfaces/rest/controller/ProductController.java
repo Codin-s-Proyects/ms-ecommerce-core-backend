@@ -33,7 +33,10 @@ public class ProductController {
     @Operation(summary = "Crear un nuevo producto")
     @PostMapping
     public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductCreateRequest req) {
-        var saved = productCommandService.createProduct(req);
+
+        var command = req.toCommand();
+
+        var saved = productCommandService.handle(command);
 
         var response = new ProductResponse(
                 saved.getId(),
