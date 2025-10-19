@@ -5,9 +5,9 @@
 INSERT INTO core.tenants (id, slug, name, plan, created_at)
 VALUES (
            'bf89c25a-3ed4-4a00-96bd-59cde2ced8c0',
-           'tenant_test',
+           'tenat-de-prueba',
            'Tenant de Prueba',
-           'free',
+           'BASIC',
            now()
        )
 ON CONFLICT (slug) DO NOTHING;

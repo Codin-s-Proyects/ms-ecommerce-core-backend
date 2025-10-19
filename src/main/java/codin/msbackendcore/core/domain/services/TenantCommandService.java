@@ -1,8 +1,8 @@
 package codin.msbackendcore.core.domain.services;
 
-import codin.msbackendcore.core.domain.model.entities.TenantSettings;
+import codin.msbackendcore.core.domain.model.commands.CreateTenantCommand;
+import codin.msbackendcore.core.domain.model.entities.Tenant;
 
 public interface TenantCommandService {
-//    TenantSettings handle(UpdateImagePromptCommand command);
-//    TenantSettings handle(UpdateComposerPromptCommand command);
+    Tenant handle(CreateTenantCommand command);
 }
