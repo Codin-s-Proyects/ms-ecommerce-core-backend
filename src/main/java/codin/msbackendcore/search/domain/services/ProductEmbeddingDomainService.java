@@ -6,5 +6,4 @@ import java.util.UUID;
 
 public interface ProductEmbeddingDomainService {
     void generateAndSaveEmbedding(UUID tenantId, ProductVariant variant);
-    float[] embedText(String text); // if needed externally
 }

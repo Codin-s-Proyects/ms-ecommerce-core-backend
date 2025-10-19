@@ -3,6 +3,7 @@ package codin.msbackendcore.catalog.interfaces.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +17,8 @@ public record ProductCreateRequest(
     public record VariantRequest(
             @NotBlank String sku,
             @NotBlank String name,
-            String attributes // JSON string
+            String attributes,
+            BigDecimal retailPrice,
+            BigDecimal wholesalePrice
     ) {}
 }

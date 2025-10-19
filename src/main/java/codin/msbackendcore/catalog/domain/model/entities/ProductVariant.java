@@ -32,19 +32,29 @@ public class ProductVariant {
     @Column(nullable = false)
     private String sku;
 
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "text", nullable = false)
     private String name;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "attributes", columnDefinition = "jsonb", nullable = false)
-    private String attributes; // JSON string
+    private String attributes;
+
+    @Column(columnDefinition = "image_url")
+    private String imageUrl;
+
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
+
     @PrePersist
     void prePersist() {
         this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
     }
 }
 

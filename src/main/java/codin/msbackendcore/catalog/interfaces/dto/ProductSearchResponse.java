@@ -1,12 +1,16 @@
 package codin.msbackendcore.catalog.interfaces.dto;
 
-import java.util.Map;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public record ProductSearchResponse(
-    UUID id,
-    String sku,
-    String name,
-    String attributes
+        UUID variantId,
+        String variantName,
+        String variantImageUrl,
+        String sku,
+        String productName,
+        String productDescription,
+        BigDecimal retailPrice,
+        BigDecimal wholesalePrice
 ) {
 }

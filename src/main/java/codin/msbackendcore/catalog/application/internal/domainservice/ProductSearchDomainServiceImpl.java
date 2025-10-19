@@ -2,7 +2,9 @@ package codin.msbackendcore.catalog.application.internal.domainservice;
 
 import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.catalog.domain.services.ProductSearchDomainService;
+import codin.msbackendcore.catalog.infrastructure.persistence.dto.ProductSearchResult;
 import codin.msbackendcore.catalog.infrastructure.persistence.jpa.ProductVariantRepository;
+import codin.msbackendcore.catalog.infrastructure.persistence.mapper.ProductSearchResultMapper;
 import codin.msbackendcore.search.application.internal.outboundservices.embedding.OpenAIEmbeddingClient;
 import org.springframework.stereotype.Service;
 
@@ -14,15 +16,19 @@ public class ProductSearchDomainServiceImpl implements ProductSearchDomainServic
 
     private final ProductVariantRepository productVariantRepository;
     private final OpenAIEmbeddingClient openAIEmbeddingClient;
+    private final ProductSearchResultMapper productSearchResultMapper;
 
-    public ProductSearchDomainServiceImpl(ProductVariantRepository productVariantRepository, OpenAIEmbeddingClient openAIEmbeddingClient) {
+    public ProductSearchDomainServiceImpl(ProductVariantRepository productVariantRepository, OpenAIEmbeddingClient openAIEmbeddingClient, ProductSearchResultMapper productSearchResultMapper) {
         this.productVariantRepository = productVariantRepository;
         this.openAIEmbeddingClient = openAIEmbeddingClient;
+        this.productSearchResultMapper = productSearchResultMapper;
     }
 
     @Override
-    public List<ProductVariant> searchSimilarProducts(UUID tenantId, String query, int limit) {
+    public List<ProductSearchResult> searchSimilarProducts(UUID tenantId, String query, int limit) {
         float[] queryEmbedding = openAIEmbeddingClient.embed(query);
-        return productVariantRepository.findMostSimilarProducts(tenantId, queryEmbedding, limit);
+        var rawResults = productVariantRepository.findEnrichedSemanticResults(tenantId, queryEmbedding, limit);
+
+        return productSearchResultMapper.map(rawResults);
     }
 }

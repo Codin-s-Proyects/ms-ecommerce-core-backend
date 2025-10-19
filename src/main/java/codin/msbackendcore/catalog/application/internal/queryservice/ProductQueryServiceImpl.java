@@ -3,6 +3,7 @@ package codin.msbackendcore.catalog.application.internal.queryservice;
 import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.catalog.domain.services.ProductQueryService;
 import codin.msbackendcore.catalog.domain.services.ProductSearchDomainService;
+import codin.msbackendcore.catalog.infrastructure.persistence.dto.ProductSearchResult;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class ProductQueryServiceImpl implements ProductQueryService {
         this.searchDomainService = searchDomainService;
     }
 
-    public List<ProductVariant> handleSearch(UUID tenantId, String query, int limit) {
+    public List<ProductSearchResult> handleSearch(UUID tenantId, String query, int limit) {
         return searchDomainService.searchSimilarProducts(tenantId, query, limit);
     }
 }
