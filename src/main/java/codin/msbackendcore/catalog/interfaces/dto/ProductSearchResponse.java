@@ -10,6 +10,7 @@ public record ProductSearchResponse(
         String sku,
         String productName,
         String productDescription,
-        BigDecimal price
+        BigDecimal retailPrice,
+        BigDecimal wholesalePrice
 ) {
 }

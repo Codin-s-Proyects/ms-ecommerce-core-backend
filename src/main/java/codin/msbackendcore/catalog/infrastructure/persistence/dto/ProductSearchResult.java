@@ -15,5 +15,6 @@ public class ProductSearchResult {
     private String sku;
     private String productName;
     private String productDescription;
-    private BigDecimal price;
+    private BigDecimal retailPrice;
+    private BigDecimal wholesalePrice;
 }

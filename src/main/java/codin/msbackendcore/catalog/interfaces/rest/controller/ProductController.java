@@ -59,7 +59,8 @@ public class ProductController {
                 pv.getSku(),
                 pv.getProductName(),
                 pv.getProductDescription(),
-                pv.getPrice()
+                pv.getRetailPrice(),
+                pv.getWholesalePrice()
         )).toList();
 
         return ResponseEntity.ok(response);

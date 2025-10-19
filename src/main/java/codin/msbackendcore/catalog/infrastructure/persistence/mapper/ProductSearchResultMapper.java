@@ -21,7 +21,8 @@ public class ProductSearchResultMapper {
                     (String) row[3],                        // sku
                     (String) row[4],                        // product_name
                     (String) row[5],                        // product_description
-                    row[6] != null ? (BigDecimal) row[6] : BigDecimal.ZERO
+                    row[6] != null ? (BigDecimal) row[6] : BigDecimal.ZERO, // retail_price
+                    row[7] != null ? (BigDecimal) row[7] : BigDecimal.ZERO // wholesale_price
             ));
         }
         return list;
