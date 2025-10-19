@@ -65,4 +65,9 @@ public class Product {
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
     }
+
+    @PreUpdate
+    void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
 }
