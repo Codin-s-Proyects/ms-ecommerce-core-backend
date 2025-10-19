@@ -11,10 +11,11 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/tenants/{tenantId}/settings")
+@RequestMapping("/api/v1/tenants-settings")
 public class TenantSettingsController {
 
     private final TenantSettingsQueryService queryService;
@@ -31,7 +32,7 @@ public class TenantSettingsController {
     @Operation(summary = "Obtiene las configuraciones del tenant")
     @ApiResponse(responseCode = "200", description = "Configuraciones obtenidas correctamente")
     @ApiResponse(responseCode = "404", description = "Tenant no encontrado")
-    @GetMapping
+    @GetMapping("tenant/{tenantId}")
     public ResponseEntity<TenantSettingsResponse> getSettings(@PathVariable UUID tenantId) {
         var settings = queryService.getByTenantId(tenantId)
                 .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{tenantId.toString()}, "tenantId"));
@@ -44,35 +45,23 @@ public class TenantSettingsController {
         ));
     }
 
-    @Operation(summary = "Actualiza el prompt de imagen del tenant")
+    @Operation(summary = "Actualiza prompts del tenant")
     @ApiResponse(responseCode = "200", description = "Prompt actualizado correctamente")
-    @PatchMapping("/image-prompt")
+    @PatchMapping("/prompt")
     public ResponseEntity<TenantSettingsResponse> updateImagePrompt(
-            @PathVariable UUID tenantId,
             @Valid @RequestBody UpdatePromptRequest request
     ) {
-        var updated = commandService.updateImagePrompt(tenantId, request.value());
-        return ResponseEntity.ok(new TenantSettingsResponse(
-                updated.getTenantId(),
-                updated.getImagePrompt(),
-                updated.getComposerPrompt(),
-                updated.getUpdatedAt()
-        ));
-    }
+        var command = request.toCommand();
 
-    @Operation(summary = "Actualiza el prompt de texto (composer) del tenant")
-    @ApiResponse(responseCode = "200", description = "Prompt actualizado correctamente")
-    @PatchMapping("/composer-prompt")
-    public ResponseEntity<TenantSettingsResponse> updateComposerPrompt(
-            @PathVariable UUID tenantId,
-            @Valid @RequestBody UpdatePromptRequest request
-    ) {
-        var updated = commandService.updateComposerPrompt(tenantId, request.value());
-        return ResponseEntity.ok(new TenantSettingsResponse(
-                updated.getTenantId(),
-                updated.getImagePrompt(),
-                updated.getComposerPrompt(),
-                updated.getUpdatedAt()
-        ));
+        var updated = commandService.handle(List.of(command));
+
+        return ResponseEntity.ok(
+                new TenantSettingsResponse(
+                        updated.getTenantId(),
+                        updated.getImagePrompt(),
+                        updated.getComposerPrompt(),
+                        updated.getUpdatedAt()
+                )
+        );
     }
 }
