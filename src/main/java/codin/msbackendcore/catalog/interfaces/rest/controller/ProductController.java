@@ -53,10 +53,13 @@ public class ProductController {
         var results = productQueryService.handleSearch(request.tenantId(), request.query(), request.limit());
 
         var response = results.stream().map(pv -> new ProductSearchResponse(
-                pv.getId(),
+                pv.getVariantId(),
+                pv.getVariantName(),
+                pv.getVariantImageUrl(),
                 pv.getSku(),
-                pv.getName(),
-                pv.getAttributes()
+                pv.getProductName(),
+                pv.getProductDescription(),
+                pv.getPrice()
         )).toList();
 
         return ResponseEntity.ok(response);
