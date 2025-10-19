@@ -30,30 +30,10 @@ public class ProductController {
         this.productQueryService = productQueryService;
     }
 
+    @Operation(summary = "Crear un nuevo producto")
     @PostMapping
     public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductCreateRequest req) {
-        Product p = new Product();
-        p.setTenantId(req.tenantId());
-        p.setName(req.name());
-        p.setSlug(req.slug());
-        p.setDescription(req.description());
-
-        if (req.variants() != null) {
-            var variants = req.variants().stream().map(vr -> {
-                var pv = new ProductVariant();
-                pv.setTenantId(req.tenantId());
-                pv.setSku(vr.sku());
-                pv.setName(vr.name());
-                pv.setAttributes(vr.attributes());
-                pv.setProduct(p);
-                return pv;
-            }).toList();
-            p.getVariants().addAll(variants);
-        }
-
-        p.setHasVariants(!p.getVariants().isEmpty());
-
-        var saved = productCommandService.createProduct(p);
+        var saved = productCommandService.createProduct(req);
 
         var response = new ProductResponse(
                 saved.getId(),
