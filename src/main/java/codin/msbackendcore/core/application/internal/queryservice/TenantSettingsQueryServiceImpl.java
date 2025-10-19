@@ -1,6 +1,7 @@
 package codin.msbackendcore.core.application.internal.queryservice;
 
 import codin.msbackendcore.core.domain.model.entities.TenantSettings;
+import codin.msbackendcore.core.domain.model.queries.tenant_settings.GetTenantSettingsByTenantIdQuery;
 import codin.msbackendcore.core.domain.services.TenantSettingsDomainService;
 import codin.msbackendcore.core.domain.services.TenantSettingsQueryService;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class TenantSettingsQueryServiceImpl implements TenantSettingsQueryServic
         this.domainService = domainService;
     }
 
-    public Optional<TenantSettings> getByTenantId(UUID tenantId) {
-        return domainService.getByTenantId(tenantId);
+    public Optional<TenantSettings> handle(GetTenantSettingsByTenantIdQuery query) {
+        return domainService.getByTenantId(query.tenantId());
     }
 }

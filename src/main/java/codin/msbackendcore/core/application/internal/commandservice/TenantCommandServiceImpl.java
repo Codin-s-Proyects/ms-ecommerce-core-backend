@@ -1,6 +1,6 @@
 package codin.msbackendcore.core.application.internal.commandservice;
 
-import codin.msbackendcore.core.domain.model.commands.CreateTenantCommand;
+import codin.msbackendcore.core.domain.model.commands.tenant.CreateTenantCommand;
 import codin.msbackendcore.core.domain.model.entities.Tenant;
 import codin.msbackendcore.core.domain.services.TenantCommandService;
 import codin.msbackendcore.core.domain.services.TenantDomainService;

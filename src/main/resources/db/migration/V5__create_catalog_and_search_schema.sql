@@ -1,10 +1,4 @@
 -- =========================================
--- SCHEMAS
--- =========================================
-CREATE SCHEMA IF NOT EXISTS catalog;
-CREATE SCHEMA IF NOT EXISTS search;
-
--- =========================================
 -- CATEGORIES
 -- =========================================
 CREATE TABLE catalog.categories

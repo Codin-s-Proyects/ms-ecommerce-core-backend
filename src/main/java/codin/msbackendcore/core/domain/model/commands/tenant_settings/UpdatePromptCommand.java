@@ -1,6 +1,4 @@
-package codin.msbackendcore.core.domain.model.commands;
-
-import codin.msbackendcore.iam.interfaces.valueobjects.PromptType;
+package codin.msbackendcore.core.domain.model.commands.tenant_settings;
 
 import java.util.UUID;
 

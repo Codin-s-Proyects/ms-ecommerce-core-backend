@@ -1,5 +1,6 @@
 package codin.msbackendcore.core.interfaces.rest.controller;
 
+import codin.msbackendcore.core.domain.model.queries.tenant_settings.GetTenantSettingsByTenantIdQuery;
 import codin.msbackendcore.core.domain.services.TenantSettingsCommandService;
 import codin.msbackendcore.core.domain.services.TenantSettingsQueryService;
 import codin.msbackendcore.core.interfaces.dto.TenantSettingsResponse;
@@ -7,6 +8,7 @@ import codin.msbackendcore.core.interfaces.dto.UpdatePromptRequest;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/tenants-settings")
+@Tag(name = "Tenant Settings", description = "Operaciones relacionadas con las configuraciones de los tenants")
 public class TenantSettingsController {
 
     private final TenantSettingsQueryService queryService;
@@ -34,7 +37,7 @@ public class TenantSettingsController {
     @ApiResponse(responseCode = "404", description = "Tenant no encontrado")
     @GetMapping("tenant/{tenantId}")
     public ResponseEntity<TenantSettingsResponse> getSettings(@PathVariable UUID tenantId) {
-        var settings = queryService.getByTenantId(tenantId)
+        var settings = queryService.handle(new GetTenantSettingsByTenantIdQuery(tenantId))
                 .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{tenantId.toString()}, "tenantId"));
 
         return ResponseEntity.ok(new TenantSettingsResponse(
