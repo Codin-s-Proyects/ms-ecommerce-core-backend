@@ -1,4 +1,4 @@
-package codin.msbackendcore.core.infrastructure.persistence.mapper;
+package codin.msbackendcore.search.infrastructure.persistence.jpa;
 
 import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;

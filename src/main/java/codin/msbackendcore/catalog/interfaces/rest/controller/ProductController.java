@@ -1,7 +1,5 @@
 package codin.msbackendcore.catalog.interfaces.rest.controller;
 
-import codin.msbackendcore.catalog.domain.model.entities.Product;
-import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.catalog.domain.services.ProductCommandService;
 import codin.msbackendcore.catalog.domain.services.ProductQueryService;
 import codin.msbackendcore.catalog.interfaces.dto.ProductCreateRequest;
@@ -9,6 +7,7 @@ import codin.msbackendcore.catalog.interfaces.dto.ProductResponse;
 import codin.msbackendcore.catalog.interfaces.dto.ProductSearchRequest;
 import codin.msbackendcore.catalog.interfaces.dto.ProductSearchResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/catalog/products")
+@Tag(name = "Product Controller", description = "Operaciones relacionadas con productos")
 public class ProductController {
 
     private final ProductCommandService productCommandService;

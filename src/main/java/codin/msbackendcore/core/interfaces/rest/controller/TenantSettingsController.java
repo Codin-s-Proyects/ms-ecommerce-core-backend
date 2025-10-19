@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/tenants-settings")
+@RequestMapping("/api/v1/core/tenants-settings")
 @Tag(name = "Tenant Settings", description = "Operaciones relacionadas con las configuraciones de los tenants")
 public class TenantSettingsController {
 

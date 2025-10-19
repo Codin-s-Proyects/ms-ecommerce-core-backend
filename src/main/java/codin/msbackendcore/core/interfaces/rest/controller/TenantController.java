@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/tenant")
+@RequestMapping("/api/v1/core/tenant")
 @Tag(name = "Tenant", description = "Operaciones relacionadas con Tenants")
 public class TenantController {
 
@@ -36,7 +36,7 @@ public class TenantController {
 
         var tenantCreated = commandService.handle(command);
 
-        return ResponseEntity.ok(
+        return ResponseEntity.status(201).body(
                 new TenantResponse(
                         tenantCreated.getId(),
                         tenantCreated.getSlug(),
