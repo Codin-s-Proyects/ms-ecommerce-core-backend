@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface ProductDomainService {
     Product createProduct(UUID tenantId, Category category, Brand brand, String name, String description, Map<String, Object> meta);
+    Product getProductById(UUID productId);
 }

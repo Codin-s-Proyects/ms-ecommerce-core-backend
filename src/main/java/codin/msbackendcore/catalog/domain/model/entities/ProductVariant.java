@@ -2,18 +2,22 @@ package codin.msbackendcore.catalog.domain.model.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
+@Builder
 @Getter
 @Setter
 @Entity
 @Table(name = "product_variants", schema = "catalog")
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductVariant {
     @Id
     @GeneratedValue
@@ -35,13 +39,13 @@ public class ProductVariant {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "attributes", columnDefinition = "jsonb", nullable = false)
-    private String attributes;
+    private Map<String, Object> attributes = new HashMap<>();
 
-    @Column(columnDefinition = "image_url")
+    @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
 
     @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
+    private Boolean isActive;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
@@ -53,6 +57,7 @@ public class ProductVariant {
     void prePersist() {
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
+        this.isActive = true;
     }
 
     @PreUpdate

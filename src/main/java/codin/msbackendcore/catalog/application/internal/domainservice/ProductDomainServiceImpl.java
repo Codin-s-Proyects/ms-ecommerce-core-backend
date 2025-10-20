@@ -6,6 +6,7 @@ import codin.msbackendcore.catalog.domain.model.entities.Product;
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.catalog.infrastructure.persistence.jpa.ProductRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
+import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -44,4 +45,11 @@ public class ProductDomainServiceImpl implements ProductDomainService {
 
         return productRepository.save(product);
     }
+
+    @Override
+    public Product getProductById(UUID productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{productId.toString()}, "productId")
+                );    }
 }

@@ -38,6 +38,10 @@ public class ProductCommandServiceImpl implements ProductCommandService {
                 command.meta()
         );
 
+        // TODO: Registro de product - variants
+        // TODO: Registro de product embeddings - asíncrono
+        // TODO: Registro de precio de productos
+
 //        Map<String, ProductCreateRequest.VariantRequest> skuToRequest = request.variants() == null
 //                ? Map.of()
 //                : request.variants().stream()
