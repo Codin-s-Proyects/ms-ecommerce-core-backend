@@ -1,6 +1,5 @@
 package codin.msbackendcore.catalog.interfaces.dto.attributevalue;
 
-import codin.msbackendcore.catalog.domain.model.commands.attribute.CreateAttributeCommand;
 import codin.msbackendcore.catalog.domain.model.commands.attributevalue.CreateAttributeValueCommand;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

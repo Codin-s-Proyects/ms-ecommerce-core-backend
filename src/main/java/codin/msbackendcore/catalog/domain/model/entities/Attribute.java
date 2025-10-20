@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.UUID;
 
 @Builder
 @Getter

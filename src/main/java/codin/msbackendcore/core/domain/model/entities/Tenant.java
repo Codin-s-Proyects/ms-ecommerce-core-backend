@@ -2,7 +2,6 @@ package codin.msbackendcore.core.domain.model.entities;
 
 import codin.msbackendcore.core.domain.model.valueobjects.TenantPlan;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 

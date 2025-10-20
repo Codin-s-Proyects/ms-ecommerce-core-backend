@@ -1,9 +1,9 @@
 package codin.msbackendcore.search.application.internal.domainservice;
 
 import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
-import codin.msbackendcore.search.infrastructure.persistence.jpa.ProductEmbeddingRepositoryJdbc;
 import codin.msbackendcore.search.application.internal.outboundservices.embedding.OpenAIEmbeddingClient;
 import codin.msbackendcore.search.domain.services.ProductEmbeddingDomainService;
+import codin.msbackendcore.search.infrastructure.persistence.jpa.ProductEmbeddingRepositoryJdbc;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

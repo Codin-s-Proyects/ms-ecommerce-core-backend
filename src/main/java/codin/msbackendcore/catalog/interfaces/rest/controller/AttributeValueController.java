@@ -1,9 +1,6 @@
 package codin.msbackendcore.catalog.interfaces.rest.controller;
 
-import codin.msbackendcore.catalog.domain.services.attribute.AttributeCommandService;
 import codin.msbackendcore.catalog.domain.services.attributevalue.AttributeValueCommandService;
-import codin.msbackendcore.catalog.interfaces.dto.attribute.AttributeCreateRequest;
-import codin.msbackendcore.catalog.interfaces.dto.attribute.AttributeResponse;
 import codin.msbackendcore.catalog.interfaces.dto.attributevalue.AttributeValueCreateRequest;
 import codin.msbackendcore.catalog.interfaces.dto.attributevalue.AttributeValueResponse;
 import io.swagger.v3.oas.annotations.Operation;
