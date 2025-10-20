@@ -1,8 +1,7 @@
 package codin.msbackendcore.catalog.application.internal.queryservice;
 
-import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
-import codin.msbackendcore.catalog.domain.services.ProductQueryService;
-import codin.msbackendcore.catalog.domain.services.ProductSearchDomainService;
+import codin.msbackendcore.catalog.domain.services.product.ProductQueryService;
+import codin.msbackendcore.catalog.domain.services.product.ProductSearchDomainService;
 import codin.msbackendcore.catalog.infrastructure.persistence.dto.ProductSearchResult;
 import org.springframework.stereotype.Service;
 

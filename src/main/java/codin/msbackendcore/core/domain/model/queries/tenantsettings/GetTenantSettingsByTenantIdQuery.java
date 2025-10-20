@@ -1,4 +1,4 @@
-package codin.msbackendcore.core.domain.model.queries.tenant_settings;
+package codin.msbackendcore.core.domain.model.queries.tenantsettings;
 
 import java.util.UUID;
 

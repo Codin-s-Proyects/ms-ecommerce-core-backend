@@ -1,6 +1,6 @@
 package codin.msbackendcore.core.interfaces.dto;
 
-import codin.msbackendcore.core.domain.model.commands.tenant_settings.UpdatePromptCommand;
+import codin.msbackendcore.core.domain.model.commands.tenantsettings.UpdatePromptCommand;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

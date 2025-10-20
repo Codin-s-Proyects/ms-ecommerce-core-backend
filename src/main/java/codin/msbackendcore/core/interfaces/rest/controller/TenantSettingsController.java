@@ -1,6 +1,6 @@
 package codin.msbackendcore.core.interfaces.rest.controller;
 
-import codin.msbackendcore.core.domain.model.queries.tenant_settings.GetTenantSettingsByTenantIdQuery;
+import codin.msbackendcore.core.domain.model.queries.tenantsettings.GetTenantSettingsByTenantIdQuery;
 import codin.msbackendcore.core.domain.services.TenantSettingsCommandService;
 import codin.msbackendcore.core.domain.services.TenantSettingsQueryService;
 import codin.msbackendcore.core.interfaces.dto.TenantSettingsResponse;

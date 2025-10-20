@@ -1,4 +1,4 @@
-package codin.msbackendcore.catalog.domain.model.commands;
+package codin.msbackendcore.catalog.domain.model.commands.product;
 
 import java.util.Map;
 import java.util.UUID;

@@ -1,6 +1,6 @@
 package codin.msbackendcore.core.application.internal.commandservice;
 
-import codin.msbackendcore.core.domain.model.commands.tenant_settings.UpdatePromptCommand;
+import codin.msbackendcore.core.domain.model.commands.tenantsettings.UpdatePromptCommand;
 import codin.msbackendcore.core.domain.model.entities.TenantSettings;
 import codin.msbackendcore.core.domain.services.TenantSettingsCommandService;
 import codin.msbackendcore.core.domain.services.TenantSettingsDomainService;

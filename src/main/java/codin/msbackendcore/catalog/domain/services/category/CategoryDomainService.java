@@ -1,4 +1,4 @@
-package codin.msbackendcore.catalog.domain.services;
+package codin.msbackendcore.catalog.domain.services.category;
 
 import codin.msbackendcore.catalog.domain.model.entities.Category;
 

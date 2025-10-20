@@ -3,7 +3,7 @@ package codin.msbackendcore.catalog.application.internal.domainservice;
 import codin.msbackendcore.catalog.domain.model.entities.Brand;
 import codin.msbackendcore.catalog.domain.model.entities.Category;
 import codin.msbackendcore.catalog.domain.model.entities.Product;
-import codin.msbackendcore.catalog.domain.services.ProductDomainService;
+import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.catalog.infrastructure.persistence.jpa.ProductRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.transaction.Transactional;

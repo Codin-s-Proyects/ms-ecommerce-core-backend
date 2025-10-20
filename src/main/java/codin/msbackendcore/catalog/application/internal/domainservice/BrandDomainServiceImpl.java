@@ -1,7 +1,7 @@
 package codin.msbackendcore.catalog.application.internal.domainservice;
 
 import codin.msbackendcore.catalog.domain.model.entities.Brand;
-import codin.msbackendcore.catalog.domain.services.BrandDomainService;
+import codin.msbackendcore.catalog.domain.services.brand.BrandDomainService;
 import codin.msbackendcore.catalog.infrastructure.persistence.jpa.BrandRepository;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;

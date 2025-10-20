@@ -3,18 +3,20 @@ package codin.msbackendcore.catalog.domain.model.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.*;
 
+@Builder
 @Getter
 @Setter
 @Entity
 @Table(name = "attribute_values", schema = "catalog")
+@NoArgsConstructor
+@AllArgsConstructor
 public class AttributeValue {
     @Id
     @GeneratedValue

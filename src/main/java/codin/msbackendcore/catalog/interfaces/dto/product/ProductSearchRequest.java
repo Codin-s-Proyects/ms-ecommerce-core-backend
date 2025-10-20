@@ -1,4 +1,4 @@
-package codin.msbackendcore.catalog.interfaces.dto;
+package codin.msbackendcore.catalog.interfaces.dto.product;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

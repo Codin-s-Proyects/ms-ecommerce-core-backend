@@ -1,6 +1,5 @@
-package codin.msbackendcore.catalog.domain.services;
+package codin.msbackendcore.catalog.domain.services.product;
 
-import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.catalog.infrastructure.persistence.dto.ProductSearchResult;
 
 import java.util.List;

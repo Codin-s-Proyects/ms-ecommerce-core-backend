@@ -1,11 +1,11 @@
 package codin.msbackendcore.catalog.interfaces.rest.controller;
 
-import codin.msbackendcore.catalog.domain.services.ProductCommandService;
-import codin.msbackendcore.catalog.domain.services.ProductQueryService;
-import codin.msbackendcore.catalog.interfaces.dto.ProductCreateRequest;
-import codin.msbackendcore.catalog.interfaces.dto.ProductResponse;
-import codin.msbackendcore.catalog.interfaces.dto.ProductSearchRequest;
-import codin.msbackendcore.catalog.interfaces.dto.ProductSearchResponse;
+import codin.msbackendcore.catalog.domain.services.product.ProductCommandService;
+import codin.msbackendcore.catalog.domain.services.product.ProductQueryService;
+import codin.msbackendcore.catalog.interfaces.dto.product.ProductCreateRequest;
+import codin.msbackendcore.catalog.interfaces.dto.product.ProductResponse;
+import codin.msbackendcore.catalog.interfaces.dto.product.ProductSearchRequest;
+import codin.msbackendcore.catalog.interfaces.dto.product.ProductSearchResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

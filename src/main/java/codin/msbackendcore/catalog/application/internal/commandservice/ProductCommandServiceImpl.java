@@ -1,11 +1,11 @@
 package codin.msbackendcore.catalog.application.internal.commandservice;
 
-import codin.msbackendcore.catalog.domain.model.commands.CreateProductCommand;
+import codin.msbackendcore.catalog.domain.model.commands.product.CreateProductCommand;
 import codin.msbackendcore.catalog.domain.model.entities.Product;
-import codin.msbackendcore.catalog.domain.services.BrandDomainService;
-import codin.msbackendcore.catalog.domain.services.CategoryDomainService;
-import codin.msbackendcore.catalog.domain.services.ProductCommandService;
-import codin.msbackendcore.catalog.domain.services.ProductDomainService;
+import codin.msbackendcore.catalog.domain.services.brand.BrandDomainService;
+import codin.msbackendcore.catalog.domain.services.category.CategoryDomainService;
+import codin.msbackendcore.catalog.domain.services.product.ProductCommandService;
+import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

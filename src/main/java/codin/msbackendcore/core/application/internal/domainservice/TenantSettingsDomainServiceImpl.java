@@ -1,6 +1,6 @@
 package codin.msbackendcore.core.application.internal.domainservice;
 
-import codin.msbackendcore.core.domain.model.commands.tenant_settings.UpdatePromptCommand;
+import codin.msbackendcore.core.domain.model.commands.tenantsettings.UpdatePromptCommand;
 import codin.msbackendcore.core.domain.model.entities.TenantSettings;
 import codin.msbackendcore.core.domain.services.TenantSettingsDomainService;
 import codin.msbackendcore.core.infrastructure.persistence.jpa.TenantSettingsRepository;

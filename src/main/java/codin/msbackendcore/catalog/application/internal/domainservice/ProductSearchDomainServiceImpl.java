@@ -1,7 +1,6 @@
 package codin.msbackendcore.catalog.application.internal.domainservice;
 
-import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
-import codin.msbackendcore.catalog.domain.services.ProductSearchDomainService;
+import codin.msbackendcore.catalog.domain.services.product.ProductSearchDomainService;
 import codin.msbackendcore.catalog.infrastructure.persistence.dto.ProductSearchResult;
 import codin.msbackendcore.catalog.infrastructure.persistence.jpa.ProductVariantRepository;
 import codin.msbackendcore.catalog.infrastructure.persistence.mapper.ProductSearchResultMapper;
