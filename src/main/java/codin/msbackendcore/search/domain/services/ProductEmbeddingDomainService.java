@@ -1,9 +1,9 @@
 package codin.msbackendcore.search.domain.services;
 
-import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
-
+import java.util.Map;
 import java.util.UUID;
 
 public interface ProductEmbeddingDomainService {
-    void generateAndSaveEmbedding(UUID tenantId, ProductVariant variant);
+    void generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String productDescription,
+                                  String variantName, Map<String, Object> variantAttributes);
 }

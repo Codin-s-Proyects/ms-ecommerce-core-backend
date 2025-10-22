@@ -1,43 +1,38 @@
 package codin.msbackendcore.catalog.application.internal.eventhandlers;
 
+import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalSearchService;
+import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.catalog.domain.model.events.ProductCreatedEvent;
-import codin.msbackendcore.catalog.infrastructure.persistence.jpa.ProductVariantRepository;
-import codin.msbackendcore.search.domain.services.ProductEmbeddingDomainService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.util.UUID;
-
-/**
- * Escucha el evento de creación de producto y genera embeddings
- * para cada variante del producto (después del commit).
- */
+@Slf4j
 @Component
 public class ProductCreatedEventHandler {
 
-    private final ProductVariantRepository variantRepository;
-    private final ProductEmbeddingDomainService embeddingService;
+    private final ExternalSearchService externalSearchService;
 
-    public ProductCreatedEventHandler(ProductVariantRepository variantRepository,
-                                      ProductEmbeddingDomainService embeddingService) {
-        this.variantRepository = variantRepository;
-        this.embeddingService = embeddingService;
+    public ProductCreatedEventHandler(ExternalSearchService externalSearchService) {
+        this.externalSearchService = externalSearchService;
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handle(ProductCreatedEvent event) {
-        for (UUID variantId : event.variantIds()) {
-            variantRepository.findById(variantId).ifPresent(variant -> {
-                try {
-                    System.out.println("Execute ProductCreated Event Handler for variant " + variantId);
-                    embeddingService.generateAndSaveEmbedding(event.tenantId(), variant);
-                } catch (Exception ex) {
-                    // 🚨 Importante: el error en embeddings no debe romper el flujo principal.
-                    // Puedes loguear o enviar a una cola de retry.
-                    System.err.println("⚠️ Error generando embedding para variante " + variantId + ": " + ex.getMessage());
-                }
-            });
+        for (ProductVariant variant : event.variants()) {
+
+            var product = variant.getProduct();
+
+            try {
+                log.debug("Execute ProductCreated Event Handler for variant {}", variant.getId());
+                externalSearchService.registerProductEmbedding(event.tenantId(), variant.getId(), product.getName(), product.getDescription(),
+                        variant.getName(), variant.getAttributes());
+            } catch (Exception ex) {
+                log.error("Error generating embedding for variant {}: {}", variant.getId(), ex.getMessage());
+            }
         }
+        ;
     }
 }
+

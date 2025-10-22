@@ -35,6 +35,11 @@ public class ProductEmbedding {
     private Map<String, Object> metadata = new HashMap<>();
 
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt = Instant.now();
+    private Instant createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = Instant.now();
+    }
 }
 

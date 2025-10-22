@@ -37,48 +37,5 @@ public class ProductCommandServiceImpl implements ProductCommandService {
                 command.description(),
                 command.meta()
         );
-
-        // TODO: Registro de product - variants
-        // TODO: Registro de product embeddings - asíncrono
-        // TODO: Registro de precio de productos
-
-//        Map<String, ProductCreateRequest.VariantRequest> skuToRequest = request.variants() == null
-//                ? Map.of()
-//                : request.variants().stream()
-//                .collect(Collectors.toMap(ProductCreateRequest.VariantRequest::sku, vr -> vr));
-//
-//        if (request.variants() != null) {
-//            var variants = request.variants().stream().map(vr -> {
-//                var pv = new ProductVariant();
-//                pv.setTenantId(request.tenantId());
-//                pv.setSku(vr.sku());
-//                pv.setName(vr.name());
-//                pv.setAttributes(vr.attributes());
-//                pv.setProduct(p);
-//
-//                return pv;
-//            }).toList();
-//            p.getVariants().addAll(variants);
-//        }
-//
-//        p.setHasVariants(!p.getVariants().isEmpty());
-
-//        List<UUID> variantIds = saved.getVariants().stream()
-//                .map(ProductVariant::getId)
-//                .toList();
-
-//        saved.getVariants().forEach(pv -> {
-//            var vr = skuToRequest.get(pv.getSku());
-//            if (vr != null) {
-//                externalPricingService.registerVariantPrices(
-//                        saved.getTenantId(),
-//                        pv.getId(),
-//                        vr.retailPrice(),
-//                        vr.wholesalePrice());
-//            }
-//        });
-//
-//        eventPublisher.publish(new ProductCreatedEvent(saved.getTenantId(), variantIds));
-
     }
 }

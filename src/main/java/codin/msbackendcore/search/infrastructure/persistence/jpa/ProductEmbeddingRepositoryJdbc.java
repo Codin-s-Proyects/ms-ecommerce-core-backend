@@ -1,5 +1,6 @@
 package codin.msbackendcore.search.infrastructure.persistence.jpa;
 
+import codin.msbackendcore.search.domain.model.entities.ProductEmbedding;
 import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -7,9 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 public class ProductEmbeddingRepositoryJdbc {
@@ -21,16 +20,12 @@ public class ProductEmbeddingRepositoryJdbc {
         this.jdbc = jdbc;
     }
 
-    /**
-     * Inserta o actualiza embedding para un variant.
-     * Construye el literal vector: '[0.123,0.234,...]'::vector
-     */
     public void upsertEmbedding(UUID tenantId, UUID productVariantId, float[] vector, Map<String, Object> metadata) {
         StringBuilder sb = new StringBuilder();
         sb.append('[');
         for (int i = 0; i < vector.length; i++) {
             if (i > 0) sb.append(',');
-            sb.append(Float.toString(vector[i]));
+            sb.append(vector[i]);
         }
         sb.append(']');
 

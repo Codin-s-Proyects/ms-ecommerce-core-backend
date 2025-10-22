@@ -1,6 +1,5 @@
 package codin.msbackendcore.search.application.internal.domainservice;
 
-import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.search.application.internal.outboundservices.embedding.OpenAIEmbeddingClient;
 import codin.msbackendcore.search.domain.services.ProductEmbeddingDomainService;
 import codin.msbackendcore.search.infrastructure.persistence.jpa.ProductEmbeddingRepositoryJdbc;
@@ -21,18 +20,35 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
     }
 
     @Override
-    public void generateAndSaveEmbedding(UUID tenantId, ProductVariant variant) {
-        String text = buildTextForVariant(variant);
+    public void generateAndSaveEmbedding(UUID tenantId, UUID variantId , String productName, String productDescription,
+                                         String variantName, Map<String, Object> variantAttributes) {
+        String text = buildText(productName, productDescription, variantName, variantAttributes);
         float[] vector = openAI.embed(text);
-        Map<String, Object> metadata = Map.of("name", variant.getName().replace("\"", "'"));
-        repo.upsertEmbedding(tenantId, variant.getId(), vector, metadata);
+        Map<String, Object> metadata = Map.of("name", variantName.replace("\"", "'"));
+        repo.upsertEmbedding(tenantId, variantId, vector, metadata);
     }
 
-    private String buildTextForVariant(ProductVariant variant) {
-        var p = variant.getProduct();
-        return (p.getName() == null ? "" : p.getName()) + " "
-                + (p.getDescription() == null ? "" : p.getDescription()) + " "
-                + (variant.getName() == null ? "" : variant.getName()) + " "
-                + (variant.getAttributes() == null ? "" : variant.getAttributes());
+    private String buildText(String productName, String productDescription,
+                             String variantName, Map<String, Object> variantAttributes) {
+
+        StringBuilder textBuilder = new StringBuilder();
+
+        if (productName != null) {
+            textBuilder.append(productName).append(" ");
+        }
+
+        if (productDescription != null) {
+            textBuilder.append(productDescription).append(" ");
+        }
+
+        if (variantName != null) {
+            textBuilder.append(variantName).append(" ");
+        }
+
+        if (variantAttributes != null) {
+            textBuilder.append(variantAttributes);
+        }
+
+        return textBuilder.toString().trim();
     }
 }
