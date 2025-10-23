@@ -1,10 +1,13 @@
 package codin.msbackendcore.search.application.internal.domainservice;
 
 import codin.msbackendcore.search.application.internal.outboundservices.embedding.OpenAIEmbeddingClient;
+import codin.msbackendcore.search.domain.model.entities.ProductEmbedding;
 import codin.msbackendcore.search.domain.services.ProductEmbeddingDomainService;
+import codin.msbackendcore.search.infrastructure.persistence.jpa.ProductEmbeddingRepository;
 import codin.msbackendcore.search.infrastructure.persistence.jpa.ProductEmbeddingRepositoryJdbc;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,19 +16,41 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
 
     private final OpenAIEmbeddingClient openAI;
     private final ProductEmbeddingRepositoryJdbc repo;
+    private final ProductEmbeddingRepository productEmbeddingRepository;
 
-    public ProductEmbeddingDomainServiceImpl(OpenAIEmbeddingClient openAI, ProductEmbeddingRepositoryJdbc repo) {
+    public ProductEmbeddingDomainServiceImpl(OpenAIEmbeddingClient openAI, ProductEmbeddingRepositoryJdbc repo, ProductEmbeddingRepository productEmbeddingRepository) {
         this.openAI = openAI;
         this.repo = repo;
+        this.productEmbeddingRepository = productEmbeddingRepository;
+    }
+
+    public static String toVectorString(float[] embedding) {
+        if (embedding == null || embedding.length == 0) return "[]";
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        for (int i = 0; i < embedding.length; i++) {
+            sb.append(embedding[i]);
+            if (i < embedding.length - 1) sb.append(',');
+        }
+        sb.append(']');
+        return sb.toString();
     }
 
     @Override
-    public void generateAndSaveEmbedding(UUID tenantId, UUID variantId , String productName, String productDescription,
+    public void generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String productDescription,
                                          String variantName, Map<String, Object> variantAttributes) {
         String text = buildText(productName, productDescription, variantName, variantAttributes);
         float[] vector = openAI.embed(text);
         Map<String, Object> metadata = Map.of("name", variantName.replace("\"", "'"));
         repo.upsertEmbedding(tenantId, variantId, vector, metadata);
+    }
+
+    @Override
+    public List<ProductEmbedding> semanticSearch(UUID tenantId, String query, int limit) {
+        float[] queryEmbedding = openAI.embed(query);
+
+        return productEmbeddingRepository.findNearestEmbeddings(tenantId, queryEmbedding, limit);
+
     }
 
     private String buildText(String productName, String productDescription,
