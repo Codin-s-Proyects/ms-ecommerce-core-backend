@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class ExternalSearchService {
@@ -14,8 +15,8 @@ public class ExternalSearchService {
         this.searchContextFacade = searchContextFacade;
     }
 
-    public void registerProductEmbedding(UUID tenantId, UUID variantId, String productName, String productDescription,
-                                         String variantName, Map<String, Object> variantAttributes) {
-        searchContextFacade.createEmbeddingForVariant(tenantId, variantId, productName, productDescription, variantName, variantAttributes);
+    public CompletableFuture<Void> registerProductEmbedding(UUID tenantId, UUID variantId, String productName, String productDescription,
+                                                            String variantName, Map<String, Object> variantAttributes) {
+        return searchContextFacade.createEmbeddingForVariant(tenantId, variantId, productName, productDescription, variantName, variantAttributes);
     }
 }

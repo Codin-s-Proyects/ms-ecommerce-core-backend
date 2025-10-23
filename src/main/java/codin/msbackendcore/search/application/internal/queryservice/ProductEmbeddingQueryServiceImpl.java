@@ -7,6 +7,7 @@ import codin.msbackendcore.search.domain.services.ProductEmbeddingQueryService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class ProductEmbeddingQueryServiceImpl implements ProductEmbeddingQueryService {
@@ -18,7 +19,7 @@ public class ProductEmbeddingQueryServiceImpl implements ProductEmbeddingQuerySe
     }
 
     @Override
-    public List<ProductEmbedding> handle(SemanticSearchQuery query) {
+    public CompletableFuture<List<ProductEmbedding>> handle(SemanticSearchQuery query) {
         return productEmbeddingDomainService.semanticSearch(
                 query.tenantId(),
                 query.query(),

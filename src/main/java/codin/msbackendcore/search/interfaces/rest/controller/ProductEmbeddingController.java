@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/v1/search/product-embedding")
@@ -27,16 +28,14 @@ public class ProductEmbeddingController {
 
     @Operation(summary = "Búsqueda semántica de productos")
     @PostMapping("/semantic-search")
-    public ResponseEntity<List<SemanticSearchResponse>> semanticSearchProduct(@Valid @RequestBody SemanticSearchRequest request) {
+    public CompletableFuture<ResponseEntity<List<SemanticSearchResponse>>> semanticSearchProduct(@Valid @RequestBody SemanticSearchRequest request) {
 
         var query = request.toQuery();
 
-        var results = productEmbeddingQueryService.handle(query);
-
-        var response = results.stream().map(ss -> new SemanticSearchResponse(
-                ss.getId()
-        )).toList();
-
-        return ResponseEntity.ok(response);
+        return productEmbeddingQueryService.handle(query)
+                .thenApply(results -> results.stream()
+                        .map(ss -> new SemanticSearchResponse(ss.getId()))
+                        .toList())
+                .thenApply(ResponseEntity::ok);
     }
 }

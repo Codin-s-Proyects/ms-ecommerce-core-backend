@@ -20,6 +20,7 @@ public class ProductEmbeddingRepositoryJdbc {
         this.jdbc = jdbc;
     }
 
+    //TODO: Verifica si esto se puede hacer con un repository.save
     public void upsertEmbedding(UUID tenantId, UUID productVariantId, float[] vector, Map<String, Object> metadata) {
         StringBuilder sb = new StringBuilder();
         sb.append('[');

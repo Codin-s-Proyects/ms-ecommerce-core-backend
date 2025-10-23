@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomainService {
@@ -37,20 +38,20 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
     }
 
     @Override
-    public void generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String productDescription,
-                                         String variantName, Map<String, Object> variantAttributes) {
+    public CompletableFuture<Void> generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String productDescription,
+                                                            String variantName, Map<String, Object> variantAttributes) {
         String text = buildText(productName, productDescription, variantName, variantAttributes);
-        float[] vector = openAI.embed(text);
-        Map<String, Object> metadata = Map.of("name", variantName.replace("\"", "'"));
-        repo.upsertEmbedding(tenantId, variantId, vector, metadata);
+        return openAI.embedAsync(text)
+                .thenAccept(vector -> {
+                    Map<String, Object> metadata = Map.of("name", variantName.replace("\"", "'"));
+                    repo.upsertEmbedding(tenantId, variantId, vector, metadata);
+                });
     }
 
     @Override
-    public List<ProductEmbedding> semanticSearch(UUID tenantId, String query, int limit) {
-        float[] queryEmbedding = openAI.embed(query);
-
-        return productEmbeddingRepository.findNearestEmbeddings(tenantId, queryEmbedding, limit);
-
+    public CompletableFuture<List<ProductEmbedding>> semanticSearch(UUID tenantId, String query, int limit) {
+        return openAI.embedAsync(query)
+                .thenApply(queryEmbedding -> productEmbeddingRepository.findNearestEmbeddings(tenantId, queryEmbedding, limit));
     }
 
     private String buildText(String productName, String productDescription,

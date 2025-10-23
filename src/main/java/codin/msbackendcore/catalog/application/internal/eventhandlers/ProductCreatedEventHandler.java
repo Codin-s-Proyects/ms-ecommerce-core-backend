@@ -8,6 +8,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 @Slf4j
 @Component
 public class ProductCreatedEventHandler {
@@ -20,19 +24,31 @@ public class ProductCreatedEventHandler {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handle(ProductCreatedEvent event) {
-        for (ProductVariant variant : event.variants()) {
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
 
+        for (ProductVariant variant : event.variants()) {
             var product = variant.getProduct();
 
             try {
                 log.debug("Execute ProductCreated Event Handler for variant {}", variant.getId());
-                externalSearchService.registerProductEmbedding(event.tenantId(), variant.getId(), product.getName(), product.getDescription(),
-                        variant.getName(), variant.getAttributes());
+                CompletableFuture<Void> future = externalSearchService.registerProductEmbedding(
+                        event.tenantId(), variant.getId(), product.getName(), product.getDescription(),
+                        variant.getName(), variant.getAttributes()
+                );
+                futures.add(future.exceptionally(ex -> {
+                    log.error("Error generating embedding for variant {}: {}", variant.getId(), ex.getMessage());
+                    return null;
+                }));
             } catch (Exception ex) {
-                log.error("Error generating embedding for variant {}: {}", variant.getId(), ex.getMessage());
+                log.error("Error registering embedding for variant {}: {}", variant.getId(), ex.getMessage());
             }
         }
-        ;
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .exceptionally(ex -> {
+                    log.error("Error in one or more embedding operations: {}", ex.getMessage());
+                    return null;
+                });
     }
 }
 
