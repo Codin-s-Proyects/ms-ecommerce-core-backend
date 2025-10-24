@@ -1,9 +1,36 @@
 package codin.msbackendcore.catalog.domain.model.valueobjects;
 
 public enum DataType {
-    STRING,     // Ej: Color, Material, Talla
-    NUMBER,     // Ej: Peso, Capacidad, Voltaje
-    BOOLEAN,    // Ej: Lavable, Disponible
-    DATE,       // Ej: Fecha de lanzamiento
-    DATETIME
+    TEXT_FIELD,
+    NUMBER_FIELD,
+    MONEY_FIELD,
+    PHONE_FIELD,
+    CHECKBOX_FIELD,
+    RADIO_GROUP_FIELD,
+    SWITCH_FIELD,
+    SELECT_FIELD,
+    COMBOBOX_FIELD,
+    DATE_PICKER_FIELD,
+    DATE_TIME_FIELD,
+    DATE_RANGE_FIELD,
+    FILE_INPUT_FIELD,
+    SLIDER_FIELD,
+    PASSWORD_FIELD,
+    TEXTAREA_FIELD,
+    PERCENT_FIELD,
+    NUMBER_FIELD_ADVANCED,
+    PHONE_INTL_FIELD,
+    TIME_FIELD,
+    RANGE_SLIDER_FIELD,
+    MULTI_SELECT_FIELD,
+    ASYNC_SELECT_FIELD,
+    TAGS_FIELD,
+    FILE_UPLOAD_FIELD,
+    IMAGE_UPLOAD_FIELD,
+    AVATAR_UPLOAD_FIELD,
+    SIGNATURE_FIELD,
+    COLOR_PICKER_FIELD,
+    RATING_FIELD,
+    INPUT_OTP_FIELD,
+    TIMEZONE_SELECT_FIELD
 }
