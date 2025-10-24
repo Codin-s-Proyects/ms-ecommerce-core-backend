@@ -33,6 +33,7 @@ public class ProductVariantController {
 
         var response = new ProductVariantResponse(
                 saved.getId(),
+                saved.getProduct().getId(),
                 saved.getTenantId(),
                 saved.getSku(),
                 saved.getName(),

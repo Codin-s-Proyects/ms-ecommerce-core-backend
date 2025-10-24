@@ -51,5 +51,6 @@ public class ProductDomainServiceImpl implements ProductDomainService {
         return productRepository.findById(productId)
                 .orElseThrow(() ->
                         new NotFoundException("error.not_found", new String[]{productId.toString()}, "productId")
-                );    }
+                );
+    }
 }

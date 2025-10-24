@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface ProductVariantDomainService {
     ProductVariant createProductVariant(UUID tenantId, Product product, String name, Map<String, Object> attributes, String imageUrl);
+    ProductVariant getProductVariantById(UUID productVariantId);
 }

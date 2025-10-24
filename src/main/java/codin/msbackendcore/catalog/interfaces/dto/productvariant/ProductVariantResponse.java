@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public record ProductVariantResponse(
     UUID id,
+    UUID productId,
     UUID tenantId,
     String sku,
     String name,
