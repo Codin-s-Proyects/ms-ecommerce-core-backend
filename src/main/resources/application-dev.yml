@@ -1,0 +1,11 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  level:
+    root: INFO
+    codin.msbackendcore: DEBUG
+    org.springframework: INFO
+    org.hibernate: INFO

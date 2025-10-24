@@ -1,0 +1,11 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+  level:
+    root: WARN
+    codin.msbackendcore: INFO
+    org.springframework: WARN
+    org.hibernate: WARN
