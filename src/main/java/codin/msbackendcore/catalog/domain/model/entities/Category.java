@@ -1,7 +1,6 @@
 package codin.msbackendcore.catalog.domain.model.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,6 +41,11 @@ public class Category {
     @PrePersist
     void prePersist() {
         this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    void onUpdate() {
         this.updatedAt = Instant.now();
     }
 }

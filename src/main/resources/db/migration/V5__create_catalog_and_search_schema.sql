@@ -1,10 +1,4 @@
 -- =========================================
--- SCHEMAS
--- =========================================
-CREATE SCHEMA IF NOT EXISTS catalog;
-CREATE SCHEMA IF NOT EXISTS search;
-
--- =========================================
 -- CATEGORIES
 -- =========================================
 CREATE TABLE catalog.categories
@@ -93,19 +87,6 @@ CREATE TABLE catalog.category_attributes
     attribute_id         uuid    NOT NULL REFERENCES catalog.attributes (id) ON DELETE CASCADE,
     is_variant_attribute boolean NOT NULL DEFAULT true,
     UNIQUE (category_id, attribute_id)
-);
-
--- =========================================
--- PRODUCTS ↔ ATTRIBUTES (opcional, metadatos fijos)
--- =========================================
-CREATE TABLE catalog.product_attributes
-(
-    id           uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    tenant_id    uuid NOT NULL REFERENCES core.tenants (id) ON DELETE CASCADE,
-    product_id   uuid NOT NULL REFERENCES catalog.products (id) ON DELETE CASCADE,
-    attribute_id uuid NOT NULL REFERENCES catalog.attributes (id) ON DELETE CASCADE,
-    value        text,
-    UNIQUE (product_id, attribute_id)
 );
 
 -- =========================================
@@ -198,11 +179,6 @@ CREATE POLICY p_attribute_values_tenant ON catalog.attribute_values
 ALTER TABLE catalog.category_attributes
     ENABLE ROW LEVEL SECURITY;
 CREATE POLICY p_category_attributes_tenant ON catalog.category_attributes
-    USING (tenant_id = current_setting('app.tenant_id')::uuid);
-
-ALTER TABLE catalog.product_attributes
-    ENABLE ROW LEVEL SECURITY;
-CREATE POLICY p_product_attributes_tenant ON catalog.product_attributes
     USING (tenant_id = current_setting('app.tenant_id')::uuid);
 
 ALTER TABLE catalog.products

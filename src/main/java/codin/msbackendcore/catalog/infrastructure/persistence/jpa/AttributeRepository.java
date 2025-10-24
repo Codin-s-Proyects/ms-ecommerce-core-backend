@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface AttributeRepository extends JpaRepository<Attribute, UUID> {
+    Boolean existsByCodeAndTenantId(String code, UUID tenantId);
 }

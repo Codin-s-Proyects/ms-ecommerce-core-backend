@@ -11,40 +11,22 @@ import java.util.UUID;
 
 @Repository
 public interface ProductVariantRepository extends JpaRepository<ProductVariant, UUID> {
+
+    boolean existsByNameAndTenantId(String name, UUID tenantId);
+
     @Query(value = """
-            SELECT 
-                pv.id AS variant_id,
-                pv.name AS variant_name,
-                pv.image_url AS variant_image_url,
-                pv.sku AS sku,
-                p.name AS product_name,
-                p.description AS product_description,
-                COALESCE(pp_minorista.final_price, 0) AS minorista_price,
-                COALESCE(pp_mayorista.final_price, 0) AS mayorista_price
-            FROM catalog.product_variants pv
-            JOIN catalog.products p ON pv.product_id = p.id
-            JOIN search.product_embeddings emb ON emb.product_variant_id = pv.id
-            LEFT JOIN pricing.product_prices pp_minorista
-                ON pp_minorista.product_variant_id = pv.id
-                AND pp_minorista.tenant_id = pv.tenant_id
-                AND pp_minorista.price_list_id = (
-                    SELECT id FROM pricing.price_lists
-                    WHERE tenant_id = :tenantId AND code = 'minorista' LIMIT 1
-                )
-            LEFT JOIN pricing.product_prices pp_mayorista
-                ON pp_mayorista.product_variant_id = pv.id
-                AND pp_mayorista.tenant_id = pv.tenant_id
-                AND pp_mayorista.price_list_id = (
-                    SELECT id FROM pricing.price_lists
-                    WHERE tenant_id = :tenantId AND code = 'mayorista' LIMIT 1
-                )
-            WHERE pv.tenant_id = :tenantId
-            ORDER BY emb.vector <-> CAST(:queryEmbedding AS vector)
-            LIMIT :limit
+            SELECT EXISTS(
+              SELECT 1
+              FROM catalog.product_variants
+              WHERE product_id = :productId
+                AND tenant_id = :tenantId
+                AND attributes = CAST(:attributes AS jsonb)
+            )
             """, nativeQuery = true)
-    List<Object[]> findEnrichedSemanticResults(
+    boolean existsByProductAndAttributes(
             @Param("tenantId") UUID tenantId,
-            @Param("queryEmbedding") float[] queryEmbedding,
-            @Param("limit") int limit
+            @Param("productId") UUID productId,
+            @Param("attributes") String attributesJson
     );
+
 }
