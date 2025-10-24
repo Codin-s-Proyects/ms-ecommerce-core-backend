@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface DiscountDomainService {
     Discount createDiscount(UUID tenantId, String name, String description, BigDecimal percentage, Instant startsAt, Instant endsAt);
+    Discount getDiscountByTenantAndId(UUID tenantId, UUID discountId);
 }

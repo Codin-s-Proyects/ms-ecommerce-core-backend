@@ -3,6 +3,7 @@ package codin.msbackendcore.pricing.application.internal.domainservice;
 import codin.msbackendcore.pricing.domain.model.entities.Discount;
 import codin.msbackendcore.pricing.domain.services.discount.DiscountDomainService;
 import codin.msbackendcore.pricing.infrastructure.jpa.DiscountRepository;
+import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -33,5 +34,13 @@ public class DiscountDomainServiceImpl implements DiscountDomainService {
                 .build();
 
         return discountRepository.save(discount);
+    }
+
+    @Override
+    public Discount getDiscountByTenantAndId(UUID tenantId, UUID discountId) {
+        return discountRepository.findByTenantId(tenantId, discountId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{discountId.toString()}, "discountId")
+                );
     }
 }
