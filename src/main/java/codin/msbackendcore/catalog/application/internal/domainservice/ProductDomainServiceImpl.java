@@ -23,9 +23,7 @@ public class ProductDomainServiceImpl implements ProductDomainService {
         this.productRepository = productRepository;
     }
 
-    /**
-     * Crea producto + variantes y genera embeddings inmediatamente (seed).
-     */
+
     @Transactional
     @Override
     public Product createProduct(UUID tenantId, Category category, Brand brand, String name, String description, Map<String, Object> meta) {
@@ -42,6 +40,18 @@ public class ProductDomainServiceImpl implements ProductDomainService {
                 .description(description)
                 .meta(meta)
                 .build();
+
+        return productRepository.save(product);
+    }
+
+    @Override
+    public Product updateHasVariant(UUID productId, boolean hasVariant) {
+        var product = productRepository.findById(productId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{productId.toString()}, "productId")
+                );
+
+        product.setHasVariants(hasVariant);
 
         return productRepository.save(product);
     }

@@ -9,5 +9,6 @@ import java.util.UUID;
 
 public interface ProductDomainService {
     Product createProduct(UUID tenantId, Category category, Brand brand, String name, String description, Map<String, Object> meta);
+    Product updateHasVariant(UUID productId, boolean hasVariant);
     Product getProductById(UUID productId);
 }
