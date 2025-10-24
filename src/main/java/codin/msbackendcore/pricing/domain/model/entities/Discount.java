@@ -1,17 +1,19 @@
 package codin.msbackendcore.pricing.domain.model.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
+@Builder
 @Entity
 @Table(name = "discounts", schema = "pricing")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Discount {
     @Id
     @GeneratedValue
@@ -36,14 +38,14 @@ public class Discount {
     private Instant endsAt;
 
     @Column(name = "active", nullable = false)
-    private Boolean active = true;
+    private Boolean active;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @PrePersist
     void prePersist() {
-        this.startsAt = this.startsAt == null ? Instant.now() : this.startsAt;
+        this.active = true;
         this.createdAt = Instant.now();
     }
 }

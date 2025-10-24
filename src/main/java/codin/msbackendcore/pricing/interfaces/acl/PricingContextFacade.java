@@ -1,6 +1,5 @@
 package codin.msbackendcore.pricing.interfaces.acl;
 
-import codin.msbackendcore.pricing.domain.services.PricingDomainService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
