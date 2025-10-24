@@ -45,7 +45,7 @@ public class ProductDomainServiceImpl implements ProductDomainService {
     }
 
     @Override
-    public Product updateHasVariant(UUID productId, boolean hasVariant) {
+    public void updateHasVariant(UUID productId, boolean hasVariant) {
         var product = productRepository.findById(productId)
                 .orElseThrow(() ->
                         new NotFoundException("error.not_found", new String[]{productId.toString()}, "productId")
@@ -53,7 +53,7 @@ public class ProductDomainServiceImpl implements ProductDomainService {
 
         product.setHasVariants(hasVariant);
 
-        return productRepository.save(product);
+        productRepository.save(product);
     }
 
     @Override

@@ -44,10 +44,10 @@ public class Product {
     private String description;
 
     @Column(name = "is_active", nullable = false)
-    private boolean isActive = true;
+    private boolean isActive;
 
     @Column(name = "has_variants", nullable = false)
-    private boolean hasVariants = false;
+    private boolean hasVariants;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "meta", columnDefinition = "jsonb", nullable = false)
@@ -66,6 +66,8 @@ public class Product {
     void prePersist() {
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
+        this.isActive = true;
+        this.hasVariants = false;
     }
 
     @PreUpdate
