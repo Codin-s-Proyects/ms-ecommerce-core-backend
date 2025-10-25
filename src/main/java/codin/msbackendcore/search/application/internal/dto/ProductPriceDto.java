@@ -8,7 +8,7 @@ public record ProductPriceDto(
         UUID id,
         UUID tenantId,
         UUID productVariantId,
-        UUID priceListId,
+        PriceListDto priceList,
         BigDecimal discountPercent,
         BigDecimal finalPrice,
         BigDecimal basePrice,

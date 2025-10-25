@@ -1,5 +1,6 @@
 package codin.msbackendcore.search.interfaces.dto;
 
+import codin.msbackendcore.search.application.internal.dto.PriceListDto;
 import codin.msbackendcore.search.application.internal.dto.SemanticSearchDto;
 
 import java.math.BigDecimal;
@@ -9,9 +10,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public record SemanticSearchResponse(
-        SemanticSearchResponse.SemanticSearchProduct product,
-        SemanticSearchResponse.SemanticSearchProductVariant variant,
-        List<SemanticSearchResponse.SemanticSearchProductPrice> prices) {
+        SemanticSearchProduct product,
+        SemanticSearchProductVariant variant,
+        List<SemanticSearchProductPrice> prices) {
 
     public static SemanticSearchResponse fromDto(SemanticSearchDto dto) {
         var product = new SemanticSearchProduct(
@@ -37,7 +38,7 @@ public record SemanticSearchResponse(
                         priceDto.id(),
                         priceDto.tenantId(),
                         priceDto.productVariantId(),
-                        priceDto.priceListId(),
+                        fromDto(priceDto.priceList()),
                         priceDto.discountPercent(),
                         priceDto.finalPrice(),
                         priceDto.basePrice(),
@@ -48,6 +49,20 @@ public record SemanticSearchResponse(
                 .toList();
 
         return new SemanticSearchResponse(product, variant, prices);
+    }
+
+    private static SemanticSearchPriceList fromDto(PriceListDto dto) {
+        return new SemanticSearchPriceList(
+                dto.id(),
+                dto.tenantId(),
+                dto.code(),
+                dto.name(),
+                dto.description(),
+                dto.currencyCode(),
+                dto.validFrom(),
+                dto.validTo(),
+                dto.isActive()
+        );
     }
 
     private record SemanticSearchProduct(
@@ -70,18 +85,30 @@ public record SemanticSearchResponse(
     ) {
     }
 
-
     private record SemanticSearchProductPrice(
             UUID id,
             UUID tenantId,
             UUID productVariantId,
-            UUID priceListId,
+            SemanticSearchPriceList priceList,
             BigDecimal discountPercent,
             BigDecimal finalPrice,
             BigDecimal basePrice,
             Integer minQuantity,
             Instant validFrom,
             Instant validTo
+    ) {
+    }
+
+    private record SemanticSearchPriceList(
+            UUID id,
+            UUID tenantId,
+            String code,
+            String name,
+            String description,
+            String currencyCode,
+            Instant validFrom,
+            Instant validTo,
+            Boolean isActive
     ) {
     }
 }
