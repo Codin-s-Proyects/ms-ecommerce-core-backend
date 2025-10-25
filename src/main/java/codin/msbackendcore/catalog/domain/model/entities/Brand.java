@@ -3,16 +3,18 @@ package codin.msbackendcore.catalog.domain.model.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
 
+@Builder
 @Getter
 @Setter
 @Entity
 @Table(name = "brands", schema = "catalog")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Brand {
     @Id
     @GeneratedValue
