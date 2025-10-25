@@ -3,6 +3,7 @@ package codin.msbackendcore.pricing.application.internal.domainservice;
 import codin.msbackendcore.pricing.domain.model.entities.PriceList;
 import codin.msbackendcore.pricing.domain.services.pricelist.PriceListDomainService;
 import codin.msbackendcore.pricing.infrastructure.jpa.PriceListRepository;
+import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,10 @@ public class PriceListDomainServiceImpl implements PriceListDomainService {
     @Transactional
     @Override
     public PriceList createPriceList(UUID tenantId, String code, String name, String description, String currencyCode, Instant validFrom, Instant validTo) {
+
+        if (priceListRepository.existsPriceListByTenantIdAndCode(tenantId, code)) {
+            throw new BadRequestException("error.bad_request", new String[]{code}, "code");
+        }
 
         var priceList = PriceList.builder()
                 .tenantId(tenantId)

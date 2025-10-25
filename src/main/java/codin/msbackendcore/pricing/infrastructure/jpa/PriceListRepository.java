@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface PriceListRepository extends JpaRepository<PriceList, UUID> {
     Optional<PriceList> findPriceListByTenantIdAndId(UUID tenantId, UUID priceListId);
+    boolean existsPriceListByTenantIdAndCode(UUID tenantId, String code);
 }
