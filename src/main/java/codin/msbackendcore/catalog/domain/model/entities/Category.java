@@ -1,16 +1,18 @@
 package codin.msbackendcore.catalog.domain.model.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
 
+@Builder
 @Entity
 @Table(name = "categories", schema = "catalog")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Category {
     @Id
     @GeneratedValue
