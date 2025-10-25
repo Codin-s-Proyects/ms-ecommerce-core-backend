@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public record ProductVariantDto(
         UUID id,
+        UUID productId,
         UUID tenantId,
         String sku,
         String name,

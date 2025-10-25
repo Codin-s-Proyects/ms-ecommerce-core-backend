@@ -3,12 +3,11 @@ package codin.msbackendcore.search.application.internal.outboundservices.acl;
 import codin.msbackendcore.catalog.interfaces.acl.CatalogContextFacade;
 import codin.msbackendcore.search.application.internal.dto.ProductDto;
 import codin.msbackendcore.search.application.internal.dto.ProductVariantDto;
-import codin.msbackendcore.search.application.internal.dto.SemanticSearchDto;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
+@Service("ExternalCatalogServiceForSearch")
 public class ExternalCatalogService {
     private final CatalogContextFacade catalogContextFacade;
 
@@ -16,20 +15,11 @@ public class ExternalCatalogService {
         this.catalogContextFacade = catalogContextFacade;
     }
 
-    public SemanticSearchDto getSemanticSearchData(UUID variantId) {
+    public ProductDto getProductById(UUID productId) {
 
-        var productVariantResponse = catalogContextFacade.getProductVariantById(variantId);
-        var productVariant = new ProductVariantDto(
-                productVariantResponse.id(),
-                productVariantResponse.tenantId(),
-                productVariantResponse.sku(),
-                productVariantResponse.name(),
-                productVariantResponse.attributes(),
-                productVariantResponse.imageUrl()
-        );
+        var productResponse = catalogContextFacade.getProductById(productId);
 
-        var productResponse = catalogContextFacade.getProductById(productVariantResponse.productId());
-        var product = new ProductDto(
+        return new ProductDto(
                 productResponse.id(),
                 productResponse.tenantId(),
                 productResponse.name(),
@@ -37,7 +27,19 @@ public class ExternalCatalogService {
                 productResponse.description(),
                 productResponse.hasVariants()
         );
+    }
 
-        return new SemanticSearchDto(product, productVariant);
+    public ProductVariantDto getVariantById(UUID variantId) {
+
+        var productVariantResponse = catalogContextFacade.getProductVariantById(variantId);
+        return new ProductVariantDto(
+                productVariantResponse.id(),
+                productVariantResponse.productId(),
+                productVariantResponse.tenantId(),
+                productVariantResponse.sku(),
+                productVariantResponse.name(),
+                productVariantResponse.attributes(),
+                productVariantResponse.imageUrl()
+        );
     }
 }

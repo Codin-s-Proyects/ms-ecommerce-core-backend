@@ -2,12 +2,16 @@ package codin.msbackendcore.search.interfaces.dto;
 
 import codin.msbackendcore.search.application.internal.dto.SemanticSearchDto;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public record SemanticSearchResponse(
         SemanticSearchResponse.SemanticSearchProduct product,
-        SemanticSearchResponse.SemanticSearchProductVariant variant) {
+        SemanticSearchResponse.SemanticSearchProductVariant variant,
+        List<SemanticSearchResponse.SemanticSearchProductPrice> prices) {
 
     public static SemanticSearchResponse fromDto(SemanticSearchDto dto) {
         var product = new SemanticSearchProduct(
@@ -28,7 +32,22 @@ public record SemanticSearchResponse(
                 dto.productVariant().imageUrl()
         );
 
-        return new SemanticSearchResponse(product, variant);
+        var prices = dto.productPrices().stream()
+                .map(priceDto -> new SemanticSearchProductPrice(
+                        priceDto.id(),
+                        priceDto.tenantId(),
+                        priceDto.productVariantId(),
+                        priceDto.priceListId(),
+                        priceDto.discountPercent(),
+                        priceDto.finalPrice(),
+                        priceDto.basePrice(),
+                        priceDto.minQuantity(),
+                        priceDto.validFrom(),
+                        priceDto.validTo()
+                ))
+                .toList();
+
+        return new SemanticSearchResponse(product, variant, prices);
     }
 
     private record SemanticSearchProduct(
@@ -48,6 +67,21 @@ public record SemanticSearchResponse(
             String name,
             Map<String, Object> attributes,
             String imageUrl
+    ) {
+    }
+
+
+    private record SemanticSearchProductPrice(
+            UUID id,
+            UUID tenantId,
+            UUID productVariantId,
+            UUID priceListId,
+            BigDecimal discountPercent,
+            BigDecimal finalPrice,
+            BigDecimal basePrice,
+            Integer minQuantity,
+            Instant validFrom,
+            Instant validTo
     ) {
     }
 }

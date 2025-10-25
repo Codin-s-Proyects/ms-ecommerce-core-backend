@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
+@Service("ExternalCatalogServiceForPricing")
 public class ExternalCatalogService {
     private final CatalogContextFacade catalogContextFacade;
 

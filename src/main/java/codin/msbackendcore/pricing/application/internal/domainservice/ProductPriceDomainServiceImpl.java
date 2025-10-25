@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -39,5 +40,10 @@ public class ProductPriceDomainServiceImpl implements ProductPriceDomainService 
                 .build();
 
         return productPriceRepository.save(productPrice);
+    }
+
+    @Override
+    public List<ProductPrice> getProductPricesByProductVariantId(UUID tenantId, UUID productVariantId) {
+        return productPriceRepository.findAllByTenantIdAndProductVariantId(tenantId, productVariantId);
     }
 }
