@@ -1,15 +1,17 @@
 package codin.msbackendcore.pricing.domain.model.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
+@Builder
 @Entity
 @Table(name = "product_discounts", schema = "pricing")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductDiscount {
     @Id
     @GeneratedValue

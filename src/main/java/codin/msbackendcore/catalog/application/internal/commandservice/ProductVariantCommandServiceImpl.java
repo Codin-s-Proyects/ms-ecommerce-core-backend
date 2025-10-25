@@ -39,6 +39,8 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
                 command.imageUrl()
         );
 
+        if (!product.isHasVariants()) productDomainService.updateHasVariant(product.getId(), true);
+
         eventPublisher.publish(new ProductCreatedEvent(command.tenantId(), List.of(productVariant)));
 
         return productVariant;

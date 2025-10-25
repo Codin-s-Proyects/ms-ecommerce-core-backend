@@ -3,8 +3,7 @@ package codin.msbackendcore.search.domain.model.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -13,10 +12,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Builder
 @Entity
 @Table(name = "product_embeddings", schema = "search")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductEmbedding {
     @Id
     @GeneratedValue

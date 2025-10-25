@@ -5,6 +5,7 @@ import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantDomainService;
 import codin.msbackendcore.catalog.infrastructure.persistence.jpa.ProductVariantRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
+import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -51,5 +52,13 @@ public class ProductVariantDomainServiceImpl implements ProductVariantDomainServ
                 .build();
 
         return productVariantRepository.save(productVariant);
+    }
+
+    @Override
+    public ProductVariant getProductVariantById(UUID productVariantId) {
+        return productVariantRepository.findById(productVariantId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{productVariantId.toString()}, "productVariantId")
+                );
     }
 }

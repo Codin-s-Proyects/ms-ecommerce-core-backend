@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.toVectorString;
+
 @Service
 public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomainService {
 
@@ -25,18 +27,6 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
         this.productEmbeddingRepository = productEmbeddingRepository;
     }
 
-    public static String toVectorString(float[] embedding) {
-        if (embedding == null || embedding.length == 0) return "[]";
-        StringBuilder sb = new StringBuilder();
-        sb.append('[');
-        for (int i = 0; i < embedding.length; i++) {
-            sb.append(embedding[i]);
-            if (i < embedding.length - 1) sb.append(',');
-        }
-        sb.append(']');
-        return sb.toString();
-    }
-
     @Override
     public CompletableFuture<Void> generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String productDescription,
                                                             String variantName, Map<String, Object> variantAttributes) {
@@ -44,7 +34,7 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
         return openAI.embedAsync(text)
                 .thenAccept(vector -> {
                     Map<String, Object> metadata = Map.of("name", variantName.replace("\"", "'"));
-                    repo.upsertEmbedding(tenantId, variantId, vector, metadata);
+                    repo.upsertEmbedding(tenantId, variantId, toVectorString(vector), metadata);
                 });
     }
 

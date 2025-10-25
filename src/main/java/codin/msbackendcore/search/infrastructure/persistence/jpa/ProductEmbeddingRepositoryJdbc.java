@@ -1,6 +1,5 @@
 package codin.msbackendcore.search.infrastructure.persistence.jpa;
 
-import codin.msbackendcore.search.domain.model.entities.ProductEmbedding;
 import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -8,7 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Repository
 public class ProductEmbeddingRepositoryJdbc {
@@ -20,16 +21,7 @@ public class ProductEmbeddingRepositoryJdbc {
         this.jdbc = jdbc;
     }
 
-    //TODO: Verifica si esto se puede hacer con un repository.save
-    public void upsertEmbedding(UUID tenantId, UUID productVariantId, float[] vector, Map<String, Object> metadata) {
-        StringBuilder sb = new StringBuilder();
-        sb.append('[');
-        for (int i = 0; i < vector.length; i++) {
-            if (i > 0) sb.append(',');
-            sb.append(vector[i]);
-        }
-        sb.append(']');
-
+    public void upsertEmbedding(UUID tenantId, UUID productVariantId, String vector, Map<String, Object> metadata) {
         String sql = """
                 INSERT INTO search.product_embeddings (id, tenant_id, product_variant_id, vector, metadata, created_at)
                 VALUES (:id, :tenantId, :variantId, :vector::vector, :metadata::jsonb, :createdAt)
@@ -41,7 +33,7 @@ public class ProductEmbeddingRepositoryJdbc {
         params.put("id", UUID.randomUUID());
         params.put("tenantId", tenantId);
         params.put("variantId", productVariantId);
-        params.put("vector", sb.toString());
+        params.put("vector", vector);
         try {
             params.put("metadata", objectMapper.writeValueAsString(metadata));
         } catch (Exception e) {

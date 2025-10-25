@@ -33,9 +33,11 @@ public class ProductEmbeddingController {
         var query = request.toQuery();
 
         return productEmbeddingQueryService.handle(query)
-                .thenApply(results -> results.stream()
-                        .map(ss -> new SemanticSearchResponse(ss.getId()))
-                        .toList())
+                .thenApply(
+                        responses -> responses.stream()
+                                .map(SemanticSearchResponse::fromDto)
+                                .toList()
+                )
                 .thenApply(ResponseEntity::ok);
     }
 }
