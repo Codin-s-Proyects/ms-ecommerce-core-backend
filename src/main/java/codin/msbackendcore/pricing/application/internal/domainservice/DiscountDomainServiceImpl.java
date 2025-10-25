@@ -38,7 +38,7 @@ public class DiscountDomainServiceImpl implements DiscountDomainService {
 
     @Override
     public Discount getDiscountByTenantAndId(UUID tenantId, UUID discountId) {
-        return discountRepository.findByTenantId(tenantId, discountId)
+        return discountRepository.findByTenantIdAndId(tenantId, discountId)
                 .orElseThrow(() ->
                         new NotFoundException("error.not_found", new String[]{discountId.toString()}, "discountId")
                 );

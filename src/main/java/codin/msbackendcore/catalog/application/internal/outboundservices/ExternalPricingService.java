@@ -13,8 +13,4 @@ public class ExternalPricingService {
     public ExternalPricingService(PricingContextFacade pricingContextFacade) {
         this.pricingContextFacade = pricingContextFacade;
     }
-
-    public void registerVariantPrices(UUID tenantId, UUID variantId, BigDecimal retailPrice, BigDecimal wholesalePrice) {
-        pricingContextFacade.registerDefaultPrices(tenantId, variantId, retailPrice, wholesalePrice);
-    }
 }

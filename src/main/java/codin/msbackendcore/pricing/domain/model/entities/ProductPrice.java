@@ -33,13 +33,13 @@ public class ProductPrice {
     private BigDecimal basePrice;
 
     @Column(name = "discount_percent", nullable = false)
-    private BigDecimal discountPercent = BigDecimal.ZERO;
+    private BigDecimal discountPercent;
 
     @Column(name = "final_price", insertable = false, updatable = false)
     private BigDecimal finalPrice;
 
     @Column(name = "min_quantity")
-    private Integer minQuantity = 1;
+    private Integer minQuantity;
 
     @Column(name = "valid_from", nullable = false)
     private Instant validFrom;
@@ -55,6 +55,8 @@ public class ProductPrice {
 
     @PrePersist
     void prePersist() {
+        this.minQuantity = (this.minQuantity == null) ? 1 : this.minQuantity;
+        this.discountPercent = BigDecimal.ZERO;
         this.validFrom = Instant.now();
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();

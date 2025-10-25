@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface DiscountRepository extends JpaRepository<Discount, UUID> {
-    Optional<Discount> findByTenantId(UUID tenantId, UUID discountId);
+    Optional<Discount> findByTenantIdAndId(UUID tenantId, UUID discountId);
 }

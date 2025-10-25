@@ -1,4 +1,4 @@
-package codin.msbackendcore.pricing.domain.services.pricinglist;
+package codin.msbackendcore.pricing.domain.services.pricelist;
 
 
 import codin.msbackendcore.pricing.domain.model.entities.PriceList;

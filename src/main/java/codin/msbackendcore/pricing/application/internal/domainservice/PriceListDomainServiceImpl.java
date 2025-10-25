@@ -1,7 +1,7 @@
 package codin.msbackendcore.pricing.application.internal.domainservice;
 
 import codin.msbackendcore.pricing.domain.model.entities.PriceList;
-import codin.msbackendcore.pricing.domain.services.pricinglist.PriceListDomainService;
+import codin.msbackendcore.pricing.domain.services.pricelist.PriceListDomainService;
 import codin.msbackendcore.pricing.infrastructure.jpa.PriceListRepository;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;

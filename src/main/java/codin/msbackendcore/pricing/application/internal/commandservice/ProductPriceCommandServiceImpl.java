@@ -2,7 +2,7 @@ package codin.msbackendcore.pricing.application.internal.commandservice;
 
 import codin.msbackendcore.pricing.domain.model.commands.CreateProductPriceCommand;
 import codin.msbackendcore.pricing.domain.model.entities.ProductPrice;
-import codin.msbackendcore.pricing.domain.services.pricinglist.PriceListDomainService;
+import codin.msbackendcore.pricing.domain.services.pricelist.PriceListDomainService;
 import codin.msbackendcore.pricing.domain.services.productprice.ProductPriceCommandService;
 import codin.msbackendcore.pricing.domain.services.productprice.ProductPriceDomainService;
 import jakarta.transaction.Transactional;
