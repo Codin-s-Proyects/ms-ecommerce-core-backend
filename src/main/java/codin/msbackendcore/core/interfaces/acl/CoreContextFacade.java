@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class TenantContextFacade {
+public class CoreContextFacade {
 
     private final TenantDomainService tenantDomainService;
 
-    public TenantContextFacade(TenantDomainService tenantDomainService) {
+    public CoreContextFacade(TenantDomainService tenantDomainService) {
         this.tenantDomainService = tenantDomainService;
     }
 
