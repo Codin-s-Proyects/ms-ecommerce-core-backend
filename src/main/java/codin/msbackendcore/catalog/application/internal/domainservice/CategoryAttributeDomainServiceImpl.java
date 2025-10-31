@@ -8,6 +8,7 @@ import codin.msbackendcore.catalog.infrastructure.persistence.jpa.CategoryAttrib
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -32,5 +33,10 @@ public class CategoryAttributeDomainServiceImpl implements CategoryAttributeDoma
                 .build();
 
         return categoryAttributeRepository.save(categoryAttribute);
+    }
+
+    @Override
+    public List<CategoryAttribute> getCategoryAttributesByTenantIdAndCategory(UUID tenantId, Category category) {
+        return categoryAttributeRepository.findAllByTenantIdAndCategory(tenantId, category);
     }
 }
