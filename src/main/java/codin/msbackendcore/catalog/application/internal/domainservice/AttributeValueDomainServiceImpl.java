@@ -8,6 +8,8 @@ import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AttributeValueDomainServiceImpl implements AttributeValueDomainService {
     private final AttributeValueRepository attributeValueRepository;
@@ -30,5 +32,10 @@ public class AttributeValueDomainServiceImpl implements AttributeValueDomainServ
                 .build();
 
         return attributeValueRepository.save(attributeValue);
+    }
+
+    @Override
+    public List<AttributeValue> getAttributeValueByAttribute(Attribute attribute) {
+        return attributeValueRepository.findAllByAttribute(attribute);
     }
 }

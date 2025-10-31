@@ -1,16 +1,18 @@
 package codin.msbackendcore.catalog.interfaces.rest.controller;
 
+import codin.msbackendcore.catalog.domain.model.queries.attribute.GetAllAttributeByTenantIdQuery;
 import codin.msbackendcore.catalog.domain.services.attribute.AttributeCommandService;
+import codin.msbackendcore.catalog.domain.services.attribute.AttributeQueryService;
 import codin.msbackendcore.catalog.interfaces.dto.attribute.AttributeCreateRequest;
 import codin.msbackendcore.catalog.interfaces.dto.attribute.AttributeResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/catalog/attributes")
@@ -18,9 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AttributeController {
 
     private final AttributeCommandService attributeCommandService;
+    private final AttributeQueryService attributeQueryService;
 
-    public AttributeController(AttributeCommandService attributeCommandService) {
+    public AttributeController(AttributeCommandService attributeCommandService, AttributeQueryService attributeQueryService) {
         this.attributeCommandService = attributeCommandService;
+        this.attributeQueryService = attributeQueryService;
     }
 
     @Operation(summary = "Crear un nuevo atributo de producto")
@@ -40,6 +44,26 @@ public class AttributeController {
         );
 
         return ResponseEntity.status(201).body(response);
+    }
+
+    @Operation(summary = "Obtener todas los atributos por tenantId")
+    @GetMapping("/tenant-id/{tenantId}")
+    public ResponseEntity<List<AttributeResponse>> getAllAttributeByTenantId(@PathVariable UUID tenantId) {
+
+        var query = new GetAllAttributeByTenantIdQuery(tenantId);
+
+        var getList = attributeQueryService.handle(query);
+
+        var responseList = getList.stream().map(attribute ->
+                new AttributeResponse(
+                        attribute.getId(),
+                        attribute.getTenantId(),
+                        attribute.getCode(),
+                        attribute.getName(),
+                        attribute.getDataType().name()
+                )).toList();
+
+        return ResponseEntity.status(200).body(responseList);
     }
 }
 

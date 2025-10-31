@@ -1,15 +1,17 @@
 package codin.msbackendcore.catalog.domain.model.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
+@Builder
 @Entity
 @Table(name = "category_attributes", schema = "catalog")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CategoryAttribute {
     @Id
     @GeneratedValue
@@ -27,6 +29,11 @@ public class CategoryAttribute {
     private Attribute attribute;
 
     @Column(name = "is_variant_attribute", nullable = false)
-    private Boolean isVariantAttribute = true;
+    private Boolean isVariantAttribute;
+
+    @PrePersist
+    void prePersist() {
+        this.isVariantAttribute = true;
+    }
 }
 

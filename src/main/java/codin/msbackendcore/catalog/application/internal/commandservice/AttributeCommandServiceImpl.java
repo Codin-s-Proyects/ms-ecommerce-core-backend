@@ -1,5 +1,6 @@
 package codin.msbackendcore.catalog.application.internal.commandservice;
 
+import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalCoreService;
 import codin.msbackendcore.catalog.domain.model.commands.attribute.CreateAttributeCommand;
 import codin.msbackendcore.catalog.domain.model.entities.Attribute;
 import codin.msbackendcore.catalog.domain.model.valueobjects.DataType;
@@ -15,9 +16,11 @@ import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.isVali
 public class AttributeCommandServiceImpl implements AttributeCommandService {
 
     private final AttributeDomainService attributeDomainService;
+    private final ExternalCoreService externalCoreService;
 
-    public AttributeCommandServiceImpl(AttributeDomainService attributeDomainService) {
+    public AttributeCommandServiceImpl(AttributeDomainService attributeDomainService, ExternalCoreService externalCoreService) {
         this.attributeDomainService = attributeDomainService;
+        this.externalCoreService = externalCoreService;
     }
 
     @Transactional
@@ -26,6 +29,10 @@ public class AttributeCommandServiceImpl implements AttributeCommandService {
 
         if (!isValidEnum(DataType.class, command.dataType())) {
             throw new BadRequestException("error.bad_request", new String[]{command.dataType()}, "dataType");
+        }
+
+        if (!externalCoreService.existTenantById(command.tenantId())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
         return attributeDomainService.createAttribute(

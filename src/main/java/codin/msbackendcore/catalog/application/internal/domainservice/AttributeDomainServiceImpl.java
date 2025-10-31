@@ -9,6 +9,7 @@ import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -42,5 +43,10 @@ public class AttributeDomainServiceImpl implements AttributeDomainService {
                 .orElseThrow(() ->
                         new NotFoundException("error.not_found", new String[]{attributeId.toString()}, "attributeId")
                 );
+    }
+
+    @Override
+    public List<Attribute> getAttributeByTenantId(UUID tenantId) {
+        return attributeRepository.findByTenantId(tenantId);
     }
 }

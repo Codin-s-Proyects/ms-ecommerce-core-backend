@@ -10,6 +10,7 @@ import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -62,5 +63,15 @@ public class ProductDomainServiceImpl implements ProductDomainService {
                 .orElseThrow(() ->
                         new NotFoundException("error.not_found", new String[]{productId.toString()}, "productId")
                 );
+    }
+
+    @Override
+    public List<Product> getProductsByCategory(UUID tenantId, Category category) {
+        return productRepository.findByCategoryAndTenantId(category, tenantId);
+    }
+
+    @Override
+    public List<Product> getProductsByBrand(UUID tenantId, Brand brand) {
+        return productRepository.findByBrandAndTenantId(brand, tenantId);
     }
 }
