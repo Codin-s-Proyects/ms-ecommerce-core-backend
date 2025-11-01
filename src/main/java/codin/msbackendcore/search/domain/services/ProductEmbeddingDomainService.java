@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface ProductEmbeddingDomainService {
-    CompletableFuture<Void> generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String productDescription,
+    CompletableFuture<Void> generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
                                                      String variantName, Map<String, Object> variantAttributes);
 
     CompletableFuture<List<ProductEmbedding>> semanticSearch(UUID tenantId, String query, int limit);

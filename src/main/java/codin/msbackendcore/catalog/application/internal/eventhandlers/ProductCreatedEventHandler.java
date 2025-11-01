@@ -28,11 +28,13 @@ public class ProductCreatedEventHandler {
 
         for (ProductVariant variant : event.variants()) {
             var product = variant.getProduct();
+            var categoryName = product.getCategory() != null ? product.getCategory().getName() : "";
+            var brandName = product.getBrand() != null ? product.getBrand().getName() : "";
 
             try {
                 log.debug("Execute ProductCreated Event Handler for variant {}", variant.getId());
                 CompletableFuture<Void> future = externalSearchService.registerProductEmbedding(
-                        event.tenantId(), variant.getId(), product.getName(), product.getDescription(),
+                        event.tenantId(), variant.getId(), product.getName(), categoryName, brandName, product.getDescription(),
                         variant.getName(), variant.getAttributes()
                 );
                 futures.add(future.exceptionally(ex -> {
