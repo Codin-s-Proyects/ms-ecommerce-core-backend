@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -45,5 +46,21 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     @Override
     public Order addItemsAndStatusHistoryToOrder(Order order) {
         return orderRepository.save(order);
+    }
+
+    @Override
+    public Order getOrderById(UUID orderId, UUID tenantId) {
+        return orderRepository.findByIdAndTenantId(orderId, tenantId)
+                .orElseThrow(() -> new BadRequestException("error.not_found", new String[]{orderId.toString()}, "orderId"));
+    }
+
+    @Override
+    public List<Order> getOrdersByTenantId(UUID tenantId) {
+        return orderRepository.findByTenantId(tenantId);
+    }
+
+    @Override
+    public List<Order> getOrdersByUserId(UUID userId, UUID tenantId) {
+        return orderRepository.findByUserIdAndTenantId(userId, tenantId);
     }
 }
