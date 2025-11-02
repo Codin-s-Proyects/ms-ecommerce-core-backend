@@ -1,6 +1,7 @@
 package codin.msbackendcore.iam.application.internal.commandservice;
 
 import codin.msbackendcore.iam.application.internal.dto.SignInResult;
+import codin.msbackendcore.iam.application.internal.outboundservices.acl.ExternalCoreService;
 import codin.msbackendcore.iam.application.internal.outboundservices.token.TokenService;
 import codin.msbackendcore.iam.domain.model.commands.RefreshTokenCommand;
 import codin.msbackendcore.iam.domain.model.commands.SignInCommand;
@@ -13,6 +14,7 @@ import codin.msbackendcore.iam.infrastructure.persistence.jpa.CredentialReposito
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.RefreshTokenRepository;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.RoleRepository;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.UserRepository;
+import codin.msbackendcore.ordering.application.internal.outboundservices.ExternalIamService;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import codin.msbackendcore.shared.infrastructure.utils.CommonUtils;
@@ -37,10 +39,12 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final RefreshTokenDomainService refreshTokenDomainService;
     private final TokenService tokenService;
 
+    private final ExternalCoreService externalCoreService;
+
     public UserCommandServiceImpl(
             UserRepository userRepository,
             CredentialRepository credentialRepository, RefreshTokenRepository refreshTokenRepository,
-            UserDomainService userDomainService, RoleRepository roleRepository, AuditLogDomainService auditLogDomainService, SessionDomainService sessionDomainService, RefreshTokenDomainService refreshTokenDomainService, TokenService tokenService
+            UserDomainService userDomainService, RoleRepository roleRepository, AuditLogDomainService auditLogDomainService, SessionDomainService sessionDomainService, RefreshTokenDomainService refreshTokenDomainService, TokenService tokenService, ExternalCoreService externalCoreService
     ) {
         this.userRepository = userRepository;
         this.credentialRepository = credentialRepository;
@@ -51,6 +55,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         this.sessionDomainService = sessionDomainService;
         this.refreshTokenDomainService = refreshTokenDomainService;
         this.tokenService = tokenService;
+        this.externalCoreService = externalCoreService;
     }
 
     @Transactional
@@ -88,7 +93,9 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     public Optional<User> handle(SignUpCommand command) {
 
-        //TODO: ADD TENANT VALIDATIONS
+        if (!externalCoreService.existTenantById(command.tenantId())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
+        }
 
         if (!CommonUtils.isValidEnum(CredentialType.class, command.type())) {
             throw new BadRequestException("error.bad_request", new String[]{command.type()}, "type");
