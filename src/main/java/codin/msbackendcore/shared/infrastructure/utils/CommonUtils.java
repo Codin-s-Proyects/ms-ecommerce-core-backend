@@ -64,6 +64,10 @@ public class CommonUtils {
         return sb.toString();
     }
 
+    public static String generateOrderNumber(int currentYear, int nextNumber) {
+        return String.format("ORD-%d-%06d", currentYear, nextNumber);
+    }
+
     private static String normalize(String text) {
         return text.replaceAll("[^A-Za-z0-9]", "").toUpperCase();
     }
