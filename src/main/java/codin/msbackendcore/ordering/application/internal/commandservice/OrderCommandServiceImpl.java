@@ -2,6 +2,7 @@ package codin.msbackendcore.ordering.application.internal.commandservice;
 
 import codin.msbackendcore.ordering.application.internal.outboundservices.ExternalCatalogService;
 import codin.msbackendcore.ordering.application.internal.outboundservices.ExternalCoreService;
+import codin.msbackendcore.ordering.application.internal.outboundservices.ExternalIamService;
 import codin.msbackendcore.ordering.domain.model.commands.order.CreateOrderCommand;
 import codin.msbackendcore.ordering.domain.model.entities.Order;
 import codin.msbackendcore.ordering.domain.model.valueobjects.OrderStatus;
@@ -29,21 +30,26 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
     private final ExternalCoreService externalCoreService;
     private final ExternalCatalogService externalCatalogService;
+    private final ExternalIamService externalIamService;
 
-    public OrderCommandServiceImpl(OrderDomainService orderDomainService, OrderCounterDomainService orderCounterDomainService, OrderItemDomainService orderItemDomainService, OrderStatusHistoryDomainService orderStatusHistoryDomainService, ExternalCoreService externalCoreService, ExternalCatalogService externalCatalogService) {
+    public OrderCommandServiceImpl(OrderDomainService orderDomainService, OrderCounterDomainService orderCounterDomainService, OrderItemDomainService orderItemDomainService, OrderStatusHistoryDomainService orderStatusHistoryDomainService, ExternalCoreService externalCoreService, ExternalCatalogService externalCatalogService, ExternalIamService externalIamService) {
         this.orderDomainService = orderDomainService;
         this.orderCounterDomainService = orderCounterDomainService;
         this.orderItemDomainService = orderItemDomainService;
         this.orderStatusHistoryDomainService = orderStatusHistoryDomainService;
         this.externalCoreService = externalCoreService;
         this.externalCatalogService = externalCatalogService;
+        this.externalIamService = externalIamService;
     }
 
     @Transactional
     @Override
     public Order handle(CreateOrderCommand command) {
 
-        //TODO: Validar si el user existe
+        if (!externalIamService.existsUserById(command.userId(), command.tenantId())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.userId().toString()}, "userId");
+        }
+
         if (!externalCoreService.existTenantById(command.tenantId())) {
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
@@ -85,7 +91,8 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
             order.addItem(orderItem);
 
-            var itemFinalPrice = item.unitPrice().multiply(item.discountPercent()).multiply(BigDecimal.valueOf(item.quantity()));
+            var discountAmount = item.unitPrice().multiply(item.discountPercent());
+            var itemFinalPrice = item.unitPrice().subtract(discountAmount).multiply(BigDecimal.valueOf(item.quantity()));
             orderFinalPrice = orderFinalPrice.add(itemFinalPrice);
         }
 

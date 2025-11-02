@@ -66,4 +66,10 @@ public class UserDomainServiceImpl implements UserDomainService {
         user.setLastLogin(Instant.now());
         userRepository.save(user);
     }
+
+    @Override
+    public User getUserByIdAndTenantId(UUID userId, UUID tenantId) {
+        return userRepository.findByIdAndTenantId(userId, tenantId)
+                .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{userId.toString()}, "user"));
+    }
 }
