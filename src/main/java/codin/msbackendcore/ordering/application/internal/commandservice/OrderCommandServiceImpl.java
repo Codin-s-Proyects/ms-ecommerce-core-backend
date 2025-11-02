@@ -1,5 +1,6 @@
 package codin.msbackendcore.ordering.application.internal.commandservice;
 
+import codin.msbackendcore.ordering.application.internal.outboundservices.ExternalCatalogService;
 import codin.msbackendcore.ordering.application.internal.outboundservices.ExternalCoreService;
 import codin.msbackendcore.ordering.domain.model.commands.order.CreateOrderCommand;
 import codin.msbackendcore.ordering.domain.model.entities.Order;
@@ -13,6 +14,7 @@ import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.Year;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateOrderNumber;
@@ -26,13 +28,15 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     private final OrderStatusHistoryDomainService orderStatusHistoryDomainService;
 
     private final ExternalCoreService externalCoreService;
+    private final ExternalCatalogService externalCatalogService;
 
-    public OrderCommandServiceImpl(OrderDomainService orderDomainService, OrderCounterDomainService orderCounterDomainService, OrderItemDomainService orderItemDomainService, OrderStatusHistoryDomainService orderStatusHistoryDomainService, ExternalCoreService externalCoreService) {
+    public OrderCommandServiceImpl(OrderDomainService orderDomainService, OrderCounterDomainService orderCounterDomainService, OrderItemDomainService orderItemDomainService, OrderStatusHistoryDomainService orderStatusHistoryDomainService, ExternalCoreService externalCoreService, ExternalCatalogService externalCatalogService) {
         this.orderDomainService = orderDomainService;
         this.orderCounterDomainService = orderCounterDomainService;
         this.orderItemDomainService = orderItemDomainService;
         this.orderStatusHistoryDomainService = orderStatusHistoryDomainService;
         this.externalCoreService = externalCoreService;
+        this.externalCatalogService = externalCatalogService;
     }
 
     @Transactional
@@ -60,12 +64,12 @@ public class OrderCommandServiceImpl implements OrderCommandService {
                 command.notes()
         );
 
-        for (var item : command.items()) {
-            //TODO: Validar si el producto existe
-            //TODO: Validar si el precio final es el correcto
+        var orderFinalPrice = BigDecimal.ZERO;
 
-            //ProductVariantData variant = catalogACL.getProductVariant(item.productVariantId());
-            //BigDecimal price = pricingACL.getFinalPrice(cmd.tenantId(), item.productVariantId(), item.quantity());
+        for (var item : command.items()) {
+            if (!externalCatalogService.existsProductVariantById(item.productVariantId())) {
+                throw new BadRequestException("error.bad_request", new String[]{item.productVariantId().toString()}, "productVariantId");
+            }
 
             var orderItem = orderItemDomainService.createOrderItem(
                     command.tenantId(),
@@ -80,7 +84,13 @@ public class OrderCommandServiceImpl implements OrderCommandService {
             );
 
             order.addItem(orderItem);
+
+            var itemFinalPrice = item.unitPrice().multiply(item.discountPercent()).multiply(BigDecimal.valueOf(item.quantity()));
+            orderFinalPrice = orderFinalPrice.add(itemFinalPrice);
         }
+
+        if (orderFinalPrice.compareTo(command.total()) != 0)
+            throw new BadRequestException("error.bad_request", new String[]{"Order total does not match sum of item prices"}, "total");
 
         order.addStatusHistory(orderStatusHistoryDomainService.createOrderStatusHistory(order, OrderStatus.CREATED, command.userId()));
 
