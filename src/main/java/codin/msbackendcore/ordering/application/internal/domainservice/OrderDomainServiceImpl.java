@@ -43,8 +43,22 @@ public class OrderDomainServiceImpl implements OrderDomainService {
         return orderRepository.save(order);
     }
 
+    @Transactional
     @Override
-    public Order addItemsAndStatusHistoryToOrder(Order order) {
+    public Order updateOrderStatus(UUID tenantId, UUID orderId, OrderStatus orderStatus) {
+        if (!orderRepository.existsByIdAndTenantId(orderId, tenantId))
+            throw new BadRequestException("error.not_found", new String[]{orderId.toString()}, "orderId");
+
+        var order = orderRepository.findByIdWithStatusHistory(orderId)
+                .orElseThrow(() -> new BadRequestException("error.not_found", new String[]{orderId.toString()}, "orderId"));
+
+        order.setStatus(orderStatus);
+
+        return orderRepository.save(order);
+    }
+
+    @Override
+    public Order persistOrder(Order order) {
         return orderRepository.save(order);
     }
 

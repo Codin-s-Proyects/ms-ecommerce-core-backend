@@ -7,6 +7,7 @@ import codin.msbackendcore.ordering.domain.services.order.OrderCommandService;
 import codin.msbackendcore.ordering.domain.services.order.OrderQueryService;
 import codin.msbackendcore.ordering.interfaces.dto.order.OrderCreateRequest;
 import codin.msbackendcore.ordering.interfaces.dto.order.OrderResponse;
+import codin.msbackendcore.ordering.interfaces.dto.order.OrderStatusUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -52,6 +53,31 @@ public class OrderController {
 
         return ResponseEntity.status(201).body(response);
     }
+
+    @Operation(summary = "Actualizar el estado de una orden", description = "Actualiza el estado de una orden existente utilizando su ID")
+    @PutMapping("/{orderId}")
+    public ResponseEntity<OrderResponse> updateOrderStatus(@Valid @RequestBody OrderStatusUpdateRequest req, @PathVariable UUID orderId) {
+
+        var command = req.toCommand(orderId);
+
+        var saved = orderCommandService.handle(command);
+
+        var response = new OrderResponse(
+                saved.getId(),
+                saved.getTenantId(),
+                saved.getUserId(),
+                saved.getOrderNumber(),
+                saved.getStatus().name(),
+                saved.getCurrencyCode(),
+                saved.getSubtotal(),
+                saved.getDiscountTotal(),
+                saved.getTotal(),
+                saved.getNotes()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
 
     @Operation(summary = "Obtener una orden por ID", description = "Obtiene los detalles de una orden específica utilizando su ID y el ID del tenant")
     @GetMapping("/{orderId}/tenant/{tenantId}")

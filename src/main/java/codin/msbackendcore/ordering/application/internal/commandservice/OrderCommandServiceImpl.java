@@ -4,6 +4,7 @@ import codin.msbackendcore.ordering.application.internal.outboundservices.Extern
 import codin.msbackendcore.ordering.application.internal.outboundservices.ExternalCoreService;
 import codin.msbackendcore.ordering.application.internal.outboundservices.ExternalIamService;
 import codin.msbackendcore.ordering.domain.model.commands.order.CreateOrderCommand;
+import codin.msbackendcore.ordering.domain.model.commands.order.UpdateOrderStatusCommand;
 import codin.msbackendcore.ordering.domain.model.entities.Order;
 import codin.msbackendcore.ordering.domain.model.valueobjects.OrderStatus;
 import codin.msbackendcore.ordering.domain.services.order.OrderCommandService;
@@ -19,6 +20,7 @@ import java.math.BigDecimal;
 import java.time.Year;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateOrderNumber;
+import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.isValidEnum;
 
 @Service
 public class OrderCommandServiceImpl implements OrderCommandService {
@@ -102,6 +104,22 @@ public class OrderCommandServiceImpl implements OrderCommandService {
         order.addStatusHistory(orderStatusHistoryDomainService.createOrderStatusHistory(order, OrderStatus.CREATED, command.userId()));
 
 
-        return orderDomainService.addItemsAndStatusHistoryToOrder(order);
+        return orderDomainService.persistOrder(order);
+    }
+
+    @Override
+    public Order handle(UpdateOrderStatusCommand command) {
+        if (!isValidEnum(OrderStatus.class, command.status()))
+            throw new BadRequestException("error.bad_request", new String[]{command.status()}, "status");
+
+        var order = orderDomainService.updateOrderStatus(
+                command.tenantId(),
+                command.orderId(),
+                OrderStatus.valueOf(command.status())
+        );
+
+        order.addStatusHistory(orderStatusHistoryDomainService.createOrderStatusHistory(order, OrderStatus.valueOf(command.status()), order.getUserId()));
+
+        return orderDomainService.persistOrder(order);
     }
 }
