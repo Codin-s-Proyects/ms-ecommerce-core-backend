@@ -34,3 +34,8 @@ logging:
     org.springframework: INFO
     org.hibernate: WARN
     codin.msbackendcore: INFO
+
+izipay:
+  api:
+    base-url: ${IZIPAY_URL}
+    key: ${IZIPAY_API_KEY:}

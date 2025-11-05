@@ -68,6 +68,10 @@ public class CommonUtils {
         return String.format("ORD-%d-%06d", currentYear, nextNumber);
     }
 
+    public static String generateTransactionId(UUID tenantId) {
+        return "TX-" + tenantId.toString().substring(0, 6) + "-" + System.currentTimeMillis();
+    }
+
     private static String normalize(String text) {
         return text.replaceAll("[^A-Za-z0-9]", "").toUpperCase();
     }
