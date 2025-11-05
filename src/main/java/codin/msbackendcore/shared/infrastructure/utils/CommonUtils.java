@@ -1,9 +1,9 @@
 package codin.msbackendcore.shared.infrastructure.utils;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.*;
 
 public class CommonUtils {
 
@@ -70,6 +70,12 @@ public class CommonUtils {
 
     public static String generateTransactionId(UUID tenantId) {
         return "TX-" + tenantId.toString().substring(0, 6) + "-" + System.currentTimeMillis();
+    }
+
+    public static String generateAmountFormat(BigDecimal amount) {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
+        symbols.setDecimalSeparator('.');
+        return new DecimalFormat("0.00", symbols).format(amount);
     }
 
     private static String normalize(String text) {

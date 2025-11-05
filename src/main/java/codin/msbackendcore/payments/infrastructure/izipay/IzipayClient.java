@@ -1,57 +1,69 @@
 package codin.msbackendcore.payments.infrastructure.izipay;
 
+import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+
+import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateAmountFormat;
 
 @Component
 public class IzipayClient {
 
     private final WebClient webClient;
-    private final String clientId;
-    private final String clientSecret;
-    private final String siteId;
-    private final String mode;
+    private final String apiKey;
+    private final String merchantCode;
 
     public IzipayClient(
             WebClient izipayWebClient,
-            @Value("${izipay.client-id}") String clientId,
-            @Value("${izipay.client-secret}") String clientSecret,
-            @Value("${izipay.site-id}") String siteId,
-            @Value("${izipay.mode:TEST}") String mode
+            @Value("${izipay.api-key}") String apiKey,
+            @Value("${izipay.merchant-code}") String merchantCode
     ) {
         this.webClient = izipayWebClient;
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-        this.siteId = siteId;
-        this.mode = mode;
+        this.apiKey = apiKey;
+        this.merchantCode = merchantCode;
     }
 
-    /**
-     * 🔐 Genera un token de seguridad (Security Token)
-     */
-    public String generateToken() {
+
+    public String generateToken(String transactionId, BigDecimal amount, String orderNumber) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("transactionId", transactionId);
+        headers.put("Content-Type", "application/json");
+
         Map<String, Object> payload = new HashMap<>();
-        payload.put("clientId", clientId);
-        payload.put("clientSecret", clientSecret);
+        payload.put("requestSource", "ECOMMERCE");
+        payload.put("orderNumber", orderNumber);
+        payload.put("publicKey", apiKey);
+        payload.put("merchantCode", merchantCode);
+        payload.put("amount", generateAmountFormat(amount));
+
+
 
         Map<String, Object> response = webClient.post()
-                .uri("/Token/Generate")
+                .uri("/security/v1/Token/Generate")
+                .headers(httpHeaders -> headers.forEach(httpHeaders::add))
                 .bodyValue(payload)
                 .retrieve()
                 .bodyToMono(Map.class)
                 .timeout(Duration.ofSeconds(10))
                 .block();
 
-        if (response == null || response.get("answer") == null) {
-            throw new RuntimeException("Izipay no devolvió un token válido");
-        }
+        if (response == null || !"00".equals(response.get("code")) || response.get("response") == null)
+            throw new ServerErrorException("error.server_error", new String[]{});
 
-        Map<String, Object> answer = (Map<String, Object>) response.get("answer");
+
+        Map<String, Object> answer = (Map<String, Object>) response.get("response");
+        if (answer.get("token") == null)
+            throw new ServerErrorException("error.server_error", new String[]{});
+
         return answer.get("token").toString();
     }
 
@@ -61,7 +73,7 @@ public class IzipayClient {
     public Map<String, Object> confirmTransaction(String transactionId) {
         Map<String, Object> payload = new HashMap<>();
         payload.put("uuidTransaction", transactionId);
-        payload.put("siteId", siteId);
+        payload.put("siteId", "fafadfa");
 
         return webClient.post()
                 .uri("/api-payment/V4/Transaction/Confirm")
@@ -78,7 +90,7 @@ public class IzipayClient {
     public Map<String, Object> getTransactionDetails(String transactionId) {
         Map<String, Object> payload = new HashMap<>();
         payload.put("uuidTransaction", transactionId);
-        payload.put("siteId", siteId);
+        payload.put("siteId", "siteId");
 
         return webClient.post()
                 .uri("/api-payment/V4/Transaction/Get")

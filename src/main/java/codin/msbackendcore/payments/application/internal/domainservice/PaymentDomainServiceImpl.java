@@ -7,6 +7,7 @@ import codin.msbackendcore.payments.infrastructure.persistence.jpa.PaymentReposi
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
     }
 
     @Override
-    public Payment createPayment(UUID tenantId, UUID orderId, Double amount) {
+    public Payment createPayment(UUID tenantId, UUID orderId, BigDecimal amount) {
 
         var payment = Payment.builder()
                 .tenantId(tenantId)

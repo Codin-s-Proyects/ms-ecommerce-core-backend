@@ -2,9 +2,11 @@ package codin.msbackendcore.payments.domain.model.entities;
 
 import codin.msbackendcore.payments.domain.model.valueobjects.PaymentMethod;
 import codin.msbackendcore.payments.domain.model.valueobjects.PaymentStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -39,7 +41,7 @@ public class Payment {
     private String transactionId;
 
     @Column(name = "amount", nullable = false)
-    private Double amount;
+    private BigDecimal amount;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
