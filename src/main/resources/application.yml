@@ -36,6 +36,9 @@ logging:
     codin.msbackendcore: INFO
 
 izipay:
-  api:
-    base-url: ${IZIPAY_URL}
-    key: ${IZIPAY_API_KEY:}
+  api-url: https://sandbox-checkout.izipay.pe/apidemo/v1
+  client-id: ${IZIPAY_CLIENT_ID}
+  client-secret: ${IZIPAY_CLIENT_SECRET}
+  api-key: ${IZIPAY_API_KEY}
+  site-id: ${IZIPAY_SITE_ID}
+  mode: TEST
