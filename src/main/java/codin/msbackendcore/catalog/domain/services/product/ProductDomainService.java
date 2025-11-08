@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface ProductDomainService {
-    Product createProduct(UUID tenantId, Category category, Brand brand, String name, String description, Map<String, Object> meta);
+    Product createProduct(UUID tenantId, Brand brand, String name, String description, Map<String, Object> meta);
     void updateHasVariant(UUID productId, boolean hasVariant);
     Product getProductById(UUID productId);
     List<Product> getProductsByCategory(UUID tenantId, Category category);

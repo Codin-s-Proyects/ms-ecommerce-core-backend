@@ -5,7 +5,6 @@ import java.util.UUID;
 
 public record CreateProductCommand(
     UUID tenantId,
-    UUID categoryId,
     UUID brandId,
     String name,
     String description,

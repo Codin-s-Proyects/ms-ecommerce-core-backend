@@ -10,7 +10,9 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -28,7 +30,13 @@ public class ProductCreatedEventHandler {
 
         for (ProductVariant variant : event.variants()) {
             var product = variant.getProduct();
-            var categoryName = product.getCategory() != null ? product.getCategory().getName() : "";
+            String categoryName = (product.getCategories() != null && !product.getCategories().isEmpty())
+                    ? product.getCategories().stream()
+                    .map(pc -> pc.getCategory().getName())
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining(" "))
+                    : "";
+
             var brandName = product.getBrand() != null ? product.getBrand().getName() : "";
 
             try {

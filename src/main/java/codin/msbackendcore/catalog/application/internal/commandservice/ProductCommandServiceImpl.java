@@ -15,13 +15,11 @@ import org.springframework.stereotype.Service;
 public class ProductCommandServiceImpl implements ProductCommandService {
 
     private final ProductDomainService productDomainService;
-    private final CategoryDomainService categoryDomainService;
     private final BrandDomainService brandDomainService;
     private final ExternalCoreService externalCoreService;
 
-    public ProductCommandServiceImpl(ProductDomainService productDomainService, CategoryDomainService categoryDomainService, BrandDomainService brandDomainService, ExternalCoreService externalCoreService) {
+    public ProductCommandServiceImpl(ProductDomainService productDomainService, BrandDomainService brandDomainService, ExternalCoreService externalCoreService) {
         this.productDomainService = productDomainService;
-        this.categoryDomainService = categoryDomainService;
         this.brandDomainService = brandDomainService;
         this.externalCoreService = externalCoreService;
     }
@@ -34,12 +32,10 @@ public class ProductCommandServiceImpl implements ProductCommandService {
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
-        var category = command.categoryId() != null ? categoryDomainService.getCategoryById(command.categoryId()) : null;
         var brand = command.brandId() != null ? brandDomainService.getBrandById(command.brandId()) : null;
 
         return productDomainService.createProduct(
                 command.tenantId(),
-                category,
                 brand,
                 command.name(),
                 command.description(),
