@@ -2,6 +2,7 @@ package codin.msbackendcore.search.application.internal.queryservice;
 
 import codin.msbackendcore.search.application.internal.dto.SemanticSearchDto;
 import codin.msbackendcore.search.application.internal.outboundservices.acl.ExternalCatalogService;
+import codin.msbackendcore.search.application.internal.outboundservices.acl.ExternalCoreService;
 import codin.msbackendcore.search.application.internal.outboundservices.acl.ExternalPricingService;
 import codin.msbackendcore.search.domain.model.queries.SemanticSearchQuery;
 import codin.msbackendcore.search.domain.services.ProductEmbeddingDomainService;
@@ -17,11 +18,13 @@ public class ProductEmbeddingQueryServiceImpl implements ProductEmbeddingQuerySe
     private final ProductEmbeddingDomainService productEmbeddingDomainService;
     private final ExternalCatalogService externalCatalogService;
     private final ExternalPricingService externalPricingService;
+    private final ExternalCoreService externalCoreService;
 
-    public ProductEmbeddingQueryServiceImpl(ProductEmbeddingDomainService productEmbeddingDomainService, ExternalCatalogService externalCatalogService, ExternalPricingService externalPricingService) {
+    public ProductEmbeddingQueryServiceImpl(ProductEmbeddingDomainService productEmbeddingDomainService, ExternalCatalogService externalCatalogService, ExternalPricingService externalPricingService, ExternalCoreService externalCoreService) {
         this.productEmbeddingDomainService = productEmbeddingDomainService;
         this.externalCatalogService = externalCatalogService;
         this.externalPricingService = externalPricingService;
+        this.externalCoreService = externalCoreService;
     }
 
     @Override
@@ -37,11 +40,13 @@ public class ProductEmbeddingQueryServiceImpl implements ProductEmbeddingQuerySe
                         .map(pe -> {
                             var productVariantDto = externalCatalogService.getVariantById(pe.getProductVariantId());
                             var productDto = externalCatalogService.getProductById(productVariantDto.productId());
+                            var mediaAssetsDto = externalCoreService.getMediaAssetsByVariantId(pe.getTenantId(), pe.getProductVariantId());
                             var productPriceListDto = externalPricingService.getProductPriceByVariantId(pe.getTenantId(), pe.getProductVariantId());
 
                             return new SemanticSearchDto(
                                     productDto,
                                     productVariantDto,
+                                    mediaAssetsDto,
                                     productPriceListDto
                             );
                         })

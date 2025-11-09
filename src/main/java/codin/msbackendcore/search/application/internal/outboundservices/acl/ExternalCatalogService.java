@@ -38,8 +38,6 @@ public class ExternalCatalogService {
                 productVariantResponse.tenantId(),
                 productVariantResponse.sku(),
                 productVariantResponse.name(),
-                productVariantResponse.attributes(),
-                productVariantResponse.imageUrl()
-        );
+                productVariantResponse.attributes());
     }
 }

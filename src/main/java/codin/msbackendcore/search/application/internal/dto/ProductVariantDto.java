@@ -9,7 +9,5 @@ public record ProductVariantDto(
         UUID tenantId,
         String sku,
         String name,
-        Map<String, Object> attributes,
-        String imageUrl
-) {
+        Map<String, Object> attributes) {
 }

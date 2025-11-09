@@ -8,4 +8,5 @@ public class Constants {
     public static final String DEFAULT_CURRENCY_CODE = "PEN";
     public static final String RETAIL_PRICE_LIST_CODE = "minorista";
     public static final String WHOLESALE_PRICE_LIST_CODE = "mayorista";
+    public static final String VARIANT_SCHEMA = "product_variant";
 }

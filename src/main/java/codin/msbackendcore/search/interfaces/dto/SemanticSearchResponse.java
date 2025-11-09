@@ -12,6 +12,7 @@ import java.util.UUID;
 public record SemanticSearchResponse(
         SemanticSearchProduct product,
         SemanticSearchProductVariant variant,
+        List<SemanticSearchMediaAsset> mediaAssets,
         List<SemanticSearchProductPrice> prices) {
 
     public static SemanticSearchResponse fromDto(SemanticSearchDto dto) {
@@ -29,9 +30,26 @@ public record SemanticSearchResponse(
                 dto.productVariant().tenantId(),
                 dto.productVariant().sku(),
                 dto.productVariant().name(),
-                dto.productVariant().attributes(),
-                dto.productVariant().imageUrl()
+                dto.productVariant().attributes()
         );
+
+        var mediaAssets = dto.mediaAssets().stream()
+                .map(mediaAssetDto -> new SemanticSearchMediaAsset(
+                        mediaAssetDto.id(),
+                        mediaAssetDto.entityType(),
+                        mediaAssetDto.entityId(),
+                        mediaAssetDto.url(),
+                        mediaAssetDto.publicId(),
+                        mediaAssetDto.format(),
+                        mediaAssetDto.width(),
+                        mediaAssetDto.height(),
+                        mediaAssetDto.bytes(),
+                        mediaAssetDto.isMain(),
+                        mediaAssetDto.sortOrder(),
+                        mediaAssetDto.altText(),
+                        mediaAssetDto.context()
+                ))
+                .toList();
 
         var prices = dto.productPrices().stream()
                 .map(priceDto -> new SemanticSearchProductPrice(
@@ -48,7 +66,7 @@ public record SemanticSearchResponse(
                 ))
                 .toList();
 
-        return new SemanticSearchResponse(product, variant, prices);
+        return new SemanticSearchResponse(product, variant, mediaAssets, prices);
     }
 
     private static SemanticSearchPriceList fromDto(PriceListDto dto) {
@@ -80,8 +98,24 @@ public record SemanticSearchResponse(
             UUID tenantId,
             String sku,
             String name,
-            Map<String, Object> attributes,
-            String imageUrl
+            Map<String, Object> attributes
+    ) {
+    }
+
+    private record SemanticSearchMediaAsset(
+            UUID id,
+            String entityType,
+            UUID entityId,
+            String url,
+            String publicId,
+            String format,
+            Integer width,
+            Integer height,
+            Long bytes,
+            Boolean isMain,
+            Integer sortOrder,
+            String altText,
+            Map<String, Object> context
     ) {
     }
 

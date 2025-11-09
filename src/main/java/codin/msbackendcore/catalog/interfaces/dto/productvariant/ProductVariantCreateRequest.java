@@ -9,16 +9,14 @@ public record ProductVariantCreateRequest(
         UUID tenantId,
         UUID productId,
         String name,
-        Map<String, Object> attributes,
-        String imageUrl
+        Map<String, Object> attributes
 ) {
     public CreateProductVariantCommand toCommand() {
         return new CreateProductVariantCommand(
                 tenantId,
                 productId,
                 name,
-                attributes,
-                imageUrl
+                attributes
         );
     }
 }
