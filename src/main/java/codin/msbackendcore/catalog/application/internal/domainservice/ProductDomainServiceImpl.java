@@ -27,14 +27,13 @@ public class ProductDomainServiceImpl implements ProductDomainService {
 
     @Transactional
     @Override
-    public Product createProduct(UUID tenantId, Category category, Brand brand, String name, String description, Map<String, Object> meta) {
+    public Product createProduct(UUID tenantId, Brand brand, String name, String description, Map<String, Object> meta) {
 
         if (Boolean.TRUE.equals(productRepository.existsByNameAndTenantId(name, tenantId)))
             throw new BadRequestException("error.already_exist", new String[]{name}, "name");
 
         var product = Product.builder()
                 .tenantId(tenantId)
-                .category(category)
                 .brand(brand)
                 .name(name)
                 .slug(generateSlug(name))
@@ -67,7 +66,7 @@ public class ProductDomainServiceImpl implements ProductDomainService {
 
     @Override
     public List<Product> getProductsByCategory(UUID tenantId, Category category) {
-        return productRepository.findByCategoryAndTenantId(category, tenantId);
+        return productRepository.findByCategoryAndTenantId(category.getId(), tenantId);
     }
 
     @Override

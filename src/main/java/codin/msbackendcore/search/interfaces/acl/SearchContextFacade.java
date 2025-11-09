@@ -15,8 +15,8 @@ public class SearchContextFacade {
         this.productEmbeddingDomainService = productEmbeddingDomainService;
     }
 
-    public CompletableFuture<Void> createEmbeddingForVariant(UUID tenantId, UUID variantId, String productName, String productDescription,
+    public CompletableFuture<Void> createEmbeddingForVariant(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
                                                              String variantName, Map<String, Object> variantAttributes) {
-        return productEmbeddingDomainService.generateAndSaveEmbedding(tenantId, variantId, productName, productDescription, variantName, variantAttributes);
+        return productEmbeddingDomainService.generateAndSaveEmbedding(tenantId, variantId, productName, categoryName, brandName, productDescription, variantName, variantAttributes);
     }
 }

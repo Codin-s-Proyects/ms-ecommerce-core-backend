@@ -1,10 +1,10 @@
 package codin.msbackendcore.core.interfaces.rest.controller;
 
 import codin.msbackendcore.core.domain.model.queries.tenantsettings.GetTenantSettingsByTenantIdQuery;
-import codin.msbackendcore.core.domain.services.TenantSettingsCommandService;
-import codin.msbackendcore.core.domain.services.TenantSettingsQueryService;
-import codin.msbackendcore.core.interfaces.dto.TenantSettingsResponse;
-import codin.msbackendcore.core.interfaces.dto.UpdatePromptRequest;
+import codin.msbackendcore.core.domain.services.tenantsettings.TenantSettingsCommandService;
+import codin.msbackendcore.core.domain.services.tenantsettings.TenantSettingsQueryService;
+import codin.msbackendcore.core.interfaces.dto.tenantsettings.TenantSettingsResponse;
+import codin.msbackendcore.core.interfaces.dto.tenantsettings.UpdatePromptRequest;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

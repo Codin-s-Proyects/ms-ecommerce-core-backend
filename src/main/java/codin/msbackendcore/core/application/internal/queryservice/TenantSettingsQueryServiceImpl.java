@@ -2,8 +2,8 @@ package codin.msbackendcore.core.application.internal.queryservice;
 
 import codin.msbackendcore.core.domain.model.entities.TenantSettings;
 import codin.msbackendcore.core.domain.model.queries.tenantsettings.GetTenantSettingsByTenantIdQuery;
-import codin.msbackendcore.core.domain.services.TenantSettingsDomainService;
-import codin.msbackendcore.core.domain.services.TenantSettingsQueryService;
+import codin.msbackendcore.core.domain.services.tenantsettings.TenantSettingsDomainService;
+import codin.msbackendcore.core.domain.services.tenantsettings.TenantSettingsQueryService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

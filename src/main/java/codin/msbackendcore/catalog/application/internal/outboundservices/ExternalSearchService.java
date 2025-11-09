@@ -15,8 +15,8 @@ public class ExternalSearchService {
         this.searchContextFacade = searchContextFacade;
     }
 
-    public CompletableFuture<Void> registerProductEmbedding(UUID tenantId, UUID variantId, String productName, String productDescription,
+    public CompletableFuture<Void> registerProductEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
                                                             String variantName, Map<String, Object> variantAttributes) {
-        return searchContextFacade.createEmbeddingForVariant(tenantId, variantId, productName, productDescription, variantName, variantAttributes);
+        return searchContextFacade.createEmbeddingForVariant(tenantId, variantId, productName, categoryName, brandName, productDescription, variantName, variantAttributes);
     }
 }

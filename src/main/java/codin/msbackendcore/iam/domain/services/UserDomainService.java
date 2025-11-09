@@ -10,4 +10,5 @@ public interface UserDomainService {
     User registerNewUser(SignUpCommand command, UUID systemUserId);
     boolean isPasswordValid(Credential credential, String rawPassword);
     void updateUserLastLogin(User user);
+    User getUserByIdAndTenantId(UUID userId, UUID tenantId);
 }

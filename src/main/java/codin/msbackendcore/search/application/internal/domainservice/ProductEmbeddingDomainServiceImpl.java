@@ -28,9 +28,9 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
     }
 
     @Override
-    public CompletableFuture<Void> generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String productDescription,
+    public CompletableFuture<Void> generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
                                                             String variantName, Map<String, Object> variantAttributes) {
-        String text = buildText(productName, productDescription, variantName, variantAttributes);
+        String text = buildText(productName, categoryName, brandName, productDescription, variantName, variantAttributes);
         return openAI.embedAsync(text)
                 .thenAccept(vector -> {
                     Map<String, Object> metadata = Map.of("name", variantName.replace("\"", "'"));
@@ -44,10 +44,18 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
                 .thenApply(queryEmbedding -> productEmbeddingRepository.findNearestEmbeddings(tenantId, queryEmbedding, limit));
     }
 
-    private String buildText(String productName, String productDescription,
+    private String buildText(String productName, String categoryName, String brandName, String productDescription,
                              String variantName, Map<String, Object> variantAttributes) {
 
         StringBuilder textBuilder = new StringBuilder();
+
+        if (categoryName != null) {
+            textBuilder.append(categoryName).append(" ");
+        }
+
+        if (brandName != null) {
+            textBuilder.append(brandName).append(" ");
+        }
 
         if (productName != null) {
             textBuilder.append(productName).append(" ");

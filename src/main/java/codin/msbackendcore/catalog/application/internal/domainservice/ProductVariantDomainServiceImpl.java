@@ -42,10 +42,16 @@ public class ProductVariantDomainServiceImpl implements ProductVariantDomainServ
             throw new BadRequestException("error.bad_request", new String[]{attributes.toString()}, "attributes");
         }
 
+        String categoryName = product.getCategories() != null && !product.getCategories().isEmpty()
+                ? product.getCategories().getFirst().getCategory().getName()
+                : "";
+
+        String brandName = product.getBrand() != null ? product.getBrand().getName() : null;
+
         var productVariant = ProductVariant.builder()
                 .tenantId(tenantId)
                 .product(product)
-                .sku(generateSku(name, attributes, tenantId))
+                .sku(generateSku(name, categoryName, brandName, attributes, tenantId))
                 .name(name)
                 .attributes(attributes)
                 .imageUrl(imageUrl)

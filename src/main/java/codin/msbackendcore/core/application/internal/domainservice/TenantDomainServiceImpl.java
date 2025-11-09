@@ -1,7 +1,7 @@
 package codin.msbackendcore.core.application.internal.domainservice;
 
 import codin.msbackendcore.core.domain.model.entities.Tenant;
-import codin.msbackendcore.core.domain.services.TenantDomainService;
+import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
 import codin.msbackendcore.core.infrastructure.persistence.jpa.TenantRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;

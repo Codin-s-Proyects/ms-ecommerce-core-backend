@@ -34,3 +34,8 @@ logging:
     org.springframework: INFO
     org.hibernate: WARN
     codin.msbackendcore: INFO
+
+izipay:
+  api-url: https://sandbox-api-pw.izipay.pe
+  api-key: ${IZIPAY_API_KEY}
+  merchant-code: ${IZIPAY_MERCHANT_CODE}

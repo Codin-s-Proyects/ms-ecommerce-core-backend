@@ -1,8 +1,8 @@
 package codin.msbackendcore.core.interfaces.rest.controller;
 
-import codin.msbackendcore.core.domain.services.TenantCommandService;
-import codin.msbackendcore.core.interfaces.dto.CreateTenantRequest;
-import codin.msbackendcore.core.interfaces.dto.TenantResponse;
+import codin.msbackendcore.core.domain.services.tenant.TenantCommandService;
+import codin.msbackendcore.core.interfaces.dto.tenantsettings.CreateTenantRequest;
+import codin.msbackendcore.core.interfaces.dto.tenant.TenantResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

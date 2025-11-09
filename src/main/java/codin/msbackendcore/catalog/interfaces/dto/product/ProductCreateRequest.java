@@ -9,7 +9,6 @@ import java.util.UUID;
 
 public record ProductCreateRequest(
         @NotNull UUID tenantId,
-        UUID categoryId,
         UUID brandId,
         @NotBlank String name,
         String description,
@@ -18,7 +17,6 @@ public record ProductCreateRequest(
     public CreateProductCommand toCommand() {
         return new CreateProductCommand(
                 tenantId,
-                categoryId,
                 brandId,
                 name,
                 description,
