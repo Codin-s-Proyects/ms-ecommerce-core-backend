@@ -1,4 +1,4 @@
-package codin.msbackendcore.core.interfaces.dto;
+package codin.msbackendcore.core.interfaces.dto.tenant;
 
 import java.util.UUID;
 

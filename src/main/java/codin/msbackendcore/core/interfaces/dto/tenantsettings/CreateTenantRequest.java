@@ -1,4 +1,4 @@
-package codin.msbackendcore.core.interfaces.dto;
+package codin.msbackendcore.core.interfaces.dto.tenantsettings;
 
 import codin.msbackendcore.core.domain.model.commands.tenant.CreateTenantCommand;
 import jakarta.validation.constraints.NotBlank;

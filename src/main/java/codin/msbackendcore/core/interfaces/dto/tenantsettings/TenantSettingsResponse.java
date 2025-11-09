@@ -1,4 +1,4 @@
-package codin.msbackendcore.core.interfaces.dto;
+package codin.msbackendcore.core.interfaces.dto.tenantsettings;
 
 import java.time.Instant;
 import java.util.UUID;

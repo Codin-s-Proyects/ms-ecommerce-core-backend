@@ -2,7 +2,7 @@ package codin.msbackendcore.core.application.internal.domainservice;
 
 import codin.msbackendcore.core.domain.model.commands.tenantsettings.UpdatePromptCommand;
 import codin.msbackendcore.core.domain.model.entities.TenantSettings;
-import codin.msbackendcore.core.domain.services.TenantSettingsDomainService;
+import codin.msbackendcore.core.domain.services.tenantsettings.TenantSettingsDomainService;
 import codin.msbackendcore.core.infrastructure.persistence.jpa.TenantSettingsRepository;
 import codin.msbackendcore.iam.interfaces.valueobjects.PromptType;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
