@@ -1,0 +1,44 @@
+package codin.msbackendcore.search.application.internal.outboundservices.acl;
+
+import codin.msbackendcore.core.interfaces.acl.CoreContextFacade;
+import codin.msbackendcore.search.application.internal.dto.MediaAssetDto;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+import static codin.msbackendcore.shared.infrastructure.utils.Constants.VARIANT_SCHEMA;
+
+@Service("ExternalCoreServiceForSearch")
+public class ExternalCoreService {
+    private final CoreContextFacade coreContextFacade;
+
+    public ExternalCoreService(CoreContextFacade coreContextFacade) {
+        this.coreContextFacade = coreContextFacade;
+    }
+
+    public List<MediaAssetDto> getMediaAssetsByVariantId(UUID tenantId, UUID variantId) {
+        var mediaAssetResponseList = coreContextFacade.getMediaAssetByEntityIdAndEntityType(tenantId, VARIANT_SCHEMA, variantId);
+
+        return mediaAssetResponseList.stream()
+                .map(mediaAssetResponse -> new MediaAssetDto(
+                        mediaAssetResponse.id(),
+                        mediaAssetResponse.entityType(),
+                        mediaAssetResponse.entityId(),
+                        mediaAssetResponse.url(),
+                        mediaAssetResponse.publicId(),
+                        mediaAssetResponse.format(),
+                        mediaAssetResponse.width(),
+                        mediaAssetResponse.height(),
+                        mediaAssetResponse.bytes(),
+                        mediaAssetResponse.isMain(),
+                        mediaAssetResponse.sortOrder(),
+                        mediaAssetResponse.altText(),
+                        mediaAssetResponse.context()
+                )).toList();
+    }
+
+    public boolean existTenantById(UUID tenantId) {
+        return coreContextFacade.getTenantById(tenantId) != null;
+    }
+}

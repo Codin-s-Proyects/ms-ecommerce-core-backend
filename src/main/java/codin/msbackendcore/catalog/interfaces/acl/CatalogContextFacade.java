@@ -41,8 +41,7 @@ public class CatalogContextFacade {
                 product.getTenantId(),
                 product.getSku(),
                 product.getName(),
-                product.getAttributes(),
-                product.getImageUrl()
+                product.getAttributes()
         );
     }
 }

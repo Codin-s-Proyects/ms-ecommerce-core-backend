@@ -25,7 +25,7 @@ public class ProductVariantDomainServiceImpl implements ProductVariantDomainServ
 
     @Transactional
     @Override
-    public ProductVariant createProductVariant(UUID tenantId, Product product, String name, Map<String, Object> attributes, String imageUrl) {
+    public ProductVariant createProductVariant(UUID tenantId, Product product, String name, Map<String, Object> attributes) {
 
         // TODO: Validar que los attributos y su valor ("color": "rojo"), sean validos
 
@@ -54,7 +54,6 @@ public class ProductVariantDomainServiceImpl implements ProductVariantDomainServ
                 .sku(generateSku(name, categoryName, brandName, attributes, tenantId))
                 .name(name)
                 .attributes(attributes)
-                .imageUrl(imageUrl)
                 .build();
 
         return productVariantRepository.save(productVariant);
