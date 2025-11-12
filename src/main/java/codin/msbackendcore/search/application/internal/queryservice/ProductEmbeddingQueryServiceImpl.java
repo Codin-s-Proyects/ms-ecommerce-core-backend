@@ -35,21 +35,27 @@ public class ProductEmbeddingQueryServiceImpl implements ProductEmbeddingQuerySe
                 query.limit()
         );
 
-        return productEmbeddingList
-                .thenApply(pel -> pel.stream()
-                        .map(pe -> {
-                            var productVariantDto = externalCatalogService.getVariantById(pe.getProductVariantId());
-                            var productDto = externalCatalogService.getProductById(productVariantDto.productId());
-                            var mediaAssetsDto = externalCoreService.getMediaAssetsByVariantId(pe.getTenantId(), pe.getProductVariantId());
-                            var productPriceListDto = externalPricingService.getProductPriceByVariantId(pe.getTenantId(), pe.getProductVariantId());
+        return productEmbeddingList.thenCompose(pel -> {
+            List<CompletableFuture<SemanticSearchDto>> futures = pel.stream()
+                    .map(pe -> CompletableFuture.supplyAsync(() -> {
+                        var productVariantDto = externalCatalogService.getVariantById(pe.getProductVariantId());
+                        var productDto = externalCatalogService.getProductById(productVariantDto.productId());
+                        var mediaAssetsDto = externalCoreService.getMediaAssetsByVariantId(pe.getTenantId(), pe.getProductVariantId());
+                        var productPriceListDto = externalPricingService.getProductPriceByVariantId(pe.getTenantId(), pe.getProductVariantId());
 
-                            return new SemanticSearchDto(
-                                    productDto,
-                                    productVariantDto,
-                                    mediaAssetsDto,
-                                    productPriceListDto
-                            );
-                        })
-                        .toList());
+                        return new SemanticSearchDto(
+                                productDto,
+                                productVariantDto,
+                                mediaAssetsDto,
+                                productPriceListDto
+                        );
+                    }))
+                    .toList();
+
+            return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                    .thenApply(v -> futures.stream()
+                            .map(CompletableFuture::join)
+                            .toList());
+        });
     }
 }
