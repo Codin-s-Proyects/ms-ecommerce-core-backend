@@ -3,6 +3,8 @@ package codin.msbackendcore.payments.interfaces.rest.controller;
 import codin.msbackendcore.payments.domain.services.PaymentCommandService;
 import codin.msbackendcore.payments.interfaces.dto.IzipayTokenRequest;
 import codin.msbackendcore.payments.interfaces.dto.IzipayTokenResponse;
+import codin.msbackendcore.payments.interfaces.dto.PaymentCreateRequest;
+import codin.msbackendcore.payments.interfaces.dto.PaymentResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,6 +34,26 @@ public class PaymentController {
         var getToken = paymentCommandService.handle(command);
 
         return ResponseEntity.ok(getToken);
+    }
+
+    @Operation(summary = "Registrar un pago", description = "Registra un nuevo pago en el sistema basado en los detalles del pedido proporcionados.")
+    @PostMapping
+    public ResponseEntity<PaymentResponse> createPayment(@Valid @RequestBody PaymentCreateRequest req) {
+
+        var command = req.toCommand();
+
+        var saved = paymentCommandService.handle(command);
+
+        var response = new PaymentResponse(
+                saved.getId(),
+                saved.getTenantId(),
+                saved.getOrderId(),
+                saved.getPaymentMethod().name(),
+                saved.getStatus().name(),
+                saved.getAmount()
+        );
+
+        return ResponseEntity.status(201).body(response);
     }
 }
 

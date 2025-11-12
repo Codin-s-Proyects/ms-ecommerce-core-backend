@@ -1,11 +1,13 @@
 package codin.msbackendcore.catalog.interfaces.rest.controller;
 
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductByBrandAndTenantIdQuery;
-import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductByCategoryAndTenantIdQuery;
+import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductPaginatedByCategoryAndTenantIdQuery;
 import codin.msbackendcore.catalog.domain.services.product.ProductCommandService;
 import codin.msbackendcore.catalog.domain.services.product.ProductQueryService;
 import codin.msbackendcore.catalog.interfaces.dto.product.ProductCreateRequest;
 import codin.msbackendcore.catalog.interfaces.dto.product.ProductResponse;
+import codin.msbackendcore.shared.infrastructure.pagination.model.CursorPage;
+import codin.msbackendcore.shared.infrastructure.pagination.model.CursorPaginationQuery;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -50,13 +52,20 @@ public class ProductController {
 
     @Operation(summary = "Obtener todos los productos por categoría y tenantId")
     @GetMapping("/category/{categoryId}/tenant-id/{tenantId}")
-    public ResponseEntity<List<ProductResponse>> getAllProductByCategory(@PathVariable UUID categoryId, @PathVariable UUID tenantId) {
+    public ResponseEntity<CursorPage<ProductResponse>> getAllProductByCategory(
+            @PathVariable UUID categoryId,
+            @PathVariable UUID tenantId,
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = "50") int limit,
+            @RequestParam(required = false) String sort
+    ) {
 
-        var query = new GetAllProductByCategoryAndTenantIdQuery(categoryId, tenantId);
+        var paginationQuery = new CursorPaginationQuery(cursor, limit, sort);
+        var query = new GetAllProductPaginatedByCategoryAndTenantIdQuery(categoryId, tenantId, paginationQuery);
 
-        var getList = productQueryService.handle(query);
+        var getPaginatedList = productQueryService.handle(query);
 
-        var responseList = getList.stream().map(product ->
+        var productResponseList = getPaginatedList.data().stream().map(product ->
                 new ProductResponse(
                         product.getId(),
                         product.getTenantId(),
@@ -66,7 +75,14 @@ public class ProductController {
                         product.isHasVariants()
                 )).toList();
 
-        return ResponseEntity.status(200).body(responseList);
+        var paginatedResponse = new CursorPage<>(
+                productResponseList,
+                getPaginatedList.nextCursor(),
+                getPaginatedList.hasMore(),
+                getPaginatedList.totalApprox()
+        );
+
+        return ResponseEntity.status(200).body(paginatedResponse);
     }
 
     @Operation(summary = "Obtener todos los productos por marca y tenantId")

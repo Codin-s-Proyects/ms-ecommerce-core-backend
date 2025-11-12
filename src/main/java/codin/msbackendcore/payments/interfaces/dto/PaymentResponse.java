@@ -9,7 +9,6 @@ public record PaymentResponse(
         UUID orderId,
         String paymentMethod,
         String status,
-        BigDecimal amount,
-        String token
+        BigDecimal amount
 ) {
 }

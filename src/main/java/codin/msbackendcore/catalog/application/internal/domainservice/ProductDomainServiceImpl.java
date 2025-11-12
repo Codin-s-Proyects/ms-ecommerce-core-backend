@@ -4,9 +4,12 @@ import codin.msbackendcore.catalog.domain.model.entities.Brand;
 import codin.msbackendcore.catalog.domain.model.entities.Category;
 import codin.msbackendcore.catalog.domain.model.entities.Product;
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
+import codin.msbackendcore.catalog.infrastructure.persistence.jdbc.ProductPaginationRepository;
 import codin.msbackendcore.catalog.infrastructure.persistence.jpa.ProductRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
+import codin.msbackendcore.shared.infrastructure.pagination.model.CursorPage;
+import codin.msbackendcore.shared.infrastructure.pagination.model.CursorPaginationQuery;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +22,11 @@ import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.genera
 @Service
 public class ProductDomainServiceImpl implements ProductDomainService {
     private final ProductRepository productRepository;
+    private final ProductPaginationRepository productPaginationRepository;
 
-    public ProductDomainServiceImpl(ProductRepository productRepository) {
+    public ProductDomainServiceImpl(ProductRepository productRepository, ProductPaginationRepository productPaginationRepository) {
         this.productRepository = productRepository;
+        this.productPaginationRepository = productPaginationRepository;
     }
 
 
@@ -67,6 +72,11 @@ public class ProductDomainServiceImpl implements ProductDomainService {
     @Override
     public List<Product> getProductsByCategory(UUID tenantId, Category category) {
         return productRepository.findByCategoryAndTenantId(category.getId(), tenantId);
+    }
+
+    @Override
+    public CursorPage<Product> getProductsByCategory(UUID tenantId, UUID categoryId, CursorPaginationQuery query) {
+        return productPaginationRepository.findByTenantAndCategory(tenantId, categoryId, query);
     }
 
     @Override

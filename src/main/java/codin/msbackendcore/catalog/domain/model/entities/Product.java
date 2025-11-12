@@ -1,5 +1,9 @@
 package codin.msbackendcore.catalog.domain.model.entities;
 
+import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,6 +11,8 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.util.*;
 
@@ -60,6 +66,32 @@ public class Product {
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ProductCategory> categories = new ArrayList<>();
+
+    public Product(ResultSet rs) {
+        try {
+            this.id = UUID.fromString(rs.getString("id"));
+            this.tenantId = UUID.fromString(rs.getString("tenant_id"));
+            this.name = rs.getString("name");
+            this.slug = rs.getString("slug");
+            this.description = rs.getString("description");
+            this.isActive = rs.getBoolean("is_active");
+            this.hasVariants = rs.getBoolean("has_variants");
+            String metaJson = rs.getString("meta");
+
+            if (metaJson != null) {
+                ObjectMapper mapper = new ObjectMapper();
+                this.meta = mapper.readValue(metaJson, new TypeReference<>() {
+                });
+            } else {
+                this.meta = new HashMap<>();
+            }
+
+            this.createdAt = rs.getTimestamp("created_at").toInstant();
+            this.updatedAt = rs.getTimestamp("updated_at").toInstant();
+        } catch (SQLException | JsonProcessingException e) {
+            throw new ServerErrorException("error.server_error", new String[]{e.getMessage()});
+        }
+    }
 
     @PrePersist
     void prePersist() {
