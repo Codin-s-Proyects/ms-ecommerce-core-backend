@@ -3,10 +3,12 @@ package codin.msbackendcore.catalog.application.internal.queryservice;
 import codin.msbackendcore.catalog.domain.model.entities.Product;
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductByBrandAndTenantIdQuery;
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductByCategoryAndTenantIdQuery;
+import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductPaginatedByCategoryAndTenantIdQuery;
 import codin.msbackendcore.catalog.domain.services.brand.BrandDomainService;
 import codin.msbackendcore.catalog.domain.services.category.CategoryDomainService;
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.catalog.domain.services.product.ProductQueryService;
+import codin.msbackendcore.shared.infrastructure.pagination.model.CursorPage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,13 @@ public class ProductQueryServiceImpl implements ProductQueryService {
         var category = categoryDomainService.getCategoryById(query.categoryId());
 
         return productDomainService.getProductsByCategory(query.tenantId(), category);
+    }
+
+    @Override
+    public CursorPage<Product> handle(GetAllProductPaginatedByCategoryAndTenantIdQuery query) {
+        var category = categoryDomainService.getCategoryById(query.categoryId());
+
+        return productDomainService.getProductsByCategory(query.tenantId(), category.getId(), query.paginationQuery());
     }
 
     @Override
