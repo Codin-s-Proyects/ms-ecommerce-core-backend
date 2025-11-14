@@ -16,5 +16,6 @@ public interface ProductDomainService {
     Product getProductById(UUID productId);
     List<Product> getProductsByCategory(UUID tenantId, Category category);
     CursorPage<Product> getProductsByCategory(UUID tenantId, UUID categoryId, CursorPaginationQuery query);
+    CursorPage<Product> getProductsByTenantId(UUID tenantId, CursorPaginationQuery query);
     List<Product> getProductsByBrand(UUID tenantId, Brand brand);
 }

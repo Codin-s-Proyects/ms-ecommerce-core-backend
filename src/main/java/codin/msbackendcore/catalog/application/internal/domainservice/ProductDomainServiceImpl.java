@@ -80,6 +80,11 @@ public class ProductDomainServiceImpl implements ProductDomainService {
     }
 
     @Override
+    public CursorPage<Product> getProductsByTenantId(UUID tenantId, CursorPaginationQuery query) {
+        return productPaginationRepository.findByTenant(tenantId, query);
+    }
+
+    @Override
     public List<Product> getProductsByBrand(UUID tenantId, Brand brand) {
         return productRepository.findByBrandAndTenantId(brand, tenantId);
     }
