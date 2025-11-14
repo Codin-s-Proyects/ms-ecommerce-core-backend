@@ -9,6 +9,7 @@ public record ProductVariantResponse(
         UUID tenantId,
         String sku,
         String name,
-        Map<String, Object> attributes
+        Map<String, Object> attributes,
+        Integer productQuantity
 ) {
 }

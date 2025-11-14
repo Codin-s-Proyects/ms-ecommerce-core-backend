@@ -37,7 +37,8 @@ public class ProductVariantController {
                 saved.getTenantId(),
                 saved.getSku(),
                 saved.getName(),
-                saved.getAttributes()
+                saved.getAttributes(),
+                saved.getProductQuantity()
         );
 
         return ResponseEntity.status(201).body(response);
