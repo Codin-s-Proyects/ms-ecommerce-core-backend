@@ -9,4 +9,5 @@ public interface CategoryDomainService {
     Category createCategory(UUID tenantId, UUID parentId, String name, String description);
     List<Category> getAllCategoryByTenantId(UUID tenantId);
     Category getCategoryById(UUID categoryId);
+    void deleteCategory(UUID categoryId, UUID tenantId);
 }

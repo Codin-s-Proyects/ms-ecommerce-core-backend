@@ -1,5 +1,6 @@
 package codin.msbackendcore.catalog.interfaces.rest.controller;
 
+import codin.msbackendcore.catalog.domain.model.commands.category.DeleteCategoryCommand;
 import codin.msbackendcore.catalog.domain.model.queries.category.GetAllCategoryByTenantIdQuery;
 import codin.msbackendcore.catalog.domain.services.category.CategoryCommandService;
 import codin.msbackendcore.catalog.domain.services.category.CategoryQueryService;
@@ -48,7 +49,7 @@ public class CategoryController {
     }
 
     @Operation(summary = "Obtener todas las categorias por tenantId")
-    @GetMapping("/tenant-id/{tenantId}")
+    @GetMapping("/tenant/{tenantId}")
     public ResponseEntity<List<CategoryResponse>> getAllCategoryByTenantId(@PathVariable UUID tenantId) {
 
         var query = new GetAllCategoryByTenantIdQuery(tenantId);
@@ -66,6 +67,17 @@ public class CategoryController {
                 )).toList();
 
         return ResponseEntity.status(200).body(responseList);
+    }
+
+    @Operation(summary = "Eliminar una categoria por su Id")
+    @DeleteMapping("/{categoryId}/tenant/{tenantId}")
+    public ResponseEntity<?> deleteCategory(@PathVariable UUID categoryId, @PathVariable UUID tenantId) {
+
+        var command = new DeleteCategoryCommand(tenantId, categoryId);
+
+        categoryCommandService.handle(command);
+
+        return ResponseEntity.status(204).build();
     }
 }
 

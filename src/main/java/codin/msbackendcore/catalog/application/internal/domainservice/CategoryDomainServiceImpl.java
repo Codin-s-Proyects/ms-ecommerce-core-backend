@@ -52,4 +52,14 @@ public class CategoryDomainServiceImpl implements CategoryDomainService {
                 );
 
     }
+
+    @Override
+    public void deleteCategory(UUID categoryId, UUID tenantId) {
+        var category = categoryRepository.findAllByTenantIdAndId(tenantId, categoryId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{categoryId.toString()}, "categoryId")
+                );
+
+        categoryRepository.delete(category);
+    }
 }
