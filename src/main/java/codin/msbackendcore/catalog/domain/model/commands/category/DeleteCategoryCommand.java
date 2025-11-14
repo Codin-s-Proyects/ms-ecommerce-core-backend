@@ -2,8 +2,8 @@ package codin.msbackendcore.catalog.domain.model.commands.category;
 
 import java.util.UUID;
 
-public record CreateCategoryCommand(
+public record DeleteCategoryCommand(
         UUID tenantId,
-        UUID parentId,
-        String name) {
+        UUID categoryId
+) {
 }

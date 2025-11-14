@@ -30,7 +30,8 @@ public record SemanticSearchResponse(
                 dto.productVariant().tenantId(),
                 dto.productVariant().sku(),
                 dto.productVariant().name(),
-                dto.productVariant().attributes()
+                dto.productVariant().attributes(),
+                dto.productVariant().productQuantity()
         );
 
         var mediaAssets = dto.mediaAssets().stream()
@@ -98,7 +99,8 @@ public record SemanticSearchResponse(
             UUID tenantId,
             String sku,
             String name,
-            Map<String, Object> attributes
+            Map<String, Object> attributes,
+            Integer productQuantity
     ) {
     }
 

@@ -4,6 +4,7 @@ import codin.msbackendcore.catalog.domain.model.entities.Product;
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductByBrandAndTenantIdQuery;
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductByCategoryAndTenantIdQuery;
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductPaginatedByCategoryAndTenantIdQuery;
+import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductPaginatedByTenantIdQuery;
 import codin.msbackendcore.catalog.domain.services.brand.BrandDomainService;
 import codin.msbackendcore.catalog.domain.services.category.CategoryDomainService;
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
@@ -23,6 +24,11 @@ public class ProductQueryServiceImpl implements ProductQueryService {
         this.productDomainService = productDomainService;
         this.categoryDomainService = categoryDomainService;
         this.brandDomainService = brandDomainService;
+    }
+
+    @Override
+    public CursorPage<Product> handle(GetAllProductPaginatedByTenantIdQuery query) {
+        return productDomainService.getProductsByTenantId(query.tenantId(), query.paginationQuery());
     }
 
     @Override

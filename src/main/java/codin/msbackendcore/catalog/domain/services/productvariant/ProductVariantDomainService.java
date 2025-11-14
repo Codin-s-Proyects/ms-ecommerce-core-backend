@@ -7,6 +7,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface ProductVariantDomainService {
-    ProductVariant createProductVariant(UUID tenantId, Product product, String name, Map<String, Object> attributes);
+    ProductVariant createProductVariant(UUID tenantId, Product product, String name, Map<String, Object> attributes, Integer productQuantity);
     ProductVariant getProductVariantById(UUID productVariantId);
 }

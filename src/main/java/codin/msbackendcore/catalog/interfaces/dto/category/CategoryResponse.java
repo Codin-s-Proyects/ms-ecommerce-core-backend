@@ -7,7 +7,6 @@ public record CategoryResponse(
         UUID tenantId,
         UUID parentId,
         String name,
-        String slug,
-        String description
+        String slug
 ) {
 }

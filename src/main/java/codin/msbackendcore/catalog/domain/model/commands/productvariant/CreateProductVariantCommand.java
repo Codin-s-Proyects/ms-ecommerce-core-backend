@@ -7,6 +7,7 @@ public record CreateProductVariantCommand(
         UUID tenantId,
         UUID productId,
         String name,
-        Map<String, Object> attributes
+        Map<String, Object> attributes,
+        int productQuantity
 ) {
 }

@@ -41,6 +41,9 @@ public class ProductVariant {
     @Column(name = "attributes", columnDefinition = "jsonb", nullable = false)
     private Map<String, Object> attributes = new HashMap<>();
 
+    @Column(name = "product_quantity", nullable = false)
+    private Integer productQuantity;
+
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
