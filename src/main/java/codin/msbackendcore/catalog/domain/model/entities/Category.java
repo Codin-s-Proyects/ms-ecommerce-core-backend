@@ -31,9 +31,6 @@ public class Category {
     @Column(columnDefinition = "citext", nullable = false)
     private String slug;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 

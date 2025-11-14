@@ -22,7 +22,7 @@ public class CategoryDomainServiceImpl implements CategoryDomainService {
     }
 
     @Override
-    public Category createCategory(UUID tenantId, UUID parentId, String name, String description) {
+    public Category createCategory(UUID tenantId, UUID parentId, String name) {
         var parentCategory = parentId != null ? getCategoryById(parentId) : null;
 
         if (categoryRepository.existsByTenantIdAndName(tenantId, name))
@@ -33,7 +33,6 @@ public class CategoryDomainServiceImpl implements CategoryDomainService {
                 .parent(parentCategory)
                 .name(name)
                 .slug(generateSlug(name))
-                .description(description)
                 .build();
 
         return categoryRepository.save(category);

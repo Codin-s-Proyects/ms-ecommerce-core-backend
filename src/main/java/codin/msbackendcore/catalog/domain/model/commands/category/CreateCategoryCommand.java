@@ -5,7 +5,5 @@ import java.util.UUID;
 public record CreateCategoryCommand(
         UUID tenantId,
         UUID parentId,
-        String name,
-        String description
-) {
+        String name) {
 }

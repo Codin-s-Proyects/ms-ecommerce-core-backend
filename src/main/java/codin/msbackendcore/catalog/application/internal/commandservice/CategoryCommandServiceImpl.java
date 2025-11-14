@@ -32,8 +32,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
         return categoryDomainService.createCategory(
                 command.tenantId(),
                 command.parentId(),
-                command.name(),
-                command.description()
+                command.name()
         );
     }
 

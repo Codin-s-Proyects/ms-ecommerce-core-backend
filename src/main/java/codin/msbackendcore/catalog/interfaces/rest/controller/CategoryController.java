@@ -41,8 +41,7 @@ public class CategoryController {
                 saved.getTenantId(),
                 saved.getParent() != null ? saved.getParent().getId() : null,
                 saved.getName(),
-                saved.getSlug(),
-                saved.getDescription()
+                saved.getSlug()
         );
 
         return ResponseEntity.status(201).body(response);
@@ -62,8 +61,7 @@ public class CategoryController {
                         category.getTenantId(),
                         category.getParent() != null ? category.getParent().getId() : null,
                         category.getName(),
-                        category.getSlug(),
-                        category.getDescription()
+                        category.getSlug()
                 )).toList();
 
         return ResponseEntity.status(200).body(responseList);
