@@ -1,17 +1,20 @@
 package codin.msbackendcore.core.interfaces.rest.controller;
 
+import codin.msbackendcore.core.domain.model.queries.tenant.GetAllTenantsQuery;
 import codin.msbackendcore.core.domain.services.tenant.TenantCommandService;
-import codin.msbackendcore.core.interfaces.dto.tenantsettings.CreateTenantRequest;
+import codin.msbackendcore.core.domain.services.tenant.TenantQueryService;
 import codin.msbackendcore.core.interfaces.dto.tenant.TenantResponse;
+import codin.msbackendcore.core.interfaces.dto.tenantsettings.CreateTenantRequest;
+import codin.msbackendcore.core.interfaces.dto.tenantsettings.TenantSettingsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/core/tenant")
@@ -19,11 +22,30 @@ import org.springframework.web.bind.annotation.RestController;
 public class TenantController {
 
     private final TenantCommandService commandService;
+    private final TenantQueryService queryService;
 
     public TenantController(
-            TenantCommandService commandService
+            TenantCommandService commandService, TenantQueryService queryService
     ) {
         this.commandService = commandService;
+        this.queryService = queryService;
+    }
+
+    @Operation(summary = "Obtencion de todos los tenants")
+    @ApiResponse(responseCode = "200", description = "Lista de tenants obtenida correctamente")
+    @GetMapping
+    public ResponseEntity<List<TenantResponse>> getAllTenants() {
+        var tenants = queryService.handle(new GetAllTenantsQuery());
+
+        var responseList = tenants.stream().map(
+                tenant -> new TenantResponse(
+                        tenant.getId(),
+                        tenant.getSlug(),
+                        tenant.getName(),
+                        tenant.getPlan().name()
+                )).toList();
+
+        return ResponseEntity.ok(responseList);
     }
 
     @Operation(summary = "Creacion de un tenant")

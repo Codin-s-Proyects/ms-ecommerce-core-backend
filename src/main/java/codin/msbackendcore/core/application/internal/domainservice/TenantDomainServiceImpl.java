@@ -8,6 +8,7 @@ import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateSlug;
@@ -32,6 +33,11 @@ public class TenantDomainServiceImpl implements TenantDomainService {
         savedTenant.setName(name);
 
         return tenantRepository.save(savedTenant);
+    }
+
+    @Override
+    public List<Tenant> getAllTenants() {
+        return tenantRepository.findAll();
     }
 
     @Override
