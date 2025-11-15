@@ -4,8 +4,8 @@ import codin.msbackendcore.core.domain.model.queries.tenant.GetAllTenantsQuery;
 import codin.msbackendcore.core.domain.services.tenant.TenantCommandService;
 import codin.msbackendcore.core.domain.services.tenant.TenantQueryService;
 import codin.msbackendcore.core.interfaces.dto.tenant.TenantResponse;
+import codin.msbackendcore.core.interfaces.dto.tenantaddress.TenantAddressResponse;
 import codin.msbackendcore.core.interfaces.dto.tenantsettings.CreateTenantRequest;
-import codin.msbackendcore.core.interfaces.dto.tenantsettings.TenantSettingsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/core/tenant")
@@ -38,12 +37,32 @@ public class TenantController {
         var tenants = queryService.handle(new GetAllTenantsQuery());
 
         var responseList = tenants.stream().map(
-                tenant -> new TenantResponse(
-                        tenant.getId(),
-                        tenant.getSlug(),
-                        tenant.getName(),
-                        tenant.getPlan().name()
-                )).toList();
+                tenant -> {
+
+                    var addressList = tenant.getAddresses().stream().map(
+                            address -> new TenantAddressResponse(
+                                    address.getId(),
+                                    address.getLine1(),
+                                    address.getCity(),
+                                    address.getCountry()
+                            )
+                    ).toList();
+
+                    return new TenantResponse(
+                            tenant.getId(),
+                            tenant.getSlug(),
+                            tenant.getName(),
+                            tenant.getPlan().name(),
+                            tenant.getStatus(),
+                            tenant.getCurrencyCode(),
+                            tenant.getLocale(),
+                            tenant.getLegal(),
+                            tenant.getContact(),
+                            tenant.getSupport(),
+                            tenant.getSocial(),
+                            addressList
+                    );
+                }).toList();
 
         return ResponseEntity.ok(responseList);
     }
@@ -58,12 +77,29 @@ public class TenantController {
 
         var tenantCreated = commandService.handle(command);
 
+        var addressList = tenantCreated.getAddresses().stream().map(
+                address -> new TenantAddressResponse(
+                        address.getId(),
+                        address.getLine1(),
+                        address.getCity(),
+                        address.getCountry()
+                )
+        ).toList();
+
         return ResponseEntity.status(201).body(
                 new TenantResponse(
                         tenantCreated.getId(),
                         tenantCreated.getSlug(),
                         tenantCreated.getName(),
-                        tenantCreated.getPlan().name()
+                        tenantCreated.getPlan().name(),
+                        tenantCreated.getStatus(),
+                        tenantCreated.getCurrencyCode(),
+                        tenantCreated.getLocale(),
+                        tenantCreated.getLegal(),
+                        tenantCreated.getContact(),
+                        tenantCreated.getSupport(),
+                        tenantCreated.getSocial(),
+                        addressList
                 )
         );
     }
