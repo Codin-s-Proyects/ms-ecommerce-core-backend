@@ -3,6 +3,7 @@ package codin.msbackendcore.core.interfaces.rest.controller;
 import codin.msbackendcore.core.domain.model.queries.tenant.GetAllTenantsQuery;
 import codin.msbackendcore.core.domain.services.tenant.TenantCommandService;
 import codin.msbackendcore.core.domain.services.tenant.TenantQueryService;
+import codin.msbackendcore.core.interfaces.dto.mediaasset.MediaAssetResponse;
 import codin.msbackendcore.core.interfaces.dto.tenant.TenantResponse;
 import codin.msbackendcore.core.interfaces.dto.tenantaddress.TenantAddressResponse;
 import codin.msbackendcore.core.interfaces.dto.tenantsettings.CreateTenantRequest;
@@ -37,7 +38,10 @@ public class TenantController {
         var tenants = queryService.handle(new GetAllTenantsQuery());
 
         var responseList = tenants.stream().map(
-                tenant -> {
+                item -> {
+
+                    var tenant = item.tenant();
+                    var mediaAssets = item.mediaAssets();
 
                     var addressList = tenant.getAddresses().stream().map(
                             address -> new TenantAddressResponse(
@@ -47,6 +51,24 @@ public class TenantController {
                                     address.getCountry()
                             )
                     ).toList();
+
+                    var mediaAssetList = mediaAssets.stream()
+                            .map(m -> new MediaAssetResponse(
+                                    m.getId(),
+                                    m.getTenantId(),
+                                    m.getEntityType(),
+                                    m.getEntityId(),
+                                    m.getUrl(),
+                                    m.getPublicId(),
+                                    m.getFormat(),
+                                    m.getWidth(),
+                                    m.getHeight(),
+                                    m.getBytes(),
+                                    m.getIsMain(),
+                                    m.getSortOrder(),
+                                    m.getAltText(),
+                                    m.getContext()
+                            )).toList();
 
                     return new TenantResponse(
                             tenant.getId(),
@@ -60,7 +82,8 @@ public class TenantController {
                             tenant.getContact(),
                             tenant.getSupport(),
                             tenant.getSocial(),
-                            addressList
+                            addressList,
+                            mediaAssetList
                     );
                 }).toList();
 
@@ -99,7 +122,8 @@ public class TenantController {
                         tenantCreated.getContact(),
                         tenantCreated.getSupport(),
                         tenantCreated.getSocial(),
-                        addressList
+                        addressList,
+                        null
                 )
         );
     }

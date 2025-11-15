@@ -4,6 +4,7 @@ import codin.msbackendcore.core.domain.model.valueobjects.ContactInfo;
 import codin.msbackendcore.core.domain.model.valueobjects.LegalInfo;
 import codin.msbackendcore.core.domain.model.valueobjects.SocialInfo;
 import codin.msbackendcore.core.domain.model.valueobjects.SupportInfo;
+import codin.msbackendcore.core.interfaces.dto.mediaasset.MediaAssetResponse;
 import codin.msbackendcore.core.interfaces.dto.tenantaddress.TenantAddressResponse;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public record TenantResponse(
         ContactInfo contact,
         SupportInfo support,
         SocialInfo social,
-        List<TenantAddressResponse> addresses
+        List<TenantAddressResponse> addresses,
+        List<MediaAssetResponse> mediaAssets
 ) {
 }
