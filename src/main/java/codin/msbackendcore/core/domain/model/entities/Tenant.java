@@ -1,11 +1,13 @@
 package codin.msbackendcore.core.domain.model.entities;
 
-import codin.msbackendcore.core.domain.model.valueobjects.TenantPlan;
+
+import codin.msbackendcore.core.domain.model.valueobjects.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -27,6 +29,30 @@ public class Tenant {
     @Enumerated(EnumType.STRING)
     @Column(name = "plan", columnDefinition = "TEXT", nullable = false)
     private TenantPlan plan = TenantPlan.BASIC;
+
+    @Embedded
+    private LegalInfo legal;
+
+    @Column(name = "status", columnDefinition = "TEXT")
+    private String status = "active";
+
+    @Embedded
+    private ContactInfo contact;
+
+    @Embedded
+    private SupportInfo support;
+
+    @Embedded
+    private SocialInfo social;
+
+    @Column(name = "currency_code", columnDefinition = "TEXT")
+    private String currencyCode = "PEN";
+
+    @Column(name = "locale", columnDefinition = "TEXT")
+    private String locale = "es";
+
+    @OneToMany(mappedBy = "tenant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<TenantAddress> addresses;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
