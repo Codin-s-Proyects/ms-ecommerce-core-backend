@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BrandDomainService {
-    Brand createBrand(UUID tenantId, String name, String description, String logoUrl);
+    Brand createBrand(UUID tenantId, String name, String description);
     List<Brand> getAllBrandsByTenantId(UUID tenantId);
     Brand getBrandById(UUID brandId);
 }

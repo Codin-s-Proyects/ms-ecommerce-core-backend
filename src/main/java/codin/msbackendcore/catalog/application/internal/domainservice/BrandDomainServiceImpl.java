@@ -22,7 +22,7 @@ public class BrandDomainServiceImpl implements BrandDomainService {
     }
 
     @Override
-    public Brand createBrand(UUID tenantId, String name, String description, String logoUrl) {
+    public Brand createBrand(UUID tenantId, String name, String description) {
         if (brandRepository.existsByTenantIdAndName(tenantId, name))
             throw new BadRequestException("error.already_exist", new String[]{name}, "name");
 
@@ -31,7 +31,6 @@ public class BrandDomainServiceImpl implements BrandDomainService {
                 .name(name)
                 .slug(generateSlug(name))
                 .description(description)
-                .logoUrl(logoUrl)
                 .build();
 
         return brandRepository.save(brand);

@@ -34,9 +34,6 @@ public class Brand {
     @Column(columnDefinition = "text")
     private String description;
 
-    @Column(name = "logo_url", columnDefinition = "text")
-    private String logoUrl;
-
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 

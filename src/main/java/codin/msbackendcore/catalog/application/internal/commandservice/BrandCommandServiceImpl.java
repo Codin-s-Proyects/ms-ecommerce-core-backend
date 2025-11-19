@@ -31,8 +31,7 @@ public class BrandCommandServiceImpl implements BrandCommandService {
         return brandDomainService.createBrand(
                 command.tenantId(),
                 command.name(),
-                command.description(),
-                command.logoUrl()
+                command.description()
         );
     }
 }
