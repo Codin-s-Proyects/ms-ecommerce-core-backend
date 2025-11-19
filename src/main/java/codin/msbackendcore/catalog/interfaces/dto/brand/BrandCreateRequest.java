@@ -9,15 +9,13 @@ import java.util.UUID;
 public record BrandCreateRequest(
         @NotNull UUID tenantId,
         @NotBlank String name,
-        @NotBlank String description,
-        @NotBlank String logoUrl
+        @NotBlank String description
 ) {
     public CreateBrandCommand toCommand() {
         return new CreateBrandCommand(
                 this.tenantId,
                 this.name,
-                this.description,
-                this.logoUrl
+                this.description
         );
     }
 }

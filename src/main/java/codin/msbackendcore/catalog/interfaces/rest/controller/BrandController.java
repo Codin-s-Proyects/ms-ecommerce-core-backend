@@ -40,8 +40,7 @@ public class BrandController {
                 saved.getTenantId(),
                 saved.getName(),
                 saved.getSlug(),
-                saved.getDescription(),
-                saved.getLogoUrl()
+                saved.getDescription()
         );
 
         return ResponseEntity.status(201).body(response);
@@ -61,8 +60,7 @@ public class BrandController {
                         brand.getTenantId(),
                         brand.getName(),
                         brand.getSlug(),
-                        brand.getDescription(),
-                        brand.getLogoUrl()
+                        brand.getDescription()
                 )).toList();
 
         return ResponseEntity.status(200).body(responseList);

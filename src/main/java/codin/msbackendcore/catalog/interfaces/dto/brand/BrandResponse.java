@@ -7,7 +7,6 @@ public record BrandResponse(
         UUID tenantId,
         String name,
         String slug,
-        String description,
-        String logoUrl
+        String description
 ) {
 }
