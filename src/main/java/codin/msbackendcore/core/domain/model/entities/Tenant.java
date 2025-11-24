@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,10 +53,15 @@ public class Tenant {
     private String locale = "es";
 
     @OneToMany(mappedBy = "tenant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<TenantAddress> addresses;
+    private List<TenantAddress> addresses = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
+
+    public void addAddress(TenantAddress address) {
+        address.setTenant(this);
+        this.addresses.add(address);
+    }
 
     @PrePersist
     void onCreate() {

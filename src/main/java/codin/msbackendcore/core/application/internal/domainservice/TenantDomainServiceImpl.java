@@ -1,6 +1,8 @@
 package codin.msbackendcore.core.application.internal.domainservice;
 
 import codin.msbackendcore.core.domain.model.entities.Tenant;
+import codin.msbackendcore.core.domain.model.entities.TenantAddress;
+import codin.msbackendcore.core.domain.model.valueobjects.*;
 import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
 import codin.msbackendcore.core.infrastructure.persistence.jpa.TenantRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
@@ -24,13 +26,22 @@ public class TenantDomainServiceImpl implements TenantDomainService {
 
     @Override
     @Transactional
-    public Tenant createTenant(String name) {
-        if(tenantRepository.existsByName(name))
+    public Tenant createTenant(String name, String plan, String currencyCode, String locale, LegalInfo legal, ContactInfo contact, SupportInfo support, SocialInfo social, List<TenantAddress> addresses) {
+        if (tenantRepository.existsByName(name))
             throw new BadRequestException("error.already_exist", new String[]{name}, "name");
 
         var savedTenant = new Tenant();
         savedTenant.setSlug(generateSlug(name));
         savedTenant.setName(name);
+        savedTenant.setPlan(TenantPlan.valueOf(plan));
+        savedTenant.setLegal(legal);
+        savedTenant.setContact(contact);
+        savedTenant.setSupport(support);
+        savedTenant.setSocial(social);
+        savedTenant.setCurrencyCode(currencyCode);
+        savedTenant.setLocale(locale);
+
+        addresses.forEach(savedTenant::addAddress);
 
         return tenantRepository.save(savedTenant);
     }

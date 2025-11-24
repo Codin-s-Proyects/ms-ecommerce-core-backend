@@ -17,4 +17,13 @@ public class ContactInfo {
 
     @Column(name = "contact_phone", columnDefinition = "TEXT")
     private String phone;
+
+    public ContactInfo() {
+    }
+
+    public ContactInfo(String name, String email, String phone) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+    }
 }

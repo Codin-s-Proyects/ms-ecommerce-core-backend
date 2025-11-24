@@ -21,5 +21,15 @@ public class SocialInfo {
 
     @Column(name = "twitter", columnDefinition = "TEXT")
     private String twitter;
+
+    public SocialInfo() {
+    }
+
+    public SocialInfo(String whatsapp, String facebook, String instagram, String twitter) {
+        this.whatsapp = whatsapp;
+        this.facebook = facebook;
+        this.instagram = instagram;
+        this.twitter = twitter;
+    }
 }
 
