@@ -6,7 +6,7 @@ import codin.msbackendcore.core.domain.services.tenant.TenantQueryService;
 import codin.msbackendcore.core.interfaces.dto.mediaasset.MediaAssetResponse;
 import codin.msbackendcore.core.interfaces.dto.tenant.TenantResponse;
 import codin.msbackendcore.core.interfaces.dto.tenantaddress.TenantAddressResponse;
-import codin.msbackendcore.core.interfaces.dto.tenantsettings.CreateTenantRequest;
+import codin.msbackendcore.core.interfaces.dto.tenant.CreateTenantRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -93,7 +93,7 @@ public class TenantController {
     @Operation(summary = "Creacion de un tenant")
     @ApiResponse(responseCode = "201", description = "Tenant creado correctamente")
     @PostMapping()
-    public ResponseEntity<TenantResponse> updateImagePrompt(
+    public ResponseEntity<TenantResponse> createTenant(
             @Valid @RequestBody CreateTenantRequest request
     ) {
         var command = request.toCommand();

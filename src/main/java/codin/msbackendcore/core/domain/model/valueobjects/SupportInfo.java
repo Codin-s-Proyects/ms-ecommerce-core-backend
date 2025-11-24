@@ -14,4 +14,12 @@ public class SupportInfo {
 
     @Column(name = "support_phone", columnDefinition = "TEXT")
     private String phone;
+
+    public SupportInfo() {
+    }
+
+    public SupportInfo(String email, String phone) {
+        this.email = email;
+        this.phone = phone;
+    }
 }

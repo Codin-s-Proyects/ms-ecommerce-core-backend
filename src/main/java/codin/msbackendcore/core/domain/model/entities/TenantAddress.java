@@ -28,4 +28,13 @@ public class TenantAddress {
 
     @Column(name = "country", nullable = false)
     private String country;
+
+    public TenantAddress() {
+    }
+
+    public TenantAddress(String line1, String city, String country) {
+        this.line1 = line1;
+        this.city = city;
+        this.country = country;
+    }
 }
