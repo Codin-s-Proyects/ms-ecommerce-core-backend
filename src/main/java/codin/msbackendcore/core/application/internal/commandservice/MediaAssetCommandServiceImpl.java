@@ -2,11 +2,15 @@ package codin.msbackendcore.core.application.internal.commandservice;
 
 import codin.msbackendcore.core.domain.model.commands.mediaasset.CreateMediaAssetCommand;
 import codin.msbackendcore.core.domain.model.entities.MediaAsset;
+import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetCommandService;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetDomainService;
 import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
+import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
+
+import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.isValidEnum;
 
 @Service
 public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
@@ -25,9 +29,13 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
         if (tenantDomainService.getTenantById(command.tenantId()) == null)
             throw new NotFoundException("error.not_found", new String[]{command.tenantId().toString()}, "tenantId");
 
+        if (!isValidEnum(EntityType.class, command.entityType())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.entityType()}, "entityType");
+        }
+
         return mediaAssetDomainService.createMediaAsset(
                 command.tenantId(),
-                command.entityType(),
+                EntityType.valueOf(command.entityType()),
                 command.entityId(),
                 command.url(),
                 command.publicId(),

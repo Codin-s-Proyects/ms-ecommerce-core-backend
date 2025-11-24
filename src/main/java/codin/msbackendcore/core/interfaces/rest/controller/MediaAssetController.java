@@ -38,7 +38,7 @@ public class MediaAssetController {
                 new MediaAssetResponse(
                         mediaAssetCreated.getId(),
                         mediaAssetCreated.getTenantId(),
-                        mediaAssetCreated.getEntityType(),
+                        mediaAssetCreated.getEntityType().toString(),
                         mediaAssetCreated.getEntityId(),
                         mediaAssetCreated.getUrl(),
                         mediaAssetCreated.getPublicId(),

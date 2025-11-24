@@ -2,6 +2,7 @@ package codin.msbackendcore.core.application.internal.queryservice;
 
 import codin.msbackendcore.core.application.internal.dto.TenantWithAssets;
 import codin.msbackendcore.core.domain.model.queries.tenant.GetAllTenantsQuery;
+import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetDomainService;
 import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
 import codin.msbackendcore.core.domain.services.tenant.TenantQueryService;
@@ -12,7 +13,6 @@ import java.util.List;
 @Service
 public class TenantQueryServiceImpl implements TenantQueryService {
 
-    private static final String ENTITY_TYPE_TENANT = "tenant";
     private final TenantDomainService tenantDomainService;
     private final MediaAssetDomainService mediaAssetDomainService;
 
@@ -30,7 +30,7 @@ public class TenantQueryServiceImpl implements TenantQueryService {
                 .map(t -> {
                     var assets = mediaAssetDomainService.getAllByEntityTypeAndEntityId(
                             t.getId(),
-                            ENTITY_TYPE_TENANT,
+                            EntityType.TENANT,
                             t.getId()
                     );
                     return new TenantWithAssets(t, assets);

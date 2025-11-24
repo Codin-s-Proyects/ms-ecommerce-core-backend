@@ -11,7 +11,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateSlug;
 
@@ -58,5 +60,53 @@ public class TenantDomainServiceImpl implements TenantDomainService {
                         new NotFoundException("error.not_found", new String[]{tenantId.toString()}, "tenantId")
                 );
 
+    }
+
+    @Override
+    public Tenant updateTenant(UUID tenantId, String name, String currencyCode, String locale, LegalInfo legal, ContactInfo contact, SupportInfo support, SocialInfo social, List<TenantAddress> addresses) {
+        var tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{tenantId.toString()}, "tenantId"));
+
+        if (!tenant.getName().equals(name) && tenantRepository.existsByName(name))
+            throw new BadRequestException("error.already_exist", new String[]{name}, "name");
+
+        tenant.setSlug(generateSlug(name));
+        tenant.setName(name);
+        tenant.setLegal(legal);
+        tenant.setContact(contact);
+        tenant.setSupport(support);
+        tenant.setSocial(social);
+        tenant.setCurrencyCode(currencyCode);
+        tenant.setLocale(locale);
+
+        updateTenantAddresses(tenant, addresses);
+
+        return tenantRepository.save(tenant);
+
+    }
+
+    private void updateTenantAddresses(Tenant tenant, List<TenantAddress> newAddresses) {
+        Map<UUID, TenantAddress> currentById = tenant.getAddresses()
+                .stream()
+                .filter(a -> a.getId() != null)
+                .collect(Collectors.toMap(TenantAddress::getId, a -> a));
+
+        tenant.getAddresses().removeIf(existing ->
+                newAddresses.stream().noneMatch(incoming ->
+                        incoming.getId() != null && incoming.getId().equals(existing.getId()))
+        );
+
+        for (TenantAddress incoming : newAddresses) {
+            if (incoming.getId() == null) {
+                tenant.addAddress(incoming);
+            } else {
+                TenantAddress existing = currentById.get(incoming.getId());
+                if (existing != null) {
+                    existing.setLine1(incoming.getLine1());
+                    existing.setCity(incoming.getCity());
+                    existing.setCountry(incoming.getCountry());
+                }
+            }
+        }
     }
 }
