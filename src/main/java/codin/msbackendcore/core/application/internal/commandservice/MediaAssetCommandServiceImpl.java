@@ -1,6 +1,7 @@
 package codin.msbackendcore.core.application.internal.commandservice;
 
 import codin.msbackendcore.core.domain.model.commands.mediaasset.CreateMediaAssetCommand;
+import codin.msbackendcore.core.domain.model.commands.mediaasset.DeleteMediaAssetCommand;
 import codin.msbackendcore.core.domain.model.entities.MediaAsset;
 import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetCommandService;
@@ -48,5 +49,10 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
                 command.altText(),
                 command.context()
         );
+    }
+
+    @Override
+    public void handle(DeleteMediaAssetCommand command) {
+        mediaAssetDomainService.deleteMediaAsset(command.tenantId(), command.mediaAssetId());
     }
 }

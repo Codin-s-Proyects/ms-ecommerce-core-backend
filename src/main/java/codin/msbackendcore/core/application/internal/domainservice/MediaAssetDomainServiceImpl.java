@@ -5,6 +5,7 @@ import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetDomainService;
 import codin.msbackendcore.core.infrastructure.persistence.jpa.MediaAssetRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
+import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +49,19 @@ public class MediaAssetDomainServiceImpl implements MediaAssetDomainService {
 
     @Override
     public List<MediaAsset> getAllByEntityTypeAndEntityId(UUID tenantId, EntityType entityType, UUID entityId) {
-        return mediaAssetRepository.findByTenantIdAndEntityTypeAndEntityId(tenantId, entityType, entityId);
+        return mediaAssetRepository.findAllByTenantIdAndEntityTypeAndEntityId(tenantId, entityType, entityId);
+    }
+
+    @Override
+    public void deleteMediaAsset(UUID tenantId, UUID mediaAssetId) {
+        var mediaAsset = mediaAssetRepository.findAllByTenantIdAndId(tenantId, mediaAssetId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{mediaAssetId.toString()}, "mediaAssetId")
+                );
+
+        mediaAssetRepository.delete(mediaAsset);
+
+
     }
 
 }
