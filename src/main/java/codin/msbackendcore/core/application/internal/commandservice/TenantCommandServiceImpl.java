@@ -1,7 +1,7 @@
 package codin.msbackendcore.core.application.internal.commandservice;
 
-import codin.msbackendcore.catalog.domain.model.valueobjects.DataType;
 import codin.msbackendcore.core.domain.model.commands.tenant.CreateTenantCommand;
+import codin.msbackendcore.core.domain.model.commands.tenant.UpdateTenantCommand;
 import codin.msbackendcore.core.domain.model.entities.Tenant;
 import codin.msbackendcore.core.domain.model.valueobjects.TenantPlan;
 import codin.msbackendcore.core.domain.services.tenant.TenantCommandService;
@@ -39,4 +39,18 @@ public class TenantCommandServiceImpl implements TenantCommandService {
                 command.addresses()
         );
     }
+
+    @Override
+    public Tenant handle(UpdateTenantCommand command) {
+        return tenantDomainService.updateTenant(
+                command.tenantId(),
+                command.name(),
+                command.currencyCode(),
+                command.locale(),
+                command.legal(),
+                command.contact(),
+                command.support(),
+                command.social(),
+                command.addresses()
+        );    }
 }

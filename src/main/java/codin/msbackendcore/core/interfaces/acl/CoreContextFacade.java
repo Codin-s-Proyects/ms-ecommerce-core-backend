@@ -1,5 +1,6 @@
 package codin.msbackendcore.core.interfaces.acl;
 
+import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetDomainService;
 import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
 import codin.msbackendcore.core.interfaces.dto.mediaasset.MediaAssetResponse;
@@ -24,13 +25,13 @@ public class CoreContextFacade {
         return tenant.getId();
     }
 
-    public List<MediaAssetResponse> getMediaAssetByEntityIdAndEntityType(UUID tenantId, String entityType, UUID entityId) {
+    public List<MediaAssetResponse> getMediaAssetByEntityIdAndEntityType(UUID tenantId, EntityType entityType, UUID entityId) {
         return mediaAssetDomainService.getAllByEntityTypeAndEntityId(tenantId, entityType, entityId)
                 .stream()
                 .map(mediaAsset -> new MediaAssetResponse(
                         mediaAsset.getId(),
                         mediaAsset.getTenantId(),
-                        mediaAsset.getEntityType(),
+                        mediaAsset.getEntityType().toString(),
                         mediaAsset.getEntityId(),
                         mediaAsset.getUrl(),
                         mediaAsset.getPublicId(),

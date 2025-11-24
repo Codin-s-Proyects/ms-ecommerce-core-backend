@@ -1,13 +1,12 @@
 package codin.msbackendcore.search.application.internal.outboundservices.acl;
 
+import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.interfaces.acl.CoreContextFacade;
 import codin.msbackendcore.search.application.internal.dto.MediaAssetDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-
-import static codin.msbackendcore.shared.infrastructure.utils.Constants.VARIANT_SCHEMA;
 
 @Service("ExternalCoreServiceForSearch")
 public class ExternalCoreService {
@@ -18,7 +17,7 @@ public class ExternalCoreService {
     }
 
     public List<MediaAssetDto> getMediaAssetsByVariantId(UUID tenantId, UUID variantId) {
-        var mediaAssetResponseList = coreContextFacade.getMediaAssetByEntityIdAndEntityType(tenantId, VARIANT_SCHEMA, variantId);
+        var mediaAssetResponseList = coreContextFacade.getMediaAssetByEntityIdAndEntityType(tenantId, EntityType.PRODUCT_VARIANT, variantId);
 
         return mediaAssetResponseList.stream()
                 .map(mediaAssetResponse -> new MediaAssetDto(

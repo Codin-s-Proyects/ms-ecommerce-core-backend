@@ -1,5 +1,6 @@
 package codin.msbackendcore.core.domain.model.entities;
 
+import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -27,8 +28,9 @@ public class MediaAsset {
     @Column(name = "tenant_id", nullable = false)
     private UUID tenantId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "entity_type", nullable = false)
-    private String entityType;
+    private EntityType entityType;
 
     @Column(name = "entity_id", nullable = false)
     private UUID entityId;

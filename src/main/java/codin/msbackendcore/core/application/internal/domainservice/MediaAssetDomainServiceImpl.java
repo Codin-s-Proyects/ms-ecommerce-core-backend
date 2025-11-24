@@ -1,9 +1,11 @@
 package codin.msbackendcore.core.application.internal.domainservice;
 
 import codin.msbackendcore.core.domain.model.entities.MediaAsset;
+import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetDomainService;
 import codin.msbackendcore.core.infrastructure.persistence.jpa.MediaAssetRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
+import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +24,7 @@ public class MediaAssetDomainServiceImpl implements MediaAssetDomainService {
 
     @Transactional
     @Override
-    public MediaAsset createMediaAsset(UUID tenantId, String entityType, UUID entityId, String url, String publicId, String format, Integer width, Integer height, Long bytes, Boolean isMain, Integer sortOrder, String altText, Map<String, Object> context) {
+    public MediaAsset createMediaAsset(UUID tenantId, EntityType entityType, UUID entityId, String url, String publicId, String format, Integer width, Integer height, Long bytes, Boolean isMain, Integer sortOrder, String altText, Map<String, Object> context) {
         if (mediaAssetRepository.existsByTenantIdAndEntityTypeAndEntityIdAndUrl(tenantId, entityType, entityId, url))
             throw new BadRequestException("error.already_exist", new String[]{url}, "url");
 
@@ -46,8 +48,20 @@ public class MediaAssetDomainServiceImpl implements MediaAssetDomainService {
     }
 
     @Override
-    public List<MediaAsset> getAllByEntityTypeAndEntityId(UUID tenantId, String entityType, UUID entityId) {
-        return mediaAssetRepository.findByTenantIdAndEntityTypeAndEntityId(tenantId, entityType, entityId);
+    public List<MediaAsset> getAllByEntityTypeAndEntityId(UUID tenantId, EntityType entityType, UUID entityId) {
+        return mediaAssetRepository.findAllByTenantIdAndEntityTypeAndEntityId(tenantId, entityType, entityId);
+    }
+
+    @Override
+    public void deleteMediaAsset(UUID tenantId, UUID mediaAssetId) {
+        var mediaAsset = mediaAssetRepository.findAllByTenantIdAndId(tenantId, mediaAssetId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{mediaAssetId.toString()}, "mediaAssetId")
+                );
+
+        mediaAssetRepository.delete(mediaAsset);
+
+
     }
 
 }

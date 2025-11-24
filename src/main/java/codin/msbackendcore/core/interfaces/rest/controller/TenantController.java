@@ -5,6 +5,7 @@ import codin.msbackendcore.core.domain.services.tenant.TenantCommandService;
 import codin.msbackendcore.core.domain.services.tenant.TenantQueryService;
 import codin.msbackendcore.core.interfaces.dto.mediaasset.MediaAssetResponse;
 import codin.msbackendcore.core.interfaces.dto.tenant.TenantResponse;
+import codin.msbackendcore.core.interfaces.dto.tenant.UpdateTenantRequest;
 import codin.msbackendcore.core.interfaces.dto.tenantaddress.TenantAddressResponse;
 import codin.msbackendcore.core.interfaces.dto.tenant.CreateTenantRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/core/tenant")
@@ -56,7 +58,7 @@ public class TenantController {
                             .map(m -> new MediaAssetResponse(
                                     m.getId(),
                                     m.getTenantId(),
-                                    m.getEntityType(),
+                                    m.getEntityType().toString(),
                                     m.getEntityId(),
                                     m.getUrl(),
                                     m.getPublicId(),
@@ -122,6 +124,45 @@ public class TenantController {
                         tenantCreated.getContact(),
                         tenantCreated.getSupport(),
                         tenantCreated.getSocial(),
+                        addressList,
+                        null
+                )
+        );
+    }
+
+    @Operation(summary = "Actualizacion de un tenant")
+    @ApiResponse(responseCode = "200", description = "Tenant actualizado correctamente")
+    @PutMapping("/{tenantId}")
+    public ResponseEntity<TenantResponse> updateTenant(
+            @PathVariable("tenantId") UUID tenantId,
+            @Valid @RequestBody UpdateTenantRequest request
+    ) {
+        var command = request.toCommand(tenantId);
+
+        var tenantUpdated = commandService.handle(command);
+
+        var addressList = tenantUpdated.getAddresses().stream().map(
+                address -> new TenantAddressResponse(
+                        address.getId(),
+                        address.getLine1(),
+                        address.getCity(),
+                        address.getCountry()
+                )
+        ).toList();
+
+        return ResponseEntity.status(200).body(
+                new TenantResponse(
+                        tenantUpdated.getId(),
+                        tenantUpdated.getSlug(),
+                        tenantUpdated.getName(),
+                        tenantUpdated.getPlan().name(),
+                        tenantUpdated.getStatus(),
+                        tenantUpdated.getCurrencyCode(),
+                        tenantUpdated.getLocale(),
+                        tenantUpdated.getLegal(),
+                        tenantUpdated.getContact(),
+                        tenantUpdated.getSupport(),
+                        tenantUpdated.getSocial(),
                         addressList,
                         null
                 )

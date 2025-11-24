@@ -1,5 +1,6 @@
 package codin.msbackendcore.core.interfaces.rest.controller;
 
+import codin.msbackendcore.core.domain.model.commands.mediaasset.DeleteMediaAssetCommand;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetCommandService;
 import codin.msbackendcore.core.interfaces.dto.mediaasset.CreateMediaAssetRequest;
 import codin.msbackendcore.core.interfaces.dto.mediaasset.MediaAssetResponse;
@@ -8,10 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/core/media-assets")
@@ -38,7 +38,7 @@ public class MediaAssetController {
                 new MediaAssetResponse(
                         mediaAssetCreated.getId(),
                         mediaAssetCreated.getTenantId(),
-                        mediaAssetCreated.getEntityType(),
+                        mediaAssetCreated.getEntityType().toString(),
                         mediaAssetCreated.getEntityId(),
                         mediaAssetCreated.getUrl(),
                         mediaAssetCreated.getPublicId(),
@@ -52,5 +52,16 @@ public class MediaAssetController {
                         mediaAssetCreated.getContext()
                 )
         );
+    }
+
+    @Operation(summary = "Eliminar un media asset por su Id")
+    @DeleteMapping("/{mediaAssetId}/tenant/{tenantId}")
+    public ResponseEntity<?> deleteMediaAsset(@PathVariable UUID mediaAssetId, @PathVariable UUID tenantId) {
+
+        var command = new DeleteMediaAssetCommand(mediaAssetId, tenantId);
+
+        mediaAssetCommandService.handle(command);
+
+        return ResponseEntity.status(204).build();
     }
 }
