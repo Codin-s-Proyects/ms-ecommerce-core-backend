@@ -40,8 +40,13 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
 
     @Override
     public CompletableFuture<List<ProductEmbedding>> semanticSearch(UUID tenantId, String query, int limit) {
+        if(tenantId == null) {
+            return openAI.embedAsync(query)
+                    .thenApply(queryEmbedding -> productEmbeddingRepository.findNearestEmbeddings(queryEmbedding, limit));
+        }
+
         return openAI.embedAsync(query)
-                .thenApply(queryEmbedding -> productEmbeddingRepository.findNearestEmbeddings(tenantId, queryEmbedding, limit));
+                .thenApply(queryEmbedding -> productEmbeddingRepository.findNearestEmbeddingsByTenant(tenantId, queryEmbedding, limit));
     }
 
     private String buildText(String productName, String categoryName, String brandName, String productDescription,
