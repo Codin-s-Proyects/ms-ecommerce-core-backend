@@ -20,9 +20,23 @@ public interface ProductEmbeddingRepository extends JpaRepository<ProductEmbeddi
             ORDER BY emb.vector <-> CAST(:queryEmbedding AS vector)
             LIMIT :limit
             """, nativeQuery = true)
-    List<ProductEmbedding> findNearestEmbeddings(
+    List<ProductEmbedding> findNearestEmbeddingsByTenant(
             @Param("tenantId") UUID tenantId,
             @Param("queryEmbedding") float[] queryEmbedding,
             @Param("limit") int limit
     );
+
+    @Query(value = """
+            SELECT
+                emb.*
+            FROM search.product_embeddings emb
+            ORDER BY emb.vector <-> CAST(:queryEmbedding AS vector)
+            LIMIT :limit
+            """, nativeQuery = true)
+    List<ProductEmbedding> findNearestEmbeddings(
+            @Param("queryEmbedding") float[] queryEmbedding,
+            @Param("limit") int limit
+    );
+
+
 }

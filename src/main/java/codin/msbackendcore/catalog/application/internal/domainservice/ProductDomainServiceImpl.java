@@ -76,6 +76,10 @@ public class ProductDomainServiceImpl implements ProductDomainService {
 
     @Override
     public CursorPage<Product> getProductsByCategory(UUID tenantId, UUID categoryId, CursorPaginationQuery query) {
+
+        if(tenantId == null)
+            return productPaginationRepository.findByCategory(categoryId, query);
+
         return productPaginationRepository.findByTenantAndCategory(tenantId, categoryId, query);
     }
 

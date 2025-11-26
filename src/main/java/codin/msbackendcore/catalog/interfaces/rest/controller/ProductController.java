@@ -52,10 +52,10 @@ public class ProductController {
     }
 
     @Operation(summary = "Obtener todos los productos por categoría y tenantId")
-    @GetMapping("/category/{categoryId}/tenant-id/{tenantId}")
+    @GetMapping("/category")
     public ResponseEntity<CursorPage<ProductResponse>> getAllProductByCategory(
-            @PathVariable UUID categoryId,
-            @PathVariable UUID tenantId,
+            @RequestParam UUID categoryId,
+            @RequestParam(required = false) UUID tenantId,
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "50") int limit,
             @RequestParam(required = false) String sort
