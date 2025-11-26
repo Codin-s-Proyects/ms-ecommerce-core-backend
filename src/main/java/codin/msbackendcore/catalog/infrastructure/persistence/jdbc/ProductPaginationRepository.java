@@ -19,6 +19,22 @@ public class ProductPaginationRepository extends CursorPaginationRepository<Prod
         super(jdbc);
     }
 
+    public CursorPage<Product> findByCategory(
+            UUID categoryId, CursorPaginationQuery query
+    ) {
+        var sql = """
+                    SELECT p.*
+                    FROM catalog.products p
+                    JOIN catalog.product_categories pc ON pc.product_id = p.id
+                    WHERE pc.category_id = :categoryId
+                """;
+
+        var filters = new HashMap<String, Object>();
+        filters.put("categoryId", categoryId);
+
+        return paginate(sql, filters, query, (rs, i) -> new Product(rs), REPOSITORY_ALIAS);
+    }
+
     public CursorPage<Product> findByTenantAndCategory(
             UUID tenantId, UUID categoryId, CursorPaginationQuery query
     ) {
