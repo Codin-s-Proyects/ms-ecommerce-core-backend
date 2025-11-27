@@ -25,7 +25,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
     @Override
     public Category handle(CreateCategoryCommand command) {
 
-        if (!externalCoreService.existTenantById(command.tenantId())) {
+        if (command.tenantId() != null && !externalCoreService.existTenantById(command.tenantId())) {
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
