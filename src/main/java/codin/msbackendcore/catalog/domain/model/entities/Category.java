@@ -18,7 +18,7 @@ public class Category {
     @GeneratedValue
     private UUID id;
 
-    @Column(name = "tenant_id", nullable = false)
+    @Column(name = "tenant_id")
     private UUID tenantId;
 
     @ManyToOne(fetch = FetchType.LAZY)
