@@ -1,16 +1,15 @@
 package codin.msbackendcore.payments.infrastructure.izipay;
 
 import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.Duration;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateAmountFormat;
@@ -32,7 +31,8 @@ public class IzipayClient {
         this.merchantCode = merchantCode;
     }
 
-
+    @Retry(name = "izipayRetry")
+    @CircuitBreaker(name = "izipayCB", fallbackMethod = "fallbackPayment")
     public String generateToken(String transactionId, BigDecimal amount, String orderNumber) {
         Map<String, String> headers = new HashMap<>();
         headers.put("transactionId", transactionId);
@@ -99,5 +99,9 @@ public class IzipayClient {
                 .bodyToMono(Map.class)
                 .timeout(Duration.ofSeconds(15))
                 .block();
+    }
+
+    private String fallbackPayment(String transactionId, BigDecimal amount, String orderNumber, Throwable ex) {
+        throw new ServerErrorException("error.izipay_unavailable", new String[]{});
     }
 }
