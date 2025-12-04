@@ -1,6 +1,9 @@
 package codin.msbackendcore.search.application.internal.outboundservices.embedding;
 
 import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -28,6 +31,9 @@ public class OpenAIEmbeddingClient {
         this.virtualThreadExecutor = Executors.newVirtualThreadPerTaskExecutor();
     }
 
+    @Retry(name = "openaiRetry")
+    @CircuitBreaker(name = "openaiCB", fallbackMethod = "fallbackEmbedding")
+    @TimeLimiter(name = "openaiTimeout")
     public CompletableFuture<float[]> embedAsync(String text) {
         return CompletableFuture.supplyAsync(() -> embedBlocking(text), virtualThreadExecutor);
     }
@@ -60,5 +66,11 @@ public class OpenAIEmbeddingClient {
             vector[i] = embeddingList.get(i).floatValue();
         }
         return vector;
+    }
+
+    private CompletableFuture<float[]> fallbackEmbedding(String text, Throwable ex) {
+        return CompletableFuture.failedFuture(
+                new ServerErrorException("error.openai_unavailable", new String[]{})
+        );
     }
 }

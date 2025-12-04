@@ -34,8 +34,47 @@ logging:
     org.springframework: INFO
     org.hibernate: WARN
     codin.msbackendcore: INFO
+    io.github.resilience4j: DEBUG
 
 izipay:
   api-url: https://sandbox-api-pw.izipay.pe
   api-key: ${IZIPAY_API_KEY}
   merchant-code: ${IZIPAY_MERCHANT_CODE}
+
+resilience4j:
+  retry:
+    instances:
+      openaiRetry:
+        maxAttempts: 3
+        waitDuration: 500ms
+        retryExceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - java.io.IOException
+          - codin.msbackendcore.shared.domain.exceptions.ServerErrorException
+      izipayRetry:
+        maxAttempts: 3
+        waitDuration: 500ms
+        retryExceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - java.io.IOException
+          - codin.msbackendcore.shared.domain.exceptions.ServerErrorException
+
+  circuitbreaker:
+    instances:
+      openaiCB:
+        failureRateThreshold: 50
+        slowCallRateThreshold: 70
+        slowCallDurationThreshold: 2s
+        waitDurationInOpenState: 10s
+        minimumNumberOfCalls: 5
+      izipayCB:
+        failureRateThreshold: 50
+        slowCallRateThreshold: 70
+        slowCallDurationThreshold: 2s
+        waitDurationInOpenState: 10s
+        minimumNumberOfCalls: 5
+
+  timelimiter:
+    instances:
+      openaiTimeout:
+        timeoutDuration: 4s
