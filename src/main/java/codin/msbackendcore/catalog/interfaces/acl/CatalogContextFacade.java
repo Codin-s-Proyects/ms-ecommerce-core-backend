@@ -5,6 +5,7 @@ import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariant
 import codin.msbackendcore.catalog.interfaces.dto.product.ProductResponse;
 import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -42,7 +43,23 @@ public class CatalogContextFacade {
                 product.getSku(),
                 product.getName(),
                 product.getAttributes(),
-                product.getProductQuantity()
+                product.getProductQuantity() - product.getReservedQuantity()
         );
+    }
+
+    @Transactional
+    public void reserve(UUID variantId, UUID tenantId, int qty) {
+
+        productVariantDomainService.reserve(variantId, tenantId, qty);
+    }
+
+    @Transactional
+    public void release(UUID variantId, UUID tenantId, int qty) {
+        productVariantDomainService.release(variantId, tenantId, qty);
+    }
+
+    @Transactional
+    public void confirm(UUID variantId, UUID tenantId, int qty) {
+        productVariantDomainService.confirm(variantId, tenantId, qty);
     }
 }

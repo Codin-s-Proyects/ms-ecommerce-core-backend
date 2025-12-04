@@ -1,5 +1,6 @@
 package codin.msbackendcore.catalog.domain.model.entities;
 
+import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -44,6 +45,9 @@ public class ProductVariant {
     @Column(name = "product_quantity", nullable = false)
     private Integer productQuantity;
 
+    @Column(name = "reserved_quantity", nullable = false)
+    private Integer reservedQuantity;
+
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
@@ -63,6 +67,32 @@ public class ProductVariant {
     @PreUpdate
     void onUpdate() {
         this.updatedAt = Instant.now();
+    }
+
+    public boolean canReserve(int qty) {
+        return (productQuantity - reservedQuantity) >= qty;
+    }
+
+    public void reserve(int qty) {
+        if (!canReserve(qty)) {
+            throw new BadRequestException("stock.insufficient", new String[]{String.valueOf(qty)}, "stock");
+        }
+        reservedQuantity += qty;
+    }
+
+    public void release(int qty) {
+        reservedQuantity -= qty;
+        if (reservedQuantity < 0) reservedQuantity = 0;
+    }
+
+    public void confirm(int qty) {
+        if (reservedQuantity < qty)
+            throw new BadRequestException("stock.reserved_mismatch", new String[]{String.valueOf(qty)}, "stock");
+
+        reservedQuantity -= qty;
+        productQuantity -= qty;
+
+        if (productQuantity < 0) productQuantity = 0;
     }
 }
 

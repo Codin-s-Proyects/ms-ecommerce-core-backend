@@ -78,7 +78,6 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-
     @Operation(summary = "Obtener una orden por ID", description = "Obtiene los detalles de una orden específica utilizando su ID y el ID del tenant")
     @GetMapping("/{orderId}/tenant/{tenantId}")
     public ResponseEntity<OrderResponse> getById(@PathVariable UUID orderId, @PathVariable UUID tenantId) {

@@ -12,4 +12,7 @@ public interface ProductVariantDomainService {
     ProductVariant createProductVariant(UUID tenantId, Product product, String name, Map<String, Object> attributes, Integer productQuantity);
     List<ProductVariant> createProductVariantBulk(UUID tenantId, Product product, List<CreateProductVariantBulkCommand.VariantItemCommand> variants);
     ProductVariant getProductVariantById(UUID productVariantId);
+    void reserve(UUID variantId, UUID tenantId, int qty);
+    void release(UUID variantId, UUID tenantId, int qty);
+    void confirm(UUID variantId, UUID tenantId, int qty);
 }
