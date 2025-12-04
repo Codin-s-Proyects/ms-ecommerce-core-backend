@@ -9,6 +9,14 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
+        generate_statistics: false
+
   flyway:
     enabled: true
     locations: classpath:db/migration
@@ -34,7 +42,7 @@ logging:
     org.springframework: INFO
     org.hibernate: WARN
     codin.msbackendcore: INFO
-    io.github.resilience4j: DEBUG
+    io.github.resilience4j: WARN
 
 izipay:
   api-url: https://sandbox-api-pw.izipay.pe

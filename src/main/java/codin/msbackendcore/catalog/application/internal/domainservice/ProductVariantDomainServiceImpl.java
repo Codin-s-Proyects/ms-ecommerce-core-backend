@@ -1,17 +1,20 @@
 package codin.msbackendcore.catalog.application.internal.domainservice;
 
+import codin.msbackendcore.catalog.domain.model.commands.productvariant.CreateProductVariantBulkCommand;
 import codin.msbackendcore.catalog.domain.model.entities.Product;
 import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantDomainService;
 import codin.msbackendcore.catalog.infrastructure.persistence.jpa.ProductVariantRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateSku;
 
@@ -58,6 +61,93 @@ public class ProductVariantDomainServiceImpl implements ProductVariantDomainServ
                 .build();
 
         return productVariantRepository.save(productVariant);
+    }
+
+    @Override
+    @Transactional
+    public List<ProductVariant> createProductVariantBulk(UUID tenantId, Product product, List<CreateProductVariantBulkCommand.VariantItemCommand> variants) {
+
+        String categoryName = product.getCategories() != null && !product.getCategories().isEmpty()
+                ? product.getCategories().getFirst().getCategory().getName()
+                : "";
+
+        String brandName = product.getBrand() != null ? product.getBrand().getName() : null;
+
+        List<ProductVariant> existingVariants =
+                productVariantRepository.findAllByProductAndTenantId(product, tenantId);
+
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        Set<JsonNode> existingAttributesNodes = existingVariants.stream()
+                .map(v -> {
+                    Object attrs = v.getAttributes();
+                    try {
+                        if (attrs instanceof String) {
+                            return mapper.readTree((String) attrs);
+                        } else {
+                            return mapper.valueToTree(attrs);
+                        }
+                    } catch (Exception e) {
+                        return NullNode.getInstance();
+                    }
+                })
+                .collect(Collectors.toSet());
+
+        Set<String> requestNames = new HashSet<>();
+        Set<JsonNode> requestAttributesNodes = new HashSet<>();
+
+        List<ProductVariant> variantsToSave = new ArrayList<>();
+
+        for (var item : variants) {
+
+            if (!requestNames.add(item.name()))
+                throw new BadRequestException("error.already_exist",
+                        new String[]{item.name()}, "name");
+
+            boolean nameExists = existingVariants.stream()
+                    .anyMatch(v -> item.name().equals(v.getName()));
+            if (nameExists)
+                throw new BadRequestException("error.already_exist", new String[]{item.name()}, "name");
+
+            JsonNode itemAttrsNode;
+            try {
+                Object raw = item.attributes();
+                if (raw instanceof String) itemAttrsNode = mapper.readTree((String) raw);
+                else itemAttrsNode = mapper.valueToTree(raw);
+            } catch (Exception ex) {
+                throw new BadRequestException("error.bad_request",
+                        new String[]{item.attributes().toString()}, "attributes");
+            }
+
+            if (!requestAttributesNodes.add(itemAttrsNode))
+                throw new BadRequestException("error.already_exist", new String[]{itemAttrsNode.toString()}, "attributes");
+
+
+            if (existingAttributesNodes.contains(itemAttrsNode))
+                throw new BadRequestException("error.already_exist", new String[]{itemAttrsNode.toString()}, "attributes");
+
+            ProductVariant variant = ProductVariant.builder()
+                    .tenantId(tenantId)
+                    .product(product)
+                    .sku(generateSku(
+                            item.name(),
+                            categoryName,
+                            brandName,
+                            item.attributes(),
+                            tenantId
+                    ))
+                    .name(item.name())
+                    .attributes(item.attributes())
+                    .productQuantity(item.productQuantity())
+                    .build();
+
+
+            variantsToSave.add(variant);
+        }
+
+        return productVariantRepository.saveAll(variantsToSave);
+
     }
 
     @Override

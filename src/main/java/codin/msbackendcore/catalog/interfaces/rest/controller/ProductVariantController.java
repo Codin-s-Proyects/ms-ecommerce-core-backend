@@ -1,6 +1,7 @@
 package codin.msbackendcore.catalog.interfaces.rest.controller;
 
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantCommandService;
+import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantCreateBulkRequest;
 import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantCreateRequest;
 import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +43,17 @@ public class ProductVariantController {
         );
 
         return ResponseEntity.status(201).body(response);
+    }
+
+    @Operation(summary = "Crear una nuevas variantes de un producto en lote")
+    @PostMapping("/bulk")
+    public ResponseEntity<Void> createProductsVariantsBulk(@Valid @RequestBody ProductVariantCreateBulkRequest req) {
+
+        var command = req.toCommand();
+
+        productVariantCommandService.handle(command);
+
+        return ResponseEntity.status(201).build();
     }
 }
 

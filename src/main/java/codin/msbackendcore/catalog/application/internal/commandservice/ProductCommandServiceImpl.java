@@ -4,7 +4,6 @@ import codin.msbackendcore.catalog.application.internal.outboundservices.Externa
 import codin.msbackendcore.catalog.domain.model.commands.product.CreateProductCommand;
 import codin.msbackendcore.catalog.domain.model.entities.Product;
 import codin.msbackendcore.catalog.domain.services.brand.BrandDomainService;
-import codin.msbackendcore.catalog.domain.services.category.CategoryDomainService;
 import codin.msbackendcore.catalog.domain.services.product.ProductCommandService;
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;

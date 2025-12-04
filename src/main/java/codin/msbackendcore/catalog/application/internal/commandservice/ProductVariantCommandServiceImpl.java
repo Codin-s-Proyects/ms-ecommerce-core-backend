@@ -1,6 +1,7 @@
 package codin.msbackendcore.catalog.application.internal.commandservice;
 
 import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalCoreService;
+import codin.msbackendcore.catalog.domain.model.commands.productvariant.CreateProductVariantBulkCommand;
 import codin.msbackendcore.catalog.domain.model.commands.productvariant.CreateProductVariantCommand;
 import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.catalog.domain.model.events.ProductCreatedEvent;
@@ -52,5 +53,25 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
         eventPublisher.publish(new ProductCreatedEvent(command.tenantId(), List.of(productVariant)));
 
         return productVariant;
+    }
+
+    @Transactional
+    @Override
+    public void handle(CreateProductVariantBulkCommand command) {
+        if (!externalCoreService.existTenantById(command.tenantId())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
+        }
+
+        var product = productDomainService.getProductById(command.productId());
+
+        var productVariants = productVariantDomainService.createProductVariantBulk(
+                command.tenantId(),
+                product,
+                command.variants()
+        );
+
+        if (!product.isHasVariants()) productDomainService.updateHasVariant(product.getId(), true);
+
+        eventPublisher.publish(new ProductCreatedEvent(command.tenantId(), productVariants));
     }
 }
