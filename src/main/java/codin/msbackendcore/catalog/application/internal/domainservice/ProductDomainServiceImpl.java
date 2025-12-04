@@ -20,6 +20,7 @@ import java.util.UUID;
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateSlug;
 
 @Service
+@Transactional
 public class ProductDomainServiceImpl implements ProductDomainService {
     private final ProductRepository productRepository;
     private final ProductPaginationRepository productPaginationRepository;
@@ -30,7 +31,6 @@ public class ProductDomainServiceImpl implements ProductDomainService {
     }
 
 
-    @Transactional
     @Override
     public Product createProduct(UUID tenantId, Brand brand, String name, String description, Map<String, Object> meta) {
 

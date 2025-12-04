@@ -1,11 +1,13 @@
 package codin.msbackendcore.catalog.infrastructure.persistence.jpa;
 
+import codin.msbackendcore.catalog.domain.model.entities.Product;
 import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -27,5 +29,7 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
             @Param("productId") UUID productId,
             @Param("attributes") String attributesJson
     );
+
+    List<ProductVariant> findAllByProductAndTenantId(Product product, UUID tenantId);
 
 }

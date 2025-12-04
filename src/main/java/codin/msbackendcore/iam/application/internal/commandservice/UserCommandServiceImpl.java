@@ -14,7 +14,6 @@ import codin.msbackendcore.iam.infrastructure.persistence.jpa.CredentialReposito
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.RefreshTokenRepository;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.RoleRepository;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.UserRepository;
-import codin.msbackendcore.ordering.application.internal.outboundservices.ExternalIamService;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import codin.msbackendcore.shared.infrastructure.utils.CommonUtils;
