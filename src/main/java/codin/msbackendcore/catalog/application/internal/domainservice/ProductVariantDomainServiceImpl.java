@@ -157,4 +157,40 @@ public class ProductVariantDomainServiceImpl implements ProductVariantDomainServ
                         new NotFoundException("error.not_found", new String[]{productVariantId.toString()}, "productVariantId")
                 );
     }
+
+    @Override
+    public void reserve(UUID variantId, UUID tenantId, int qty) {
+        ProductVariant variant = productVariantRepository.findByIdForUpdate(variantId, tenantId)
+                .orElseThrow(
+                        () -> new NotFoundException("error.not_found", new String[]{variantId.toString()}, "variantId")
+                );
+
+        variant.reserve(qty);
+
+        productVariantRepository.save(variant);
+    }
+
+    @Override
+    public void release(UUID variantId, UUID tenantId, int qty) {
+        ProductVariant variant = productVariantRepository.findByIdForUpdate(variantId, tenantId)
+                .orElseThrow(
+                        () -> new NotFoundException("error.not_found", new String[]{variantId.toString()}, "variantId")
+                );
+
+        variant.release(qty);
+
+        productVariantRepository.save(variant);
+    }
+
+    @Override
+    public void confirm(UUID variantId, UUID tenantId, int qty) {
+        ProductVariant variant = productVariantRepository.findByIdForUpdate(variantId, tenantId)
+                .orElseThrow(
+                        () -> new NotFoundException("error.not_found", new String[]{variantId.toString()}, "variantId")
+                );
+
+        variant.confirm(qty);
+
+        productVariantRepository.save(variant);
+    }
 }

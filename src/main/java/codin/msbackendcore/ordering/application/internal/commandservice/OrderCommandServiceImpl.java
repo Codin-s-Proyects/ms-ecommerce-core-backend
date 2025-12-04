@@ -22,6 +22,7 @@ import java.time.Year;
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateOrderNumber;
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.isValidEnum;
 
+@Transactional
 @Service
 public class OrderCommandServiceImpl implements OrderCommandService {
 
@@ -44,7 +45,6 @@ public class OrderCommandServiceImpl implements OrderCommandService {
         this.externalIamService = externalIamService;
     }
 
-    @Transactional
     @Override
     public Order handle(CreateOrderCommand command) {
 
@@ -103,6 +103,13 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
         order.addStatusHistory(orderStatusHistoryDomainService.createOrderStatusHistory(order, OrderStatus.CREATED, command.userId()));
 
+        for (var item : order.getItems()) {
+            externalCatalogService.reserve(
+                    item.getProductVariantId(),
+                    command.tenantId(),
+                    item.getQuantity()
+            );
+        }
 
         return orderDomainService.persistOrder(order);
     }
@@ -119,6 +126,16 @@ public class OrderCommandServiceImpl implements OrderCommandService {
         );
 
         order.addStatusHistory(orderStatusHistoryDomainService.createOrderStatusHistory(order, OrderStatus.valueOf(command.status()), order.getUserId()));
+
+        if (order.getStatus().equals(OrderStatus.CANCELED) || (order.getStatus().equals(OrderStatus.RETURNED))) {
+            for (var item : order.getItems()) {
+                externalCatalogService.release(item.getProductVariantId(), command.tenantId(), item.getQuantity());
+            }
+        } else if (order.getStatus().equals(OrderStatus.PAID)) {
+            for (var item : order.getItems()) {
+                externalCatalogService.confirm(item.getProductVariantId(), command.tenantId(), item.getQuantity());
+            }
+        }
 
         return orderDomainService.persistOrder(order);
     }
