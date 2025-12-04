@@ -12,7 +12,7 @@ public class CommonUtils {
             return false;
         }
         return Arrays.stream(enumClass.getEnumConstants())
-                .anyMatch(e -> e.name().equalsIgnoreCase(value));
+                .anyMatch(e -> e.name().equals(value));
     }
 
     public static String generateSlug(String input) {
