@@ -1,8 +1,11 @@
 package codin.msbackendcore.catalog.application.internal.outboundservices;
 
+import codin.msbackendcore.catalog.application.internal.dto.MediaAssetDto;
+import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.interfaces.acl.CoreContextFacade;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service("ExternalCoreServiceForCatalog")
@@ -11,6 +14,27 @@ public class ExternalCoreService {
 
     public ExternalCoreService(CoreContextFacade coreContextFacade) {
         this.coreContextFacade = coreContextFacade;
+    }
+
+    public List<MediaAssetDto> getMediaAssetsByVariantId(UUID tenantId, UUID variantId) {
+        var mediaAssetResponseList = coreContextFacade.getMediaAssetByEntityIdAndEntityType(tenantId, EntityType.PRODUCT_VARIANT, variantId);
+
+        return mediaAssetResponseList.stream()
+                .map(mediaAssetResponse -> new MediaAssetDto(
+                        mediaAssetResponse.id(),
+                        mediaAssetResponse.entityType(),
+                        mediaAssetResponse.entityId(),
+                        mediaAssetResponse.url(),
+                        mediaAssetResponse.publicId(),
+                        mediaAssetResponse.format(),
+                        mediaAssetResponse.width(),
+                        mediaAssetResponse.height(),
+                        mediaAssetResponse.bytes(),
+                        mediaAssetResponse.isMain(),
+                        mediaAssetResponse.sortOrder(),
+                        mediaAssetResponse.altText(),
+                        mediaAssetResponse.context()
+                )).toList();
     }
 
     public boolean existTenantById(UUID tenantId) {

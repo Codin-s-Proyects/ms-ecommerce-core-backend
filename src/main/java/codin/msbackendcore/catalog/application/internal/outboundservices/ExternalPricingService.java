@@ -1,14 +1,14 @@
-package codin.msbackendcore.search.application.internal.outboundservices.acl;
+package codin.msbackendcore.catalog.application.internal.outboundservices;
 
+import codin.msbackendcore.catalog.application.internal.dto.PriceListDto;
+import codin.msbackendcore.catalog.application.internal.dto.ProductPriceDto;
 import codin.msbackendcore.pricing.interfaces.acl.PricingContextFacade;
-import codin.msbackendcore.search.application.internal.dto.PriceListDto;
-import codin.msbackendcore.search.application.internal.dto.ProductPriceDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
-@Service("ExternalPricingServiceForSearch")
+@Service("ExternalPricingServiceForCatalog")
 public class ExternalPricingService {
     private final PricingContextFacade pricingContextFacade;
 
