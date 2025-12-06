@@ -5,7 +5,6 @@ import java.util.UUID;
 
 public record CreatePriceListCommand(
         UUID tenantId,
-        String code,
         String name,
         String description,
         String currencyCode,

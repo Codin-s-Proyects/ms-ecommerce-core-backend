@@ -30,7 +30,6 @@ public class PriceListCommandServiceImpl implements PriceListCommandService {
 
         return priceListDomainService.createPriceList(
                 command.tenantId(),
-                command.code(),
                 command.name(),
                 command.description(),
                 command.currencyCode(),
