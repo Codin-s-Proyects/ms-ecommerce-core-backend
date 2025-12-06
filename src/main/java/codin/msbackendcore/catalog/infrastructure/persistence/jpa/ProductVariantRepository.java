@@ -16,7 +16,7 @@ import java.util.UUID;
 @Repository
 public interface ProductVariantRepository extends JpaRepository<ProductVariant, UUID> {
 
-    boolean existsByNameAndTenantId(String name, UUID tenantId);
+    boolean existsByNameAndTenantIdAndProduct(String name, UUID tenantId, Product product);
 
     @Query(value = """
             SELECT EXISTS(

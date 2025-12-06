@@ -61,6 +61,7 @@ public class ProductVariant {
     void prePersist() {
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
+        this.reservedQuantity = 0;
         this.isActive = true;
     }
 
