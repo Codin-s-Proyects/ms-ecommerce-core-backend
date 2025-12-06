@@ -32,7 +32,7 @@ public class ProductVariantDomainServiceImpl implements ProductVariantDomainServ
 
         // TODO: Validar que los attributos y su valor ("color": "rojo"), sean validos
 
-        if (productVariantRepository.existsByNameAndTenantId(name, tenantId))
+        if (productVariantRepository.existsByNameAndTenantIdAndProduct(name, tenantId, product))
             throw new BadRequestException("error.already_exist", new String[]{name}, "name");
 
         try {
