@@ -151,6 +151,11 @@ public class ProductVariantDomainServiceImpl implements ProductVariantDomainServ
     }
 
     @Override
+    public List<ProductVariant> getVariantsByProductId(Product product, UUID tenantId) {
+        return productVariantRepository.findAllByProductAndTenantId(product, tenantId);
+    }
+
+    @Override
     public ProductVariant getProductVariantById(UUID productVariantId) {
         return productVariantRepository.findById(productVariantId)
                 .orElseThrow(() ->

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.UUID;
 
+import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generatePriceListCode;
+
 @Service
 public class PriceListDomainServiceImpl implements PriceListDomainService {
 
@@ -22,15 +24,15 @@ public class PriceListDomainServiceImpl implements PriceListDomainService {
 
     @Transactional
     @Override
-    public PriceList createPriceList(UUID tenantId, String code, String name, String description, String currencyCode, Instant validFrom, Instant validTo) {
+    public PriceList createPriceList(UUID tenantId, String name, String description, String currencyCode, Instant validFrom, Instant validTo) {
 
-        if (priceListRepository.existsPriceListByTenantIdAndCode(tenantId, code)) {
-            throw new BadRequestException("error.bad_request", new String[]{code}, "code");
+        if (priceListRepository.existsPriceListByTenantIdAndName(tenantId, name)) {
+            throw new BadRequestException("error.already_exist", new String[]{name}, "name");
         }
 
         var priceList = PriceList.builder()
                 .tenantId(tenantId)
-                .code(code)
+                .code(generatePriceListCode(name, tenantId))
                 .name(name)
                 .description(description)
                 .currencyCode(currencyCode)

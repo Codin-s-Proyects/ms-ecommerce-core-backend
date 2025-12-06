@@ -52,6 +52,15 @@ public class CommonUtils {
         return skuBuilder.toString();
     }
 
+    public static String generatePriceListCode(String name, UUID tenantId) {
+        String namePart = normalize(name).length() >= 4
+                ? normalize(name).substring(0, 4).toLowerCase()
+                : normalize(name).toLowerCase();
+        String tenantPart = normalize(tenantId.toString()).substring(0, 4).toUpperCase();
+        String randomPart = String.format("%04d", new Random().nextInt(9999));
+        return namePart + "-" + tenantPart + "-" + randomPart;
+    }
+
     public static String toVectorString(float[] embedding) {
         if (embedding == null || embedding.length == 0) return "[]";
         StringBuilder sb = new StringBuilder();

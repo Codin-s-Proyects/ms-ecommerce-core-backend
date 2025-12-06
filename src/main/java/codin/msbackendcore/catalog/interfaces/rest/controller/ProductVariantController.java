@@ -1,17 +1,19 @@
 package codin.msbackendcore.catalog.interfaces.rest.controller;
 
+import codin.msbackendcore.catalog.domain.model.queries.productvariant.GetProductVariantByProductAndTenantIdQuery;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantCommandService;
+import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantQueryService;
 import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantCreateBulkRequest;
 import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantCreateRequest;
+import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantDetailResponse;
 import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/catalog/products-variants")
@@ -19,9 +21,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductVariantController {
 
     private final ProductVariantCommandService productVariantCommandService;
+    private final ProductVariantQueryService productVariantQueryService;
 
-    public ProductVariantController(ProductVariantCommandService productVariantCommandService) {
+    public ProductVariantController(ProductVariantCommandService productVariantCommandService, ProductVariantQueryService productVariantQueryService) {
         this.productVariantCommandService = productVariantCommandService;
+        this.productVariantQueryService = productVariantQueryService;
+    }
+
+    @Operation(summary = "Obtener todas las variantes por producto")
+    @GetMapping("/tenant/{tenantId}/product/{productId}")
+    public ResponseEntity<ProductVariantDetailResponse> getVariantsByProduct(@PathVariable UUID productId, @PathVariable UUID tenantId) {
+
+        var query = new GetProductVariantByProductAndTenantIdQuery(productId, tenantId);
+
+        var response = productVariantQueryService.handle(query);
+
+        return ResponseEntity.status(200).body(ProductVariantDetailResponse.fromDto(response));
     }
 
     @Operation(summary = "Crear una nueva variante de un producto")

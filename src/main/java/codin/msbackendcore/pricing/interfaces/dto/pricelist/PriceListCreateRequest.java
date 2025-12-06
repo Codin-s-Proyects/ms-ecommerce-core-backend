@@ -9,7 +9,6 @@ import java.util.UUID;
 
 public record PriceListCreateRequest(
         @NotNull UUID tenantId,
-        @NotBlank String code,
         @NotBlank String name,
         @NotBlank String description,
         @NotBlank String currencyCode,
@@ -20,7 +19,6 @@ public record PriceListCreateRequest(
     public CreatePriceListCommand toCommand() {
         return new CreatePriceListCommand(
                 tenantId,
-                code,
                 name,
                 description,
                 currencyCode,
