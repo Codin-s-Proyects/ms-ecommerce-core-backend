@@ -4,6 +4,7 @@ import codin.msbackendcore.pricing.domain.model.entities.PriceList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,4 +12,5 @@ import java.util.UUID;
 public interface PriceListRepository extends JpaRepository<PriceList, UUID> {
     Optional<PriceList> findPriceListByTenantIdAndId(UUID tenantId, UUID priceListId);
     boolean existsPriceListByTenantIdAndName(UUID tenantId, String name);
+    List<PriceList> findAllByTenantId(UUID tenantId);
 }
