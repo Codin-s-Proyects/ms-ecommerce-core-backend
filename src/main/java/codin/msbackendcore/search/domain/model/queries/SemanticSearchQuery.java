@@ -5,6 +5,7 @@ import java.util.UUID;
 public record SemanticSearchQuery(
         UUID tenantId,
         String query,
-        int limit
+        int limit,
+        Double distanceThreshold
 ) {
 }

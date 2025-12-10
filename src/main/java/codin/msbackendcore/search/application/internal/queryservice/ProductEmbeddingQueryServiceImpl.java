@@ -32,7 +32,8 @@ public class ProductEmbeddingQueryServiceImpl implements ProductEmbeddingQuerySe
         var productEmbeddingList = productEmbeddingDomainService.semanticSearch(
                 query.tenantId(),
                 query.query(),
-                query.limit()
+                query.limit(),
+                query.distanceThreshold()
         );
 
         return productEmbeddingList.thenCompose(pel -> {
