@@ -13,6 +13,7 @@ public record CreateTenantCommand(
         String plan,
         String currencyCode,
         String locale,
+        String complaintBookUrl,
         LegalInfo legal,
         ContactInfo contact,
         SupportInfo support,

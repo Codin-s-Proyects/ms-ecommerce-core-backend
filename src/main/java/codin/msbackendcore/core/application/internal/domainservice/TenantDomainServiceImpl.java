@@ -28,11 +28,12 @@ public class TenantDomainServiceImpl implements TenantDomainService {
 
     @Override
     @Transactional
-    public Tenant createTenant(String name, String plan, String currencyCode, String locale, LegalInfo legal, ContactInfo contact, SupportInfo support, SocialInfo social, List<TenantAddress> addresses) {
+    public Tenant createTenant(String name, String plan, String complaintBookUrl, String currencyCode, String locale, LegalInfo legal, ContactInfo contact, SupportInfo support, SocialInfo social, List<TenantAddress> addresses) {
         if (tenantRepository.existsByName(name))
             throw new BadRequestException("error.already_exist", new String[]{name}, "name");
 
         var savedTenant = new Tenant();
+        savedTenant.setComplaintBookUrl(complaintBookUrl);
         savedTenant.setSlug(generateSlug(name));
         savedTenant.setName(name);
         savedTenant.setPlan(TenantPlan.valueOf(plan));
@@ -63,7 +64,7 @@ public class TenantDomainServiceImpl implements TenantDomainService {
     }
 
     @Override
-    public Tenant updateTenant(UUID tenantId, String name, String currencyCode, String locale, LegalInfo legal, ContactInfo contact, SupportInfo support, SocialInfo social, List<TenantAddress> addresses) {
+    public Tenant updateTenant(UUID tenantId, String name, String complaintBookUrl, String currencyCode, String locale, LegalInfo legal, ContactInfo contact, SupportInfo support, SocialInfo social, List<TenantAddress> addresses) {
         var tenant = tenantRepository.findById(tenantId)
                 .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{tenantId.toString()}, "tenantId"));
 

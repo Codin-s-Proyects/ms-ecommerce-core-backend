@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface TenantDomainService {
-    Tenant createTenant(String name, String plan, String currencyCode, String locale, LegalInfo legal, ContactInfo contact, SupportInfo support, SocialInfo social, List<TenantAddress> addresses);
+    Tenant createTenant(String name, String plan, String complaintBookUrl, String currencyCode, String locale, LegalInfo legal, ContactInfo contact, SupportInfo support, SocialInfo social, List<TenantAddress> addresses);
     List<Tenant> getAllTenants();
     Tenant getTenantById(UUID tenantId);
-    Tenant updateTenant(UUID tenantId, String name, String currencyCode, String locale, LegalInfo legal, ContactInfo contact, SupportInfo support, SocialInfo social, List<TenantAddress> addresses);
+    Tenant updateTenant(UUID tenantId, String name, String complaintBookUrl, String currencyCode, String locale, LegalInfo legal, ContactInfo contact, SupportInfo support, SocialInfo social, List<TenantAddress> addresses);
 }

@@ -30,6 +30,7 @@ public class TenantCommandServiceImpl implements TenantCommandService {
         return tenantDomainService.createTenant(
                 command.name(),
                 command.plan(),
+                command.complaintBookUrl(),
                 command.currencyCode(),
                 command.locale(),
                 command.legal(),
@@ -45,6 +46,7 @@ public class TenantCommandServiceImpl implements TenantCommandService {
         return tenantDomainService.updateTenant(
                 command.tenantId(),
                 command.name(),
+                command.complaintBookUrl(),
                 command.currencyCode(),
                 command.locale(),
                 command.legal(),
