@@ -1,5 +1,6 @@
 package codin.msbackendcore.catalog.interfaces.rest.controller;
 
+import codin.msbackendcore.catalog.domain.model.commands.product.DeleteProductByTenantCommand;
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductByBrandAndTenantIdQuery;
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductPaginatedByCategoryAndTenantIdQuery;
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductPaginatedByTenantIdQuery;
@@ -139,6 +140,17 @@ public class ProductController {
                 )).toList();
 
         return ResponseEntity.status(200).body(responseList);
+    }
+
+    @Operation(summary = "Eliminar todos los productos por tenantId")
+    @DeleteMapping("/tenant-id/{tenantId}")
+    public ResponseEntity<Void> deleteProductByTenantId(@PathVariable UUID tenantId) {
+
+        var command = new DeleteProductByTenantCommand(tenantId);
+
+        productCommandService.handle(command);
+
+        return ResponseEntity.noContent().build();
     }
 }
 
