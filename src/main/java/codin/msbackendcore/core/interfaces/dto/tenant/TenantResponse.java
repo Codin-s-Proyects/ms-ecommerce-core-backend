@@ -18,6 +18,7 @@ public record TenantResponse(
         String status,
         String currencyCode,
         String locale,
+        String complaintBookUrl,
         LegalInfo legal,
         ContactInfo contact,
         SupportInfo support,

@@ -28,6 +28,7 @@ public record CreateTenantRequest(
         @NotBlank String twitter,
         @NotBlank String currencyCode,
         @NotBlank String locale,
+        String complaintBookUrl,
         @NotNull List<CreateTenantAddressRequest> addresses
 ) {
     public CreateTenantCommand toCommand() {
@@ -44,6 +45,7 @@ public record CreateTenantRequest(
                 name,
                 plan.toUpperCase(),
                 currencyCode,
+                complaintBookUrl,
                 locale,
                 new LegalInfo(legalName, taxId),
                 new ContactInfo(contactName, contactEmail, contactPhone),

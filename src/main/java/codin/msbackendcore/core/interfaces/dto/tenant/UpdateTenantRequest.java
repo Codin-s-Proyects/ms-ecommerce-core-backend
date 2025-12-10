@@ -28,6 +28,7 @@ public record UpdateTenantRequest(
         @NotBlank String twitter,
         @NotBlank String currencyCode,
         @NotBlank String locale,
+        String complaintBookUrl,
         @NotNull List<CreateTenantAddressRequest> addresses
 ) {
     public UpdateTenantCommand toCommand(UUID tenantId) {
@@ -45,6 +46,7 @@ public record UpdateTenantRequest(
                 name,
                 currencyCode,
                 locale,
+                complaintBookUrl,
                 new LegalInfo(legalName, taxId),
                 new ContactInfo(contactName, contactEmail, contactPhone),
                 new SupportInfo(supportEmail, supportPhone),

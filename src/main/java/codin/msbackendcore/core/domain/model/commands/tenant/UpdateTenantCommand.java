@@ -14,6 +14,7 @@ public record UpdateTenantCommand(
         String name,
         String currencyCode,
         String locale,
+        String complaintBookUrl,
         LegalInfo legal,
         ContactInfo contact,
         SupportInfo support,

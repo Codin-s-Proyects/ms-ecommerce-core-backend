@@ -27,6 +27,9 @@ public class Tenant {
     @Column(name = "name", columnDefinition = "TEXT", nullable = false)
     private String name;
 
+    @Column(name = "complaint_book_url", columnDefinition = "TEXT")
+    private String complaintBookUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "plan", columnDefinition = "TEXT", nullable = false)
     private TenantPlan plan = TenantPlan.BASIC;
