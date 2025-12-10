@@ -65,7 +65,18 @@ public class OpenAIEmbeddingClient {
         for (int i = 0; i < embeddingList.size(); i++) {
             vector[i] = embeddingList.get(i).floatValue();
         }
+
         return vector;
+    }
+
+    private float[] normalize(float[] v) {
+        double norm = 0;
+        for (float x : v) norm += x * x;
+        norm = Math.sqrt(norm);
+
+        float[] out = new float[v.length];
+        for (int i = 0; i < v.length; i++) out[i] = (float) (v[i] / norm);
+        return out;
     }
 
     private CompletableFuture<float[]> fallbackEmbedding(String text, Throwable ex) {
