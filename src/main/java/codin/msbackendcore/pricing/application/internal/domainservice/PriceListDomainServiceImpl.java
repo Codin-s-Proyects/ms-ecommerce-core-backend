@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generatePriceListCode;
@@ -49,6 +50,11 @@ public class PriceListDomainServiceImpl implements PriceListDomainService {
                 .orElseThrow(() ->
                         new NotFoundException("error.not_found", new String[]{priceListId.toString()}, "priceListId")
                 );
+    }
+
+    @Override
+    public List<PriceList> getPriceListsByTenantId(UUID tenantId) {
+        return priceListRepository.findAllByTenantId(tenantId);
     }
 
     @Override
