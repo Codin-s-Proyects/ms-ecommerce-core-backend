@@ -11,4 +11,5 @@ public interface PriceListDomainService {
     PriceList createPriceList(UUID tenantId, String name, String description, String currencyCode, Instant validFrom, Instant validTo);
     PriceList getPriceListByTenantAndId(UUID tenantId, UUID priceListId);
     List<PriceList> getPriceListsByTenantId(UUID tenantId);
+    void deletePriceList(UUID tenantId, UUID priceListId);
 }

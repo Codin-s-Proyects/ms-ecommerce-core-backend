@@ -56,4 +56,14 @@ public class PriceListDomainServiceImpl implements PriceListDomainService {
     public List<PriceList> getPriceListsByTenantId(UUID tenantId) {
         return priceListRepository.findAllByTenantId(tenantId);
     }
+
+    @Override
+    public void deletePriceList(UUID tenantId, UUID priceListId) {
+        var priceList = priceListRepository.findPriceListByTenantIdAndId(tenantId, priceListId)
+                .orElseThrow(
+                        () -> new NotFoundException("error.not_found", new String[]{priceListId.toString()}, "priceListId")
+                );
+
+        priceListRepository.delete(priceList);
+    }
 }

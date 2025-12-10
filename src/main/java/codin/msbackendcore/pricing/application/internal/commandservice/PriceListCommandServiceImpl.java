@@ -2,6 +2,7 @@ package codin.msbackendcore.pricing.application.internal.commandservice;
 
 import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalCoreService;
 import codin.msbackendcore.pricing.domain.model.commands.CreatePriceListCommand;
+import codin.msbackendcore.pricing.domain.model.commands.DeletePriceListCommand;
 import codin.msbackendcore.pricing.domain.model.entities.PriceList;
 import codin.msbackendcore.pricing.domain.services.pricelist.PriceListCommandService;
 import codin.msbackendcore.pricing.domain.services.pricelist.PriceListDomainService;
@@ -9,6 +10,7 @@ import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+@Transactional
 @Service
 public class PriceListCommandServiceImpl implements PriceListCommandService {
 
@@ -20,7 +22,6 @@ public class PriceListCommandServiceImpl implements PriceListCommandService {
         this.externalCoreService = externalCoreService;
     }
 
-    @Transactional
     @Override
     public PriceList handle(CreatePriceListCommand command) {
 
@@ -37,5 +38,10 @@ public class PriceListCommandServiceImpl implements PriceListCommandService {
                 command.validTo()
         );
 
+    }
+
+    @Override
+    public void handle(DeletePriceListCommand command) {
+        priceListDomainService.deletePriceList(command.tenantId(), command.priceListId());
     }
 }

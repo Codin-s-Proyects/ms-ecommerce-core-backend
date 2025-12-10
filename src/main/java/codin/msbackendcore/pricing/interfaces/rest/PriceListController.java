@@ -1,12 +1,11 @@
 package codin.msbackendcore.pricing.interfaces.rest;
 
+import codin.msbackendcore.pricing.domain.model.commands.DeletePriceListCommand;
 import codin.msbackendcore.pricing.domain.model.queries.GetAllPriceListByTenantIdQuery;
-import codin.msbackendcore.pricing.domain.model.queries.GetAllProductPriceByProductVariantIdQuery;
 import codin.msbackendcore.pricing.domain.services.pricelist.PriceListCommandService;
 import codin.msbackendcore.pricing.domain.services.pricelist.PriceListQueryService;
 import codin.msbackendcore.pricing.interfaces.dto.pricelist.PriceListCreateRequest;
 import codin.msbackendcore.pricing.interfaces.dto.pricelist.PriceListResponse;
-import codin.msbackendcore.pricing.interfaces.dto.productprice.ProductPriceResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -74,6 +73,16 @@ public class PriceListController {
                 )).toList();
 
         return ResponseEntity.status(200).body(responseList);
+    }
+
+    @DeleteMapping("/{priceListId}/tenant/{tenantId}")
+    public ResponseEntity<Void> deletePriceList(@PathVariable UUID priceListId, @PathVariable UUID tenantId) {
+
+        var command = new DeletePriceListCommand(priceListId, tenantId);
+
+        priceListCommandService.handle(command);
+
+        return ResponseEntity.noContent().build();
     }
 }
 

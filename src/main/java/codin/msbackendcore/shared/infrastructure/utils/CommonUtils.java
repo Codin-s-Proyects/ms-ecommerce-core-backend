@@ -39,7 +39,11 @@ public class CommonUtils {
             attrCode.append(val.charAt(0));
         });
 
-        String randomPart = String.format("%03d", new Random().nextInt(999));
+        String timeHash = Integer.toHexString(
+                (productName + System.nanoTime()).hashCode()
+        ).toUpperCase();
+
+        String randomPart = String.format("%05d", new Random().nextInt(100000));
 
         StringBuilder skuBuilder = new StringBuilder();
         if (categoryPrefix != null) skuBuilder.append(categoryPrefix).append("-");
@@ -47,6 +51,7 @@ public class CommonUtils {
         skuBuilder.append(productPrefix).append("-");
         skuBuilder.append(tenantPrefix).append("-");
         skuBuilder.append(attrCode).append("-");
+        skuBuilder.append(timeHash, 0, 4).append("-");
         skuBuilder.append(randomPart);
 
         return skuBuilder.toString();
