@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface PriceListDomainService {
     PriceList createPriceList(UUID tenantId, String name, String description, String currencyCode, Instant validFrom, Instant validTo);
     PriceList getPriceListByTenantAndId(UUID tenantId, UUID priceListId);
+    void deletePriceList(UUID tenantId, UUID priceListId);
 }
