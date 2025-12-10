@@ -4,6 +4,7 @@ import codin.msbackendcore.catalog.domain.model.commands.product.DeleteProductBy
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductByBrandAndTenantIdQuery;
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductPaginatedByCategoryAndTenantIdQuery;
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductPaginatedByTenantIdQuery;
+import codin.msbackendcore.catalog.domain.model.queries.product.GetProductByIdQuery;
 import codin.msbackendcore.catalog.domain.services.product.ProductCommandService;
 import codin.msbackendcore.catalog.domain.services.product.ProductQueryService;
 import codin.msbackendcore.catalog.interfaces.dto.product.ProductCreateRequest;
@@ -119,6 +120,27 @@ public class ProductController {
         );
 
         return ResponseEntity.status(200).body(paginatedResponse);
+    }
+
+    @Operation(summary = "Obtener todos los productos por marca y tenantId")
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable UUID productId) {
+
+        var query = new GetProductByIdQuery(productId);
+
+        var getList = productQueryService.handle(query);
+
+        var response =
+                new ProductResponse(
+                        getList.getId(),
+                        getList.getTenantId(),
+                        getList.getName(),
+                        getList.getSlug(),
+                        getList.getDescription(),
+                        getList.isHasVariants()
+                );
+
+        return ResponseEntity.status(200).body(response);
     }
 
     @Operation(summary = "Obtener todos los productos por marca y tenantId")
