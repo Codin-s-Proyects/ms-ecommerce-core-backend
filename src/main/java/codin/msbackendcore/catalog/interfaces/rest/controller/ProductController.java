@@ -1,8 +1,10 @@
 package codin.msbackendcore.catalog.interfaces.rest.controller;
 
+import codin.msbackendcore.catalog.domain.model.commands.product.DeleteProductByTenantCommand;
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductByBrandAndTenantIdQuery;
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductPaginatedByCategoryAndTenantIdQuery;
 import codin.msbackendcore.catalog.domain.model.queries.product.GetAllProductPaginatedByTenantIdQuery;
+import codin.msbackendcore.catalog.domain.model.queries.product.GetProductByIdQuery;
 import codin.msbackendcore.catalog.domain.services.product.ProductCommandService;
 import codin.msbackendcore.catalog.domain.services.product.ProductQueryService;
 import codin.msbackendcore.catalog.interfaces.dto.product.ProductCreateRequest;
@@ -121,6 +123,27 @@ public class ProductController {
     }
 
     @Operation(summary = "Obtener todos los productos por marca y tenantId")
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable UUID productId) {
+
+        var query = new GetProductByIdQuery(productId);
+
+        var getList = productQueryService.handle(query);
+
+        var response =
+                new ProductResponse(
+                        getList.getId(),
+                        getList.getTenantId(),
+                        getList.getName(),
+                        getList.getSlug(),
+                        getList.getDescription(),
+                        getList.isHasVariants()
+                );
+
+        return ResponseEntity.status(200).body(response);
+    }
+
+    @Operation(summary = "Obtener todos los productos por marca y tenantId")
     @GetMapping("/brand/{brandId}/tenant-id/{tenantId}")
     public ResponseEntity<List<ProductResponse>> getAllProductByBrand(@PathVariable UUID brandId, @PathVariable UUID tenantId) {
 
@@ -139,6 +162,17 @@ public class ProductController {
                 )).toList();
 
         return ResponseEntity.status(200).body(responseList);
+    }
+
+    @Operation(summary = "Eliminar todos los productos por tenantId")
+    @DeleteMapping("/tenant-id/{tenantId}")
+    public ResponseEntity<Void> deleteProductByTenantId(@PathVariable UUID tenantId) {
+
+        var command = new DeleteProductByTenantCommand(tenantId);
+
+        productCommandService.handle(command);
+
+        return ResponseEntity.noContent().build();
     }
 }
 

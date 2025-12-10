@@ -27,4 +27,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     );
 
     List<Product> findByBrandAndTenantId(Brand brand, UUID tenantId);
+
+    void deleteAllByTenantId(UUID tenantId);
 }

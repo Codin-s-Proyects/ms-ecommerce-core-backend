@@ -92,4 +92,9 @@ public class ProductDomainServiceImpl implements ProductDomainService {
     public List<Product> getProductsByBrand(UUID tenantId, Brand brand) {
         return productRepository.findByBrandAndTenantId(brand, tenantId);
     }
+
+    @Override
+    public void deleteProductsByTenant(UUID tenantId) {
+        productRepository.deleteAllByTenantId(tenantId);
+    }
 }
