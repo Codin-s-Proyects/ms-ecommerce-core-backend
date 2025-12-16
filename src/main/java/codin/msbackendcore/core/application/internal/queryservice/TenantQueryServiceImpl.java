@@ -2,6 +2,7 @@ package codin.msbackendcore.core.application.internal.queryservice;
 
 import codin.msbackendcore.core.application.internal.dto.TenantWithAssets;
 import codin.msbackendcore.core.domain.model.queries.tenant.GetAllTenantsQuery;
+import codin.msbackendcore.core.domain.model.queries.tenant.GetTenantByIdQuery;
 import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetDomainService;
 import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
@@ -22,7 +23,7 @@ public class TenantQueryServiceImpl implements TenantQueryService {
     }
 
     @Override
-    public List<TenantWithAssets> handle(GetAllTenantsQuery command) {
+    public List<TenantWithAssets> handle(GetAllTenantsQuery query) {
 
         var tenants = tenantDomainService.getAllTenants();
 
@@ -36,5 +37,18 @@ public class TenantQueryServiceImpl implements TenantQueryService {
                     return new TenantWithAssets(t, assets);
                 })
                 .toList();
+    }
+
+    @Override
+    public TenantWithAssets handle(GetTenantByIdQuery query) {
+        var tenant = tenantDomainService.getTenantById(query.tenantId());
+        var assets = mediaAssetDomainService.getAllByEntityTypeAndEntityId(
+                tenant.getId(),
+                EntityType.TENANT,
+                tenant.getId()
+        );
+
+        return new TenantWithAssets(tenant, assets);
+
     }
 }
