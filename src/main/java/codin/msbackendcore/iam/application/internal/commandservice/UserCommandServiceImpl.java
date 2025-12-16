@@ -108,11 +108,11 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new BadRequestException("error.already_exist", new String[]{command.identifier()}, "identifier");
         }
 
-        if (roleRepository.existsByName(command.role())) {
+        if (!roleRepository.existsByCode(command.role())) {
             throw new BadRequestException("error.not_found", new String[]{command.role()}, "role");
         }
 
-        UUID systemUserId = userRepository.findSystemUserIdByTenantId(command.tenantId())
+        UUID systemUserId = userRepository.findSystemUserId()
                 .orElseThrow(
                         () -> new BadRequestException("error.not_found", new String[]{command.tenantId().toString()}, "tenantId")
                 );
