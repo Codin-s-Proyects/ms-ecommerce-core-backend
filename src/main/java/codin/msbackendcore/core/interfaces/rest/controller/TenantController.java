@@ -1,6 +1,7 @@
 package codin.msbackendcore.core.interfaces.rest.controller;
 
 import codin.msbackendcore.core.domain.model.queries.tenant.GetAllTenantsQuery;
+import codin.msbackendcore.core.domain.model.queries.tenant.GetTenantByIdQuery;
 import codin.msbackendcore.core.domain.services.tenant.TenantCommandService;
 import codin.msbackendcore.core.domain.services.tenant.TenantQueryService;
 import codin.msbackendcore.core.interfaces.dto.mediaasset.MediaAssetResponse;
@@ -91,6 +92,62 @@ public class TenantController {
                 }).toList();
 
         return ResponseEntity.ok(responseList);
+    }
+
+    @Operation(summary = "Obtencion un tenant por id")
+    @ApiResponse(responseCode = "200", description = "Tenant obtenido correctamente")
+    @GetMapping("/{tenantId}")
+    public ResponseEntity<TenantResponse> getTenantById(@PathVariable UUID tenantId) {
+        var handleResponse = queryService.handle(new GetTenantByIdQuery(tenantId));
+        var tenant = handleResponse.tenant();
+        var mediaAssets = handleResponse.mediaAssets();
+
+        var addressList = tenant.getAddresses().stream().map(
+                address -> new TenantAddressResponse(
+                        address.getId(),
+                        address.getLine1(),
+                        address.getCity(),
+                        address.getCountry()
+                )
+        ).toList();
+
+        var mediaAssetList = mediaAssets.stream()
+                .map(m -> new MediaAssetResponse(
+                        m.getId(),
+                        m.getTenantId(),
+                        m.getEntityType().toString(),
+                        m.getEntityId(),
+                        m.getUrl(),
+                        m.getPublicId(),
+                        m.getFormat(),
+                        m.getWidth(),
+                        m.getHeight(),
+                        m.getBytes(),
+                        m.getIsMain(),
+                        m.getSortOrder(),
+                        m.getAltText(),
+                        m.getContext()
+                )).toList();
+
+        var tenantResponse = new TenantResponse(
+                tenant.getId(),
+                tenant.getSlug(),
+                tenant.getName(),
+                tenant.getPlan().name(),
+                tenant.getStatus(),
+                tenant.getCurrencyCode(),
+                tenant.getLocale(),
+                tenant.getComplaintBookUrl(),
+                tenant.getLegal(),
+                tenant.getContact(),
+                tenant.getSupport(),
+                tenant.getSocial(),
+                addressList,
+                mediaAssetList
+        );
+
+
+        return ResponseEntity.ok(tenantResponse);
     }
 
     @Operation(summary = "Creacion de un tenant")

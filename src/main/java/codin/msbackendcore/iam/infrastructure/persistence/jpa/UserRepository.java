@@ -14,10 +14,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query("""
         SELECT u.id 
         FROM User u 
-        WHERE u.tenantId = :tenantId 
-          AND u.userType = 'system'
+        WHERE u.userType = 'system'
           AND u.active = true
         """)
-    Optional<UUID> findSystemUserIdByTenantId(UUID tenantId);
+    Optional<UUID> findSystemUserId();
 
 }
