@@ -16,4 +16,8 @@ public class ExternalOrderingService {
     public Integer getOrderCounterByTenant(UUID tenantId) {
         return orderingContextFacade.getOrderCounterByTenant(tenantId);
     }
+
+    public boolean existOrderByIdAndTenantId(UUID orderId, UUID tenantId) {
+        return orderingContextFacade.existOrderByIdAndTenantId(orderId, tenantId);
+    }
 }

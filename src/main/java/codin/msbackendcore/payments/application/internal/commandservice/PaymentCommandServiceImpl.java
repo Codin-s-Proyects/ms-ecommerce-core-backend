@@ -5,6 +5,8 @@ import codin.msbackendcore.payments.application.internal.outboundservices.Extern
 import codin.msbackendcore.payments.domain.model.commands.CreatePaymentCommand;
 import codin.msbackendcore.payments.domain.model.commands.IzipayTokenPaymentCommand;
 import codin.msbackendcore.payments.domain.model.entities.Payment;
+import codin.msbackendcore.payments.domain.model.valueobjects.PaymentMethod;
+import codin.msbackendcore.payments.domain.model.valueobjects.PaymentStatus;
 import codin.msbackendcore.payments.domain.services.PaymentCommandService;
 import codin.msbackendcore.payments.domain.services.PaymentDomainService;
 import codin.msbackendcore.payments.infrastructure.izipay.IzipayClient;
@@ -15,8 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.Year;
 import java.util.UUID;
 
-import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateOrderNumber;
-import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateTransactionId;
+import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.*;
 
 @Service
 public class PaymentCommandServiceImpl implements PaymentCommandService {
@@ -37,16 +38,28 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     @Override
     public Payment handle(CreatePaymentCommand command) {
 
-        //TODO: Verificar si existe el orderId
+        if (!isValidEnum(PaymentStatus.class, command.paymentStatus())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.paymentStatus()}, "paymentStatus");
+        }
+
+        if (command.paymentMethod() != null && !isValidEnum(PaymentMethod.class, command.paymentMethod())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.paymentMethod()}, "paymentMethod");
+        }
 
         if (!externalCoreService.existTenantById(command.tenantId())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
+        }
+
+        if (!externalOrderingService.existOrderByIdAndTenantId(command.orderId(), command.tenantId())) {
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
         return paymentDomainService.createPayment(
                 command.tenantId(),
                 command.orderId(),
-                command.amount()
+                command.amount(),
+                command.paymentMethod() != null ? PaymentMethod.valueOf(command.paymentMethod()) : null,
+                PaymentStatus.valueOf(command.paymentStatus())
         );
     }
 

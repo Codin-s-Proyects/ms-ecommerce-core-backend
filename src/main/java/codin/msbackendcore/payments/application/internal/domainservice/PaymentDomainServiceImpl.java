@@ -1,6 +1,7 @@
 package codin.msbackendcore.payments.application.internal.domainservice;
 
 import codin.msbackendcore.payments.domain.model.entities.Payment;
+import codin.msbackendcore.payments.domain.model.valueobjects.PaymentMethod;
 import codin.msbackendcore.payments.domain.model.valueobjects.PaymentStatus;
 import codin.msbackendcore.payments.domain.services.PaymentDomainService;
 import codin.msbackendcore.payments.infrastructure.persistence.jpa.PaymentRepository;
@@ -23,14 +24,18 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
     }
 
     @Override
-    public Payment createPayment(UUID tenantId, UUID orderId, BigDecimal amount) {
+    public Payment createPayment(UUID tenantId, UUID orderId, BigDecimal amount, PaymentMethod paymentMethod, PaymentStatus paymentStatus) {
+
+        var confirmedAt = paymentStatus.equals(PaymentStatus.CONFIRMED) ? Instant.now() : null;
 
         var payment = Payment.builder()
                 .tenantId(tenantId)
                 .orderId(orderId)
-                .status(PaymentStatus.PENDING)
+                .paymentMethod(paymentMethod)
+                .status(paymentStatus)
                 .transactionId(generateTransactionId(tenantId))
                 .amount(amount)
+                .confirmedAt(confirmedAt)
                 .build();
 
         return paymentRepository.save(payment);

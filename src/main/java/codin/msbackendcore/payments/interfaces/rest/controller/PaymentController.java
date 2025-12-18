@@ -48,9 +48,11 @@ public class PaymentController {
                 saved.getId(),
                 saved.getTenantId(),
                 saved.getOrderId(),
-                saved.getPaymentMethod().name(),
+                saved.getPaymentMethod() != null ? saved.getPaymentMethod().name() : "",
+                saved.getTransactionId(),
                 saved.getStatus().name(),
-                saved.getAmount()
+                saved.getAmount(),
+                saved.getConfirmedAt()
         );
 
         return ResponseEntity.status(201).body(response);
