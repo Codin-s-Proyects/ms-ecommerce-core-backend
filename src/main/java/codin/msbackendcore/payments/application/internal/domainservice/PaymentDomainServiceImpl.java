@@ -42,23 +42,15 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
     }
 
     @Override
-    public Payment confirmPayment(UUID tenantId, String transactionId) {
-        Payment payment = paymentRepository.findByTransactionIdAndTenantId(transactionId, tenantId)
-                .orElseThrow(() -> new BadRequestException("error.bad_request", new String[]{transactionId}, "transactionId"));
+    public Payment updatePayment(UUID paymentId, UUID tenantId, PaymentMethod paymentMethod, PaymentStatus paymentStatus) {
+        var payment = paymentRepository.findByIdAndTenantId(paymentId, tenantId)
+                .orElseThrow(() -> new BadRequestException("error.bad_request", new String[]{paymentId.toString()}, "paymentId"));
 
-        payment.setStatus(PaymentStatus.CONFIRMED);
-        payment.setConfirmedAt(Instant.now());
-
-        return paymentRepository.save(payment);
-    }
-
-    @Override
-    public Payment failPayment(UUID tenantId, String transactionId) {
-        Payment payment = paymentRepository.findByTransactionIdAndTenantId(transactionId, tenantId)
-                .orElseThrow(() -> new BadRequestException("error.bad_request", new String[]{transactionId}, "transactionId"));
-
-        payment.setStatus(PaymentStatus.FAILED);
-        payment.setConfirmedAt(Instant.now());
+        payment.setPaymentMethod(paymentMethod);
+        payment.setStatus(paymentStatus);
+        if(paymentStatus.equals(PaymentStatus.CONFIRMED)) {
+            payment.setConfirmedAt(Instant.now());
+        }
 
         return paymentRepository.save(payment);
     }

@@ -1,18 +1,14 @@
 package codin.msbackendcore.payments.interfaces.rest.controller;
 
 import codin.msbackendcore.payments.domain.services.PaymentCommandService;
-import codin.msbackendcore.payments.interfaces.dto.IzipayTokenRequest;
-import codin.msbackendcore.payments.interfaces.dto.IzipayTokenResponse;
-import codin.msbackendcore.payments.interfaces.dto.PaymentCreateRequest;
-import codin.msbackendcore.payments.interfaces.dto.PaymentResponse;
+import codin.msbackendcore.payments.interfaces.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -56,6 +52,28 @@ public class PaymentController {
         );
 
         return ResponseEntity.status(201).body(response);
+    }
+
+    @Operation(summary = "Actualizar el estado de un pago", description = "Actualizar el estado de un pago existente basado en el ID del pago y los detalles proporcionados.")
+    @PutMapping("/{paymentId}/status")
+    public ResponseEntity<PaymentResponse> updatePaymentStus(@Valid @RequestBody PaymentStatusUpdateRequest req, @PathVariable("paymentId") UUID paymentId) {
+
+        var command = req.toCommand(paymentId);
+
+        var saved = paymentCommandService.handle(command);
+
+        var response = new PaymentResponse(
+                saved.getId(),
+                saved.getTenantId(),
+                saved.getOrderId(),
+                saved.getPaymentMethod() != null ? saved.getPaymentMethod().name() : "",
+                saved.getTransactionId(),
+                saved.getStatus().name(),
+                saved.getAmount(),
+                saved.getConfirmedAt()
+        );
+
+        return ResponseEntity.status(200).body(response);
     }
 }
 

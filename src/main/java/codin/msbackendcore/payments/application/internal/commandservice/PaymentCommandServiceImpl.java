@@ -4,6 +4,7 @@ import codin.msbackendcore.payments.application.internal.outboundservices.Extern
 import codin.msbackendcore.payments.application.internal.outboundservices.ExternalOrderingService;
 import codin.msbackendcore.payments.domain.model.commands.CreatePaymentCommand;
 import codin.msbackendcore.payments.domain.model.commands.IzipayTokenPaymentCommand;
+import codin.msbackendcore.payments.domain.model.commands.UpdatePaymentStatusCommand;
 import codin.msbackendcore.payments.domain.model.entities.Payment;
 import codin.msbackendcore.payments.domain.model.valueobjects.PaymentMethod;
 import codin.msbackendcore.payments.domain.model.valueobjects.PaymentStatus;
@@ -15,7 +16,6 @@ import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.time.Year;
-import java.util.UUID;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.*;
 
@@ -25,7 +25,6 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     private final PaymentDomainService paymentDomainService;
     private final ExternalCoreService externalCoreService;
     private final ExternalOrderingService externalOrderingService;
-
     private final IzipayClient izipayClient;
 
     public PaymentCommandServiceImpl(PaymentDomainService paymentDomainService, ExternalCoreService externalCoreService, ExternalOrderingService externalOrderingService, IzipayClient izipayClient) {
@@ -64,6 +63,24 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     }
 
     @Override
+    public Payment handle(UpdatePaymentStatusCommand command) {
+        if (!isValidEnum(PaymentStatus.class, command.paymentStatus())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.paymentStatus()}, "paymentStatus");
+        }
+
+        if (command.paymentMethod() != null && !isValidEnum(PaymentMethod.class, command.paymentMethod())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.paymentMethod()}, "paymentMethod");
+        }
+
+        return paymentDomainService.updatePayment(
+                command.paymentId(),
+                command.tenantId(),
+                command.paymentMethod() != null ? PaymentMethod.valueOf(command.paymentMethod()) : null,
+                PaymentStatus.valueOf(command.paymentStatus())
+        );
+    }
+
+    @Override
     public IzipayTokenResponse handle(IzipayTokenPaymentCommand command) {
 
         var currentYear = Year.now().getValue();
@@ -79,10 +96,5 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
                 orderNumber,
                 securityToken
         );
-    }
-
-    public Payment confirmPayment(UUID tenantId, String transactionId) {
-        //Map<String, Object> response = izipayClient.confirmTransaction(transactionId);
-        return paymentDomainService.confirmPayment(tenantId, transactionId);
     }
 }
