@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateTransactionId;
@@ -54,5 +55,10 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
         }
 
         return paymentRepository.save(payment);
+    }
+
+    @Override
+    public List<Payment> getAllPaymentsByUserId(UUID userId) {
+        return paymentRepository.findAllByUserId(userId);
     }
 }

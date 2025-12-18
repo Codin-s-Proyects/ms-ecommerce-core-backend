@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.isValidEnum;
 
 @Service
+@Transactional
 public class AttributeCommandServiceImpl implements AttributeCommandService {
 
     private final AttributeDomainService attributeDomainService;
@@ -23,7 +24,6 @@ public class AttributeCommandServiceImpl implements AttributeCommandService {
         this.externalCoreService = externalCoreService;
     }
 
-    @Transactional
     @Override
     public Attribute handle(CreateAttributeCommand command) {
 

@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class BrandCommandServiceImpl implements BrandCommandService {
 
     private final BrandDomainService brandDomainService;
@@ -20,7 +21,6 @@ public class BrandCommandServiceImpl implements BrandCommandService {
         this.externalCoreService = externalCoreService;
     }
 
-    @Transactional
     @Override
     public Brand handle(CreateBrandCommand command) {
 

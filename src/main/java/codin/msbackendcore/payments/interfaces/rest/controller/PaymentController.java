@@ -1,6 +1,8 @@
 package codin.msbackendcore.payments.interfaces.rest.controller;
 
+import codin.msbackendcore.payments.domain.model.queries.GetAllPaymentsByUserIdQuery;
 import codin.msbackendcore.payments.domain.services.PaymentCommandService;
+import codin.msbackendcore.payments.domain.services.PaymentQueryService;
 import codin.msbackendcore.payments.interfaces.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -16,9 +19,34 @@ import java.util.UUID;
 public class PaymentController {
 
     private final PaymentCommandService paymentCommandService;
+    private final PaymentQueryService paymentQueryService;
 
-    public PaymentController(PaymentCommandService paymentCommandService) {
+    public PaymentController(PaymentCommandService paymentCommandService, PaymentQueryService paymentQueryService) {
         this.paymentCommandService = paymentCommandService;
+        this.paymentQueryService = paymentQueryService;
+    }
+
+    @Operation(summary = "Obtener los atributos de categoria por categoria")
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<PaymentResponse>> getAllPaymentsByUser(@PathVariable UUID userId) {
+
+        var query = new GetAllPaymentsByUserIdQuery(userId);
+
+        var getList = paymentQueryService.handle(query);
+
+        var responseList = getList.stream().map(payment ->
+                new PaymentResponse(
+                        payment.getId(),
+                        payment.getTenantId(),
+                        payment.getOrderId(),
+                        payment.getPaymentMethod() != null ? payment.getPaymentMethod().name() : "",
+                        payment.getStatus().name(),
+                        payment.getTransactionId(),
+                        payment.getAmount(),
+                        payment.getConfirmedAt()
+                )).toList();
+
+        return ResponseEntity.status(200).body(responseList);
     }
 
     @Operation(summary = "Obtener token de pago Izipay", description = "Genera un token de pago para Izipay basado en los detalles proporcionados.")

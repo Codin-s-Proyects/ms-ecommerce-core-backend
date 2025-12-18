@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class AttributeValueCommandServiceImpl implements AttributeValueCommandService {
 
     private final AttributeValueDomainService attributeValueDomainService;
@@ -19,7 +20,6 @@ public class AttributeValueCommandServiceImpl implements AttributeValueCommandSe
         this.attributeDomainService = attributeDomainService;
     }
 
-    @Transactional
     @Override
     public AttributeValue handle(CreateAttributeValueCommand command) {
 
