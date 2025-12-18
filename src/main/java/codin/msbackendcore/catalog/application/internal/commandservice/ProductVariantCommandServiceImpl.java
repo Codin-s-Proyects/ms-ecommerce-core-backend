@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Transactional
 public class ProductVariantCommandServiceImpl implements ProductVariantCommandService {
 
     private final ProductVariantDomainService productVariantDomainService;
@@ -30,7 +31,6 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
         this.externalCoreService = externalCoreService;
     }
 
-    @Transactional
     @Override
     public ProductVariant handle(CreateProductVariantCommand command) {
 
@@ -55,7 +55,6 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
         return productVariant;
     }
 
-    @Transactional
     @Override
     public void handle(CreateProductVariantBulkCommand command) {
         if (!externalCoreService.existTenantById(command.tenantId())) {

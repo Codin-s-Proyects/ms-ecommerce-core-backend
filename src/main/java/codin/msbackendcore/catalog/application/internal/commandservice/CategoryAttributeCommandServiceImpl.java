@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class CategoryAttributeCommandServiceImpl implements CategoryAttributeCommandService {
 
     private final CategoryAttributeDomainService categoryAttributeDomainService;
@@ -26,7 +27,6 @@ public class CategoryAttributeCommandServiceImpl implements CategoryAttributeCom
         this.externalCoreService = externalCoreService;
     }
 
-    @Transactional
     @Override
     public CategoryAttribute handle(CreateCategoryAttributeCommand command) {
 

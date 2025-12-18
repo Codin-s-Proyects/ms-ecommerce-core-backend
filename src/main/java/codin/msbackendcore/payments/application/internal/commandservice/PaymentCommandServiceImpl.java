@@ -14,6 +14,7 @@ import codin.msbackendcore.payments.domain.services.PaymentDomainService;
 import codin.msbackendcore.payments.infrastructure.izipay.IzipayClient;
 import codin.msbackendcore.payments.interfaces.dto.IzipayTokenResponse;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.Year;
@@ -21,6 +22,7 @@ import java.time.Year;
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.*;
 
 @Service
+@Transactional
 public class PaymentCommandServiceImpl implements PaymentCommandService {
 
     private final PaymentDomainService paymentDomainService;

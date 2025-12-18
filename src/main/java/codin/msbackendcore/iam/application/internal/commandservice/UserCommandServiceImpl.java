@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
@@ -57,7 +58,6 @@ public class UserCommandServiceImpl implements UserCommandService {
         this.externalCoreService = externalCoreService;
     }
 
-    @Transactional
     @Override
     public Optional<SignInResult> handle(SignInCommand command) {
         var credential = credentialRepository.findByIdentifier(command.identifier())
@@ -88,7 +88,6 @@ public class UserCommandServiceImpl implements UserCommandService {
                 ));
     }
 
-    @Transactional
     @Override
     public Optional<User> handle(SignUpCommand command) {
 
@@ -134,7 +133,6 @@ public class UserCommandServiceImpl implements UserCommandService {
         return Optional.of(user);
     }
 
-    @Transactional
     @Override
     public Optional<SignInResult> handle(RefreshTokenCommand command) {
 //        var newRefreshToken = refreshTokenDomainService.validateAndRotate(
