@@ -32,7 +32,7 @@ public class Tenant {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "plan", columnDefinition = "TEXT", nullable = false)
-    private TenantPlan plan = TenantPlan.BASIC;
+    private TenantPlan plan = TenantPlan.STARTER;
 
     @Embedded
     private LegalInfo legal;
