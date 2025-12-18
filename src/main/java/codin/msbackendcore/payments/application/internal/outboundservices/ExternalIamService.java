@@ -1,11 +1,11 @@
-package codin.msbackendcore.ordering.application.internal.outboundservices;
+package codin.msbackendcore.payments.application.internal.outboundservices;
 
 import codin.msbackendcore.iam.interfaces.acl.IamContextFacade;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service("ExternalIamServiceForOrdering")
+@Service("ExternalIamServiceForPayments")
 public class ExternalIamService {
     private final IamContextFacade iamContextFacade;
 

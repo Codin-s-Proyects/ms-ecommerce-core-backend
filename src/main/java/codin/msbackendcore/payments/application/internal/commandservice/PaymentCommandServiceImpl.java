@@ -1,6 +1,7 @@
 package codin.msbackendcore.payments.application.internal.commandservice;
 
 import codin.msbackendcore.payments.application.internal.outboundservices.ExternalCoreService;
+import codin.msbackendcore.payments.application.internal.outboundservices.ExternalIamService;
 import codin.msbackendcore.payments.application.internal.outboundservices.ExternalOrderingService;
 import codin.msbackendcore.payments.domain.model.commands.CreatePaymentCommand;
 import codin.msbackendcore.payments.domain.model.commands.IzipayTokenPaymentCommand;
@@ -25,17 +26,26 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     private final PaymentDomainService paymentDomainService;
     private final ExternalCoreService externalCoreService;
     private final ExternalOrderingService externalOrderingService;
+    private final ExternalIamService externalIamService;
     private final IzipayClient izipayClient;
 
-    public PaymentCommandServiceImpl(PaymentDomainService paymentDomainService, ExternalCoreService externalCoreService, ExternalOrderingService externalOrderingService, IzipayClient izipayClient) {
+    public PaymentCommandServiceImpl(PaymentDomainService paymentDomainService, ExternalCoreService externalCoreService, ExternalOrderingService externalOrderingService, ExternalIamService externalIamService, IzipayClient izipayClient) {
         this.paymentDomainService = paymentDomainService;
         this.externalCoreService = externalCoreService;
         this.externalOrderingService = externalOrderingService;
+        this.externalIamService = externalIamService;
         this.izipayClient = izipayClient;
     }
 
     @Override
     public Payment handle(CreatePaymentCommand command) {
+        if (!externalCoreService.existTenantById(command.tenantId())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
+        }
+
+        if (!externalIamService.existsUserById(command.userId(), command.tenantId())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.userId().toString()}, "userId");
+        }
 
         if (!isValidEnum(PaymentStatus.class, command.paymentStatus())) {
             throw new BadRequestException("error.bad_request", new String[]{command.paymentStatus()}, "paymentStatus");
@@ -45,10 +55,6 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
             throw new BadRequestException("error.bad_request", new String[]{command.paymentMethod()}, "paymentMethod");
         }
 
-        if (!externalCoreService.existTenantById(command.tenantId())) {
-            throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
-        }
-
         if (!externalOrderingService.existOrderByIdAndTenantId(command.orderId(), command.tenantId())) {
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
@@ -56,6 +62,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         return paymentDomainService.createPayment(
                 command.tenantId(),
                 command.orderId(),
+                command.userId(),
                 command.amount(),
                 command.paymentMethod() != null ? PaymentMethod.valueOf(command.paymentMethod()) : null,
                 PaymentStatus.valueOf(command.paymentStatus())

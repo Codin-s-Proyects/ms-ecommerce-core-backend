@@ -24,13 +24,14 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
     }
 
     @Override
-    public Payment createPayment(UUID tenantId, UUID orderId, BigDecimal amount, PaymentMethod paymentMethod, PaymentStatus paymentStatus) {
+    public Payment createPayment(UUID tenantId, UUID orderId, UUID userId, BigDecimal amount, PaymentMethod paymentMethod, PaymentStatus paymentStatus) {
 
         var confirmedAt = paymentStatus.equals(PaymentStatus.CONFIRMED) ? Instant.now() : null;
 
         var payment = Payment.builder()
                 .tenantId(tenantId)
                 .orderId(orderId)
+                .userId(userId)
                 .paymentMethod(paymentMethod)
                 .status(paymentStatus)
                 .transactionId(generateTransactionId(tenantId))
