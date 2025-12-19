@@ -1,3 +1,5 @@
+ALTER TABLE core.tenants
+    ADD COLUMN plan_id UUID;
 -- =========================================
 -- 2. Asignar plan STARTER a todos los tenants
 -- =========================================
