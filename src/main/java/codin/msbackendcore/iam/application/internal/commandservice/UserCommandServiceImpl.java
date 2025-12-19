@@ -69,7 +69,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         var session = sessionDomainService.createSession(user, command.ip(), command.deviceInfo());
 
-        var refreshToken = refreshTokenDomainService.createRefreshToken(command.tenantId(), user, command.deviceInfo(), command.identifier());
+        var refreshToken = refreshTokenDomainService.createRefreshToken(command.identifier(), session);
 
         var accessToken = tokenService.generateToken(command.identifier());
 
@@ -148,6 +148,30 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public Optional<Void> handle(LogoutCommand command) {
+
+        var session = sessionDomainService.findById(command.sessionId());
+
+        if (!session.getUser().getId().equals(command.userId())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.sessionId().toString()}, "sessionId");
+        }
+
+        if (session.isRevoked()) {
+            throw new BadRequestException("session.revoked", new String[]{command.sessionId().toString()}, "sessionId");
+        }
+
+        sessionDomainService.revokeSession(session);
+        refreshTokenDomainService.revokeAllTokensBySession(session);
+
+        auditLogDomainService.recordAction(
+                session.getUser().getTenantId(),
+                command.userId(),
+                command.userId(),
+                "USER_LOGOUT",
+                Map.of(
+                        "sessionId", command.sessionId().toString()
+                )
+        );
+
         return Optional.empty();
     }
 

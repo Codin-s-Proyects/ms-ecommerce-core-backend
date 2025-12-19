@@ -6,7 +6,10 @@ import codin.msbackendcore.iam.domain.services.SessionDomainService;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.SessionRepository;
 import codin.msbackendcore.shared.domain.exceptions.AuthenticatedException;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
+import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 import static codin.msbackendcore.shared.infrastructure.utils.Constants.MAX_ACTIVE_SESSIONS;
 
@@ -17,6 +20,14 @@ public class SessionDomainServiceImpl implements SessionDomainService {
 
     public SessionDomainServiceImpl(SessionRepository sessionRepository) {
         this.sessionRepository = sessionRepository;
+    }
+
+    @Override
+    public Session findById(UUID sessionId) {
+        return sessionRepository.findById(sessionId)
+                .orElseThrow(
+                        () -> new NotFoundException("error.not_found", new String[]{sessionId.toString()}, "sessionId")
+                );
     }
 
     @Override
@@ -39,5 +50,11 @@ public class SessionDomainServiceImpl implements SessionDomainService {
         session.setIp(ipAddress);
         session.setRevoked(false);
         return sessionRepository.save(session);
+    }
+
+    @Override
+    public void revokeSession(Session session) {
+        session.setRevoked(true);
+        sessionRepository.save(session);
     }
 }

@@ -11,5 +11,6 @@ public interface UserDomainService {
     boolean isPasswordValid(Credential credential, String rawPassword);
     void updateUserLastLogin(User user);
     User getUserByIdAndTenantId(UUID userId, UUID tenantId);
+    User getUserById(UUID userId);
     UUID findSystemUserId();
 }

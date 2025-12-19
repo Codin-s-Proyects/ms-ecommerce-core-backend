@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public record LogoutCommand(
         UUID userId,
-        UUID tenantId,
-        String ip
+        UUID sessionId,
+        UUID tenantId
 ) {
 }

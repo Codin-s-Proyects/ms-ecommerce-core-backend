@@ -75,6 +75,12 @@ public class UserDomainServiceImpl implements UserDomainService {
     }
 
     @Override
+    public User getUserById(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{userId.toString()}, "user"));
+    }
+
+    @Override
     public UUID findSystemUserId() {
         return userRepository.findSystemUserId()
                 .orElseThrow(
