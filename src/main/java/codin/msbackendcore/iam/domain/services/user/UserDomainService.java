@@ -1,4 +1,4 @@
-package codin.msbackendcore.iam.domain.services;
+package codin.msbackendcore.iam.domain.services.user;
 
 import codin.msbackendcore.iam.domain.model.commands.SignUpCommand;
 import codin.msbackendcore.iam.domain.model.entities.Credential;
@@ -11,4 +11,5 @@ public interface UserDomainService {
     boolean isPasswordValid(Credential credential, String rawPassword);
     void updateUserLastLogin(User user);
     User getUserByIdAndTenantId(UUID userId, UUID tenantId);
+    UUID findSystemUserId();
 }

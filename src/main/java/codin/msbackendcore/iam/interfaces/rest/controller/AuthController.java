@@ -1,10 +1,7 @@
 package codin.msbackendcore.iam.interfaces.rest.controller;
 
-import codin.msbackendcore.iam.domain.services.UserCommandService;
-import codin.msbackendcore.iam.interfaces.dto.AuthResponse;
-import codin.msbackendcore.iam.interfaces.dto.RefreshTokenRequest;
-import codin.msbackendcore.iam.interfaces.dto.SignInRequest;
-import codin.msbackendcore.iam.interfaces.dto.SignUpRequest;
+import codin.msbackendcore.iam.domain.services.user.UserCommandService;
+import codin.msbackendcore.iam.interfaces.dto.*;
 import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -72,5 +69,14 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logoutSession(@Valid @RequestBody LogoutRequest request) {
+        var command = request.toCommand();
+
+        userCommandService.handle(command);
+
+        return ResponseEntity.noContent().build();
     }
 }

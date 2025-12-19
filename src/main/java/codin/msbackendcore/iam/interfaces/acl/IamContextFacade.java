@@ -1,6 +1,6 @@
 package codin.msbackendcore.iam.interfaces.acl;
 
-import codin.msbackendcore.iam.domain.services.UserDomainService;
+import codin.msbackendcore.iam.domain.services.user.UserDomainService;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

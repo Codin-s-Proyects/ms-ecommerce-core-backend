@@ -3,19 +3,21 @@ package codin.msbackendcore.iam.application.internal.commandservice;
 import codin.msbackendcore.iam.application.internal.dto.SignInResult;
 import codin.msbackendcore.iam.application.internal.outboundservices.acl.ExternalCoreService;
 import codin.msbackendcore.iam.application.internal.outboundservices.token.TokenService;
+import codin.msbackendcore.iam.domain.model.commands.LogoutCommand;
 import codin.msbackendcore.iam.domain.model.commands.RefreshTokenCommand;
 import codin.msbackendcore.iam.domain.model.commands.SignInCommand;
 import codin.msbackendcore.iam.domain.model.commands.SignUpCommand;
 import codin.msbackendcore.iam.domain.model.entities.User;
 import codin.msbackendcore.iam.domain.model.valueobjects.CredentialType;
 import codin.msbackendcore.iam.domain.model.valueobjects.UserType;
-import codin.msbackendcore.iam.domain.services.*;
-import codin.msbackendcore.iam.infrastructure.persistence.jpa.CredentialRepository;
-import codin.msbackendcore.iam.infrastructure.persistence.jpa.RefreshTokenRepository;
-import codin.msbackendcore.iam.infrastructure.persistence.jpa.RoleRepository;
-import codin.msbackendcore.iam.infrastructure.persistence.jpa.UserRepository;
+import codin.msbackendcore.iam.domain.services.AuditLogDomainService;
+import codin.msbackendcore.iam.domain.services.RefreshTokenDomainService;
+import codin.msbackendcore.iam.domain.services.SessionDomainService;
+import codin.msbackendcore.iam.domain.services.credential.CredentialDomainService;
+import codin.msbackendcore.iam.domain.services.role.RoleDomainService;
+import codin.msbackendcore.iam.domain.services.user.UserCommandService;
+import codin.msbackendcore.iam.domain.services.user.UserDomainService;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
-import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import codin.msbackendcore.shared.infrastructure.utils.CommonUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -28,12 +30,10 @@ import java.util.UUID;
 @Transactional
 public class UserCommandServiceImpl implements UserCommandService {
 
-    private final UserRepository userRepository;
-    private final CredentialRepository credentialRepository;
-    private final RoleRepository roleRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
-
     private final UserDomainService userDomainService;
+    private final CredentialDomainService credentialDomainService;
+    private final RoleDomainService roleDomainService;
+
     private final AuditLogDomainService auditLogDomainService;
     private final SessionDomainService sessionDomainService;
     private final RefreshTokenDomainService refreshTokenDomainService;
@@ -42,15 +42,14 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final ExternalCoreService externalCoreService;
 
     public UserCommandServiceImpl(
-            UserRepository userRepository,
-            CredentialRepository credentialRepository, RefreshTokenRepository refreshTokenRepository,
-            UserDomainService userDomainService, RoleRepository roleRepository, AuditLogDomainService auditLogDomainService, SessionDomainService sessionDomainService, RefreshTokenDomainService refreshTokenDomainService, TokenService tokenService, ExternalCoreService externalCoreService
+            CredentialDomainService credentialDomainService,
+            UserDomainService userDomainService, RoleDomainService roleDomainService, AuditLogDomainService auditLogDomainService,
+            SessionDomainService sessionDomainService, RefreshTokenDomainService refreshTokenDomainService, TokenService tokenService,
+            ExternalCoreService externalCoreService
     ) {
-        this.userRepository = userRepository;
-        this.credentialRepository = credentialRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
+        this.credentialDomainService = credentialDomainService;
         this.userDomainService = userDomainService;
-        this.roleRepository = roleRepository;
+        this.roleDomainService = roleDomainService;
         this.auditLogDomainService = auditLogDomainService;
         this.sessionDomainService = sessionDomainService;
         this.refreshTokenDomainService = refreshTokenDomainService;
@@ -60,11 +59,9 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public Optional<SignInResult> handle(SignInCommand command) {
-        var credential = credentialRepository.findByIdentifier(command.identifier())
-                .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{command.identifier()}, "identifier"));
+        var credential = credentialDomainService.findByIdentifier(command.identifier());
 
-        var user = userRepository.findByIdAndTenantId(credential.getUser().getId(), command.tenantId())
-                .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{command.tenantId().toString()}, "tenantId"));
+        var user = userDomainService.getUserByIdAndTenantId(credential.getUser().getId(), command.tenantId());
 
         if (!userDomainService.isPasswordValid(credential, command.password())) {
             throw new BadRequestException("error.authorization", new String[]{command.password()}, "password");
@@ -103,18 +100,15 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new BadRequestException("error.bad_request", new String[]{command.type()}, "userType");
         }
 
-        if (credentialRepository.existsByIdentifier(command.identifier())) {
+        if (credentialDomainService.existsByIdentifier(command.identifier())) {
             throw new BadRequestException("error.already_exist", new String[]{command.identifier()}, "identifier");
         }
 
-        if (!roleRepository.existsByCode(command.role())) {
+        if (!roleDomainService.existsByRole(command.role())) {
             throw new BadRequestException("error.not_found", new String[]{command.role()}, "role");
         }
 
-        UUID systemUserId = userRepository.findSystemUserId()
-                .orElseThrow(
-                        () -> new BadRequestException("error.not_found", new String[]{command.tenantId().toString()}, "tenantId")
-                );
+        UUID systemUserId = userDomainService.findSystemUserId();
 
         User user = userDomainService.registerNewUser(command, systemUserId);
 
@@ -149,6 +143,11 @@ public class UserCommandServiceImpl implements UserCommandService {
 //                newRefreshToken.getUser().getUserType()
 //        );
 
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Void> handle(LogoutCommand command) {
         return Optional.empty();
     }
 
