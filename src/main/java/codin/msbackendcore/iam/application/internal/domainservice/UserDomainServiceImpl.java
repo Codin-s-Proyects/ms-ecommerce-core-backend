@@ -6,9 +6,10 @@ import codin.msbackendcore.iam.domain.model.entities.Credential;
 import codin.msbackendcore.iam.domain.model.entities.Role;
 import codin.msbackendcore.iam.domain.model.entities.User;
 import codin.msbackendcore.iam.domain.model.entities.UserRole;
-import codin.msbackendcore.iam.domain.services.UserDomainService;
+import codin.msbackendcore.iam.domain.services.user.UserDomainService;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.RoleRepository;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.UserRepository;
+import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -71,5 +72,19 @@ public class UserDomainServiceImpl implements UserDomainService {
     public User getUserByIdAndTenantId(UUID userId, UUID tenantId) {
         return userRepository.findByIdAndTenantId(userId, tenantId)
                 .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{userId.toString()}, "user"));
+    }
+
+    @Override
+    public User getUserById(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{userId.toString()}, "user"));
+    }
+
+    @Override
+    public UUID findSystemUserId() {
+        return userRepository.findSystemUserId()
+                .orElseThrow(
+                        () -> new BadRequestException("error.not_found", new String[]{"system"}, "userId")
+                );
     }
 }

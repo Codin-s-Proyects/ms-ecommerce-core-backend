@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class ProductCategoryCommandServiceImpl implements ProductCategoryCommandService {
 
     private final ProductCategoryDomainService productCategoryDomainService;
@@ -27,7 +28,6 @@ public class ProductCategoryCommandServiceImpl implements ProductCategoryCommand
     }
 
 
-    @Transactional
     @Override
     public ProductCategory handle(CreateProductCategoryCommand command) {
 

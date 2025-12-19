@@ -4,11 +4,13 @@ import codin.msbackendcore.core.domain.model.commands.tenantsettings.UpdatePromp
 import codin.msbackendcore.core.domain.model.entities.TenantSettings;
 import codin.msbackendcore.core.domain.services.tenantsettings.TenantSettingsCommandService;
 import codin.msbackendcore.core.domain.services.tenantsettings.TenantSettingsDomainService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class TenantSettingsCommandServiceImpl implements TenantSettingsCommandService {
     private final TenantSettingsDomainService domainService;
 

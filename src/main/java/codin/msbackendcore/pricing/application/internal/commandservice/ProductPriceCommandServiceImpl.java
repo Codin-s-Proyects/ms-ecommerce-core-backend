@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class ProductPriceCommandServiceImpl implements ProductPriceCommandService {
 
     private final ProductPriceDomainService productPriceDomainService;
@@ -27,7 +28,6 @@ public class ProductPriceCommandServiceImpl implements ProductPriceCommandServic
         this.externalCoreService = externalCoreService;
     }
 
-    @Transactional
     @Override
     public ProductPrice handle(CreateProductPriceCommand command) {
 

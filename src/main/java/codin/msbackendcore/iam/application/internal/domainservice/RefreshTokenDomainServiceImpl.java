@@ -3,6 +3,7 @@ package codin.msbackendcore.iam.application.internal.domainservice;
 import codin.msbackendcore.iam.application.internal.outboundservices.hashing.HashingService;
 import codin.msbackendcore.iam.application.internal.outboundservices.token.TokenService;
 import codin.msbackendcore.iam.domain.model.entities.RefreshToken;
+import codin.msbackendcore.iam.domain.model.entities.Session;
 import codin.msbackendcore.iam.domain.model.entities.User;
 import codin.msbackendcore.iam.domain.services.RefreshTokenDomainService;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.RefreshTokenRepository;
@@ -26,22 +27,29 @@ public class RefreshTokenDomainServiceImpl implements RefreshTokenDomainService 
     }
 
     @Override
-    public RefreshToken createRefreshToken(UUID tenantId, User user, String deviceInfo, String identifier) {
+    public RefreshToken createRefreshToken(String identifier, Session session) {
 
         String refreshAccessToken = tokenService.generateRefreshToken(identifier);
 
         RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setTenantId(tenantId);
-        refreshToken.setUser(user);
         refreshToken.setTokenHash(hashingService.encode(refreshAccessToken));
         refreshToken.setExpiresAt(REFRESH_TOKEN_EXPIRES_AT);
-        refreshToken.setDeviceInfo(deviceInfo);
+        refreshToken.setSession(session);
 
         refreshTokenRepository.save(refreshToken);
 
         refreshToken.setPlainToken(refreshAccessToken);
 
         return refreshToken;
+    }
+
+    @Override
+    public void revokeAllTokensBySession(Session session) {
+        var refreshTokenList = refreshTokenRepository.getAllBySession(session);
+
+        refreshTokenList.forEach(token -> token.setRevoked(true));
+
+        refreshTokenRepository.saveAll(refreshTokenList);
     }
 
     @Override

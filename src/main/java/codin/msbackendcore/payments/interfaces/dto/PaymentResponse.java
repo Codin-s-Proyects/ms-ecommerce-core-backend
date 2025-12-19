@@ -1,6 +1,7 @@
 package codin.msbackendcore.payments.interfaces.dto;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.UUID;
 
 public record PaymentResponse(
@@ -8,7 +9,9 @@ public record PaymentResponse(
         UUID tenantId,
         UUID orderId,
         String paymentMethod,
-        String status,
-        BigDecimal amount
+        String paymentStatus,
+        String transactionId,
+        BigDecimal amount,
+        Instant confirmedAt
 ) {
 }

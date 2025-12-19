@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class ProductDiscountCommandServiceImpl implements ProductDiscountCommandService {
 
     private final ProductDiscountDomainService productDiscountDomainService;
@@ -27,7 +28,6 @@ public class ProductDiscountCommandServiceImpl implements ProductDiscountCommand
         this.externalCoreService = externalCoreService;
     }
 
-    @Transactional
     @Override
     public ProductDiscount handle(CreateProductDiscountCommand command) {
 

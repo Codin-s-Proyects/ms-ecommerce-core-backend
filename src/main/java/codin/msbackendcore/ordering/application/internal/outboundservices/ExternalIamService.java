@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
+@Service("ExternalIamServiceForOrdering")
 public class ExternalIamService {
     private final IamContextFacade iamContextFacade;
 
