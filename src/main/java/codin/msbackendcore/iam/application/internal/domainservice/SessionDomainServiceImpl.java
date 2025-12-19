@@ -33,7 +33,7 @@ public class SessionDomainServiceImpl implements SessionDomainService {
     @Override
     public Session createSession(User user, String ipAddress, String deviceInfo) {
 
-        if (sessionRepository.existsByDeviceInfo(deviceInfo)) {
+        if (sessionRepository.existsByDeviceInfoAndRevokedIsFalse(deviceInfo)) {
             throw new BadRequestException("error.already_exist", new String[]{deviceInfo}, "deviceInfo");
         }
 
