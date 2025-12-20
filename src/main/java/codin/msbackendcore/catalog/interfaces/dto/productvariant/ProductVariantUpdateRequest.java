@@ -11,9 +11,10 @@ public record ProductVariantUpdateRequest(
         Map<String, Object> attributes,
         Integer productQuantity
 ) {
-    public UpdateProductVariantCommand toCommand(UUID productVariantId) {
+    public UpdateProductVariantCommand toCommand(UUID productVariantId, UUID tenantId) {
         return new UpdateProductVariantCommand(
                 productVariantId,
+                tenantId,
                 name,
                 attributes,
                 productQuantity

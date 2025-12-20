@@ -3,6 +3,7 @@ package codin.msbackendcore.catalog.application.internal.commandservice;
 import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalCoreService;
 import codin.msbackendcore.catalog.domain.model.commands.productvariant.CreateProductVariantBulkCommand;
 import codin.msbackendcore.catalog.domain.model.commands.productvariant.CreateProductVariantCommand;
+import codin.msbackendcore.catalog.domain.model.commands.productvariant.DeleteProductVariantCommand;
 import codin.msbackendcore.catalog.domain.model.commands.productvariant.UpdateProductVariantCommand;
 import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.catalog.domain.model.events.ProductCreatedEvent;
@@ -60,7 +61,12 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
     @Override
     public ProductVariant handle(UpdateProductVariantCommand command) {
 
+        if (!externalCoreService.existTenantById(command.tenantId())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
+        }
+
         var productVariant = productVariantDomainService.updateProductVariant(
+                command.tenantId(),
                 command.productVariantId(),
                 command.name(),
                 command.attributes(),
@@ -90,5 +96,10 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
         if (!product.isHasVariants()) productDomainService.updateHasVariant(product.getId(), true);
 
         eventPublisher.publish(new ProductCreatedEvent(command.tenantId(), productVariants));
+    }
+
+    @Override
+    public void handle(DeleteProductVariantCommand command) {
+        productVariantDomainService.deleteProductVariant(command.tenantId(), command.productVariantId());
     }
 }

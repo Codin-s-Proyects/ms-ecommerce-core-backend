@@ -64,14 +64,13 @@ public class ProductVariantDomainServiceImpl implements ProductVariantDomainServ
     }
 
     @Override
-    public ProductVariant updateProductVariant(UUID productVariantId, String name, Map<String, Object> attributes, Integer productQuantity) {
+    public ProductVariant updateProductVariant(UUID tenantId, UUID productVariantId, String name, Map<String, Object> attributes, Integer productQuantity) {
 
         var productVariant = productVariantRepository.findById(productVariantId)
                 .orElseThrow(
                         () -> new NotFoundException("error.not_found", new String[]{productVariantId.toString()}, "productVariantId")
                 );
 
-        var tenantId = productVariant.getTenantId();
         var product = productVariant.getProduct();
 
         if (!productVariant.getName().equals(name)
@@ -201,6 +200,16 @@ public class ProductVariantDomainServiceImpl implements ProductVariantDomainServ
                 .orElseThrow(() ->
                         new NotFoundException("error.not_found", new String[]{productVariantId.toString()}, "productVariantId")
                 );
+    }
+
+    @Override
+    public void deleteProductVariant(UUID tenantId, UUID productVariantId) {
+        var productVariant = productVariantRepository.findProductVariantByTenantIdAndId(tenantId, productVariantId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{productVariantId.toString()}, "productVariantId")
+                );
+
+        productVariantRepository.delete(productVariant);
     }
 
     @Override

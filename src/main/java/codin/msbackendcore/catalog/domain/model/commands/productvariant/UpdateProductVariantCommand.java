@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public record UpdateProductVariantCommand(
         UUID productVariantId,
+        UUID tenantId,
         String name,
         Map<String, Object> attributes,
         int productQuantity
