@@ -60,7 +60,7 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
             throw new NotFoundException("error.not_found", new String[]{command.tenantId().toString()}, "tenantId");
 
         return mediaAssetDomainService.updateMediaAsset(
-                command.tenantId(),
+                command.mediaAssetId(),
                 command.tenantId(),
                 command.url(),
                 command.publicId(),

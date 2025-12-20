@@ -7,10 +7,11 @@ import codin.msbackendcore.core.domain.model.valueobjects.SocialInfo;
 import codin.msbackendcore.core.domain.model.valueobjects.SupportInfo;
 
 import java.util.List;
+import java.util.UUID;
 
 public record CreateTenantCommand(
         String name,
-        String plan,
+        UUID planId,
         String currencyCode,
         String locale,
         String complaintBookUrl,

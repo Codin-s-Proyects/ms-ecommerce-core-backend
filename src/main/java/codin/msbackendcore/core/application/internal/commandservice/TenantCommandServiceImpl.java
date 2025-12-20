@@ -3,7 +3,7 @@ package codin.msbackendcore.core.application.internal.commandservice;
 import codin.msbackendcore.core.domain.model.commands.tenant.CreateTenantCommand;
 import codin.msbackendcore.core.domain.model.commands.tenant.UpdateTenantCommand;
 import codin.msbackendcore.core.domain.model.entities.Tenant;
-import codin.msbackendcore.core.domain.model.valueobjects.TenantPlan;
+import codin.msbackendcore.core.domain.services.tenant.PlanDomainService;
 import codin.msbackendcore.core.domain.services.tenant.TenantCommandService;
 import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
@@ -17,21 +17,21 @@ import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.isVali
 public class TenantCommandServiceImpl implements TenantCommandService {
 
     private final TenantDomainService tenantDomainService;
+    private final PlanDomainService planDomainService;
 
-    public TenantCommandServiceImpl(TenantDomainService tenantDomainService) {
+    public TenantCommandServiceImpl(TenantDomainService tenantDomainService, PlanDomainService planDomainService) {
         this.tenantDomainService = tenantDomainService;
+        this.planDomainService = planDomainService;
     }
 
     @Override
     public Tenant handle(CreateTenantCommand command) {
 
-        if (!isValidEnum(TenantPlan.class, command.plan())) {
-            throw new BadRequestException("error.bad_request", new String[]{command.plan()}, "plan");
-        }
+        var plan = planDomainService.getPlanById(command.planId());
 
         return tenantDomainService.createTenant(
                 command.name(),
-                command.plan(),
+                plan,
                 command.complaintBookUrl(),
                 command.currencyCode(),
                 command.locale(),
