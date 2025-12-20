@@ -64,6 +64,46 @@ public class ProductVariantDomainServiceImpl implements ProductVariantDomainServ
     }
 
     @Override
+    public ProductVariant updateProductVariant(UUID productVariantId, String name, Map<String, Object> attributes, Integer productQuantity) {
+
+        var productVariant = productVariantRepository.findById(productVariantId)
+                .orElseThrow(
+                        () -> new NotFoundException("error.not_found", new String[]{productVariantId.toString()}, "productVariantId")
+                );
+
+        var tenantId = productVariant.getTenantId();
+        var product = productVariant.getProduct();
+
+        if (!productVariant.getName().equals(name)
+                && productVariantRepository.existsByNameAndTenantIdAndProduct(name, tenantId, product))
+            throw new BadRequestException("error.already_exist", new String[]{name}, "name");
+
+        try {
+            String attributeJson = new ObjectMapper().writeValueAsString(attributes);
+            String actualAttribute = new ObjectMapper().writeValueAsString(productVariant.getAttributes());
+
+            if (!attributeJson.equals(actualAttribute) && productVariantRepository.existsByProductAndAttributes(tenantId, product.getId(), attributeJson))
+                throw new BadRequestException("error.already_exist", new String[]{name}, "name");
+
+        } catch (Exception e) {
+            throw new BadRequestException("error.bad_request", new String[]{attributes.toString()}, "attributes");
+        }
+
+        String categoryName = product.getCategories() != null && !product.getCategories().isEmpty()
+                ? product.getCategories().getFirst().getCategory().getName()
+                : "";
+
+        String brandName = product.getBrand() != null ? product.getBrand().getName() : null;
+
+        productVariant.setSku(generateSku(name, categoryName, brandName, attributes, tenantId));
+        productVariant.setName(name);
+        productVariant.setAttributes(attributes);
+        productVariant.setProductQuantity(productQuantity);
+
+        return productVariantRepository.save(productVariant);
+    }
+
+    @Override
     @Transactional
     public List<ProductVariant> createProductVariantBulk(UUID tenantId, Product product, List<CreateProductVariantBulkCommand.VariantItemCommand> variants) {
 

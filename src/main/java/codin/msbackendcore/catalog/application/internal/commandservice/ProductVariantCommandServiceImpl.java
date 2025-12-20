@@ -3,8 +3,10 @@ package codin.msbackendcore.catalog.application.internal.commandservice;
 import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalCoreService;
 import codin.msbackendcore.catalog.domain.model.commands.productvariant.CreateProductVariantBulkCommand;
 import codin.msbackendcore.catalog.domain.model.commands.productvariant.CreateProductVariantCommand;
+import codin.msbackendcore.catalog.domain.model.commands.productvariant.UpdateProductVariantCommand;
 import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.catalog.domain.model.events.ProductCreatedEvent;
+import codin.msbackendcore.catalog.domain.model.events.ProductVariantUpdatedEvent;
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantCommandService;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantDomainService;
@@ -54,6 +56,22 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
 
         return productVariant;
     }
+
+    @Override
+    public ProductVariant handle(UpdateProductVariantCommand command) {
+
+        var productVariant = productVariantDomainService.updateProductVariant(
+                command.productVariantId(),
+                command.name(),
+                command.attributes(),
+                command.productQuantity()
+        );
+
+        eventPublisher.publish(new ProductVariantUpdatedEvent(productVariant));
+
+        return productVariant;
+    }
+
 
     @Override
     public void handle(CreateProductVariantBulkCommand command) {

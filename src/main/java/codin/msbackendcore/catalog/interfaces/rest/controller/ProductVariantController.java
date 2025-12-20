@@ -3,10 +3,7 @@ package codin.msbackendcore.catalog.interfaces.rest.controller;
 import codin.msbackendcore.catalog.domain.model.queries.productvariant.GetProductVariantByProductAndTenantIdQuery;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantCommandService;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantQueryService;
-import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantCreateBulkRequest;
-import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantCreateRequest;
-import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantDetailResponse;
-import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantResponse;
+import codin.msbackendcore.catalog.interfaces.dto.productvariant.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -69,6 +66,27 @@ public class ProductVariantController {
         productVariantCommandService.handle(command);
 
         return ResponseEntity.status(201).build();
+    }
+
+    @Operation(summary = "Actualizar un variante de un producto")
+    @PutMapping("/{productVariantId}")
+    public ResponseEntity<ProductVariantResponse> updateProductVariant(@Valid @RequestBody ProductVariantUpdateRequest req, @PathVariable UUID productVariantId) {
+
+        var command = req.toCommand(productVariantId);
+
+        var saved = productVariantCommandService.handle(command);
+
+        var response = new ProductVariantResponse(
+                saved.getId(),
+                saved.getProduct().getId(),
+                saved.getTenantId(),
+                saved.getSku(),
+                saved.getName(),
+                saved.getAttributes(),
+                saved.getProductQuantity()
+        );
+
+        return ResponseEntity.status(201).body(response);
     }
 }
 

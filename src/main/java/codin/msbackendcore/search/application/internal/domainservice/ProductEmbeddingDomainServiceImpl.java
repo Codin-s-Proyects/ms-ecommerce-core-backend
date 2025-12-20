@@ -39,6 +39,17 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
     }
 
     @Override
+    public CompletableFuture<Void> updateEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
+                                                            String variantName, Map<String, Object> variantAttributes) {
+        String text = buildText(productName, categoryName, brandName, productDescription, variantName, variantAttributes);
+        return openAI.embedAsync(text)
+                .thenAccept(vector -> {
+                    Map<String, Object> metadata = Map.of("name", variantName.replace("\"", "'"));
+                    repo.updateEmbedding(tenantId, variantId, toVectorString(vector), metadata);
+                });
+    }
+
+    @Override
     public CompletableFuture<List<ProductEmbedding>> semanticSearch(UUID tenantId, String query, int limit, Double distanceThreshold) {
         if(tenantId == null) {
             return openAI.embedAsync(query)

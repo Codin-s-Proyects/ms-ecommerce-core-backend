@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public interface ProductVariantDomainService {
     ProductVariant createProductVariant(UUID tenantId, Product product, String name, Map<String, Object> attributes, Integer productQuantity);
+    ProductVariant updateProductVariant(UUID productVariantId, String name, Map<String, Object> attributes, Integer productQuantity);
     List<ProductVariant> createProductVariantBulk(UUID tenantId, Product product, List<CreateProductVariantBulkCommand.VariantItemCommand> variants);
     List<ProductVariant> getVariantsByProductId(Product product, UUID tenantId);
     ProductVariant getProductVariantById(UUID productVariantId);
