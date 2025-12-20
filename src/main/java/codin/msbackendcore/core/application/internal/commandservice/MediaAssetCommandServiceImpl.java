@@ -2,6 +2,7 @@ package codin.msbackendcore.core.application.internal.commandservice;
 
 import codin.msbackendcore.core.domain.model.commands.mediaasset.CreateMediaAssetCommand;
 import codin.msbackendcore.core.domain.model.commands.mediaasset.DeleteMediaAssetCommand;
+import codin.msbackendcore.core.domain.model.commands.mediaasset.UpdateMediaAssetCommand;
 import codin.msbackendcore.core.domain.model.entities.MediaAsset;
 import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetCommandService;
@@ -40,6 +41,27 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
                 command.tenantId(),
                 EntityType.valueOf(command.entityType()),
                 command.entityId(),
+                command.url(),
+                command.publicId(),
+                command.format(),
+                command.width(),
+                command.height(),
+                command.bytes(),
+                command.isMain(),
+                command.sortOrder(),
+                command.altText(),
+                command.context()
+        );
+    }
+
+    @Override
+    public MediaAsset handle(UpdateMediaAssetCommand command) {
+        if (tenantDomainService.getTenantById(command.tenantId()) == null)
+            throw new NotFoundException("error.not_found", new String[]{command.tenantId().toString()}, "tenantId");
+
+        return mediaAssetDomainService.updateMediaAsset(
+                command.tenantId(),
+                command.tenantId(),
                 command.url(),
                 command.publicId(),
                 command.format(),
