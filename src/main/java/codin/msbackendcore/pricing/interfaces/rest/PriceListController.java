@@ -1,6 +1,6 @@
 package codin.msbackendcore.pricing.interfaces.rest;
 
-import codin.msbackendcore.pricing.domain.model.commands.DeletePriceListCommand;
+import codin.msbackendcore.pricing.domain.model.commands.pricelist.DeletePriceListCommand;
 import codin.msbackendcore.pricing.domain.model.queries.GetAllPriceListByTenantIdQuery;
 import codin.msbackendcore.pricing.domain.services.pricelist.PriceListCommandService;
 import codin.msbackendcore.pricing.domain.services.pricelist.PriceListQueryService;

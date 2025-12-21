@@ -1,6 +1,6 @@
 package codin.msbackendcore.pricing.interfaces.dto.pricelist;
 
-import codin.msbackendcore.pricing.domain.model.commands.CreatePriceListCommand;
+import codin.msbackendcore.pricing.domain.model.commands.pricelist.CreatePriceListCommand;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

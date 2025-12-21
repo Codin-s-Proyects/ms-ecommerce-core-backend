@@ -1,23 +1,22 @@
 package codin.msbackendcore.pricing.interfaces.dto.productprice;
 
 import codin.msbackendcore.pricing.domain.model.commands.productprice.CreateProductPriceCommand;
+import codin.msbackendcore.pricing.domain.model.commands.productprice.UpdateProductPriceCommand;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-public record ProductPriceCreateRequest(
-        UUID tenantId,
-        UUID productVariantId,
+public record ProductPriceUpdateRequest(
         UUID priceListId,
         BigDecimal basePrice,
         Integer minQuantity,
         Instant validTo
 ) {
-    public CreateProductPriceCommand toCommand() {
-        return new CreateProductPriceCommand(
+    public UpdateProductPriceCommand toCommand(UUID tenantId, UUID productPriceId) {
+        return new UpdateProductPriceCommand(
+                productPriceId,
                 tenantId,
-                productVariantId,
                 priceListId,
                 basePrice,
                 minQuantity,

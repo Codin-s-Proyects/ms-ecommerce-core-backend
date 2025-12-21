@@ -1,4 +1,4 @@
-package codin.msbackendcore.pricing.domain.model.commands;
+package codin.msbackendcore.pricing.domain.model.commands.pricelist;
 
 import java.util.UUID;
 

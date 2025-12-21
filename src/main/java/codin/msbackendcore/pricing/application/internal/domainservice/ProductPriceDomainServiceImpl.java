@@ -5,6 +5,7 @@ import codin.msbackendcore.pricing.domain.model.entities.ProductPrice;
 import codin.msbackendcore.pricing.domain.services.productprice.ProductPriceDomainService;
 import codin.msbackendcore.pricing.infrastructure.jpa.ProductPriceRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
+import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,21 @@ public class ProductPriceDomainServiceImpl implements ProductPriceDomainService 
                 .minQuantity(minQuantity)
                 .validTo(validTo)
                 .build();
+
+        return productPriceRepository.save(productPrice);
+    }
+
+    @Override
+    public ProductPrice updateProductPrice(UUID productPriceId, UUID tenantId, PriceList priceList, BigDecimal basePrice, Integer minQuantity, Instant validTo) {
+        var productPrice = productPriceRepository.findByIdAndTenantId(productPriceId, tenantId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{productPriceId.toString()}, "productPriceId")
+                );
+
+        productPrice.setPriceList(priceList);
+        productPrice.setBasePrice(basePrice);
+        productPrice.setMinQuantity(minQuantity);
+        productPrice.setValidTo(validTo);
 
         return productPriceRepository.save(productPrice);
     }

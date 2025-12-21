@@ -11,5 +11,6 @@ import java.util.UUID;
 
 public interface ProductPriceDomainService {
     ProductPrice createProductPrice(UUID tenantId, UUID productVariantId, PriceList priceList, BigDecimal basePrice, Integer minQuantity, Instant validTo);
+    ProductPrice updateProductPrice(UUID productPriceId, UUID tenantId, PriceList priceList, BigDecimal basePrice, Integer minQuantity, Instant validTo);
     List<ProductPrice> getProductPricesByProductVariantId(UUID tenantId, UUID productVariantId);
 }

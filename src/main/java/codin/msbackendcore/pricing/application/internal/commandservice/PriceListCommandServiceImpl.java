@@ -1,14 +1,13 @@
 package codin.msbackendcore.pricing.application.internal.commandservice;
 
 import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalCoreService;
-import codin.msbackendcore.pricing.domain.model.commands.CreatePriceListCommand;
-import codin.msbackendcore.pricing.domain.model.commands.DeletePriceListCommand;
-import codin.msbackendcore.pricing.domain.model.commands.UpdatePriceListCommand;
+import codin.msbackendcore.pricing.domain.model.commands.pricelist.CreatePriceListCommand;
+import codin.msbackendcore.pricing.domain.model.commands.pricelist.DeletePriceListCommand;
+import codin.msbackendcore.pricing.domain.model.commands.pricelist.UpdatePriceListCommand;
 import codin.msbackendcore.pricing.domain.model.entities.PriceList;
 import codin.msbackendcore.pricing.domain.services.pricelist.PriceListCommandService;
 import codin.msbackendcore.pricing.domain.services.pricelist.PriceListDomainService;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
-import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

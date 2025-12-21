@@ -5,6 +5,7 @@ import codin.msbackendcore.pricing.domain.services.productprice.ProductPriceComm
 import codin.msbackendcore.pricing.domain.services.productprice.ProductPriceQueryService;
 import codin.msbackendcore.pricing.interfaces.dto.productprice.ProductPriceCreateRequest;
 import codin.msbackendcore.pricing.interfaces.dto.productprice.ProductPriceResponse;
+import codin.msbackendcore.pricing.interfaces.dto.productprice.ProductPriceUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -49,6 +50,30 @@ public class ProductPriceController {
         );
 
         return ResponseEntity.status(201).body(response);
+    }
+
+    @Operation(summary = "Actualizar el precio de producto")
+    @PutMapping("/{productPriceId}/tenant/{tenantId}")
+    public ResponseEntity<ProductPriceResponse> updateProductPrice(@Valid @RequestBody ProductPriceUpdateRequest req, @PathVariable UUID productPriceId, @PathVariable UUID tenantId) {
+
+        var command = req.toCommand(tenantId, productPriceId);
+
+        var saved = productPriceCommandService.handle(command);
+
+        var response = new ProductPriceResponse(
+                saved.getId(),
+                saved.getTenantId(),
+                saved.getProductVariantId(),
+                saved.getPriceList().getId(),
+                saved.getDiscountPercent(),
+                saved.getFinalPrice(),
+                saved.getBasePrice(),
+                saved.getMinQuantity(),
+                saved.getValidFrom(),
+                saved.getValidTo()
+        );
+
+        return ResponseEntity.status(200).body(response);
     }
 
     @Operation(summary = "Obtener todos los precios de un variante de producto")
