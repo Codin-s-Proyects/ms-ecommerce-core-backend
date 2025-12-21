@@ -203,13 +203,15 @@ public class ProductVariantDomainServiceImpl implements ProductVariantDomainServ
     }
 
     @Override
-    public void deleteProductVariant(UUID tenantId, UUID productVariantId) {
+    public void deactivateProductVariant(UUID tenantId, UUID productVariantId) {
         var productVariant = productVariantRepository.findProductVariantByTenantIdAndId(tenantId, productVariantId)
                 .orElseThrow(() ->
                         new NotFoundException("error.not_found", new String[]{productVariantId.toString()}, "productVariantId")
                 );
 
-        productVariantRepository.delete(productVariant);
+        productVariant.setIsActive(false);
+
+        productVariantRepository.save(productVariant);
     }
 
     @Override

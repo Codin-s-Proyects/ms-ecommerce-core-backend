@@ -100,6 +100,6 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
 
     @Override
     public void handle(DeleteProductVariantCommand command) {
-        productVariantDomainService.deleteProductVariant(command.tenantId(), command.productVariantId());
+        productVariantDomainService.deactivateProductVariant(command.tenantId(), command.productVariantId());
     }
 }

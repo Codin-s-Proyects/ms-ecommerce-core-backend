@@ -110,11 +110,23 @@ public class ProductDomainServiceImpl implements ProductDomainService {
 
     @Override
     public List<Product> getProductsByBrand(UUID tenantId, Brand brand) {
-        return productRepository.findByBrandAndTenantId(brand, tenantId);
+        return productRepository.findByBrandAndTenantIdAndIsActiveTrue(brand, tenantId);
     }
 
     @Override
     public void deleteProductsByTenant(UUID tenantId) {
         productRepository.deleteAllByTenantId(tenantId);
+    }
+
+    @Override
+    public Product deactivateProduct(UUID productId, UUID tenantId) {
+        var product = productRepository.findByIdAndTenantId(productId, tenantId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{productId.toString()}, "productId")
+                );
+
+        product.setActive(false);
+
+        return productRepository.save(product);
     }
 }

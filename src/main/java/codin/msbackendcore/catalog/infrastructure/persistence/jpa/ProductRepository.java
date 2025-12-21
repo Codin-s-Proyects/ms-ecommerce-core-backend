@@ -21,13 +21,14 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
             JOIN catalog.product_categories pc ON pc.product_id = p.id
             WHERE pc.category_id = :categoryId
               AND p.tenant_id = :tenantId
+              AND p.is_active = true
             """, nativeQuery = true)
     List<Product> findByCategoryAndTenantId(
             @Param("categoryId") UUID categoryId,
             @Param("tenantId") UUID tenantId
     );
 
-    List<Product> findByBrandAndTenantId(Brand brand, UUID tenantId);
+    List<Product> findByBrandAndTenantIdAndIsActiveTrue(Brand brand, UUID tenantId);
 
     void deleteAllByTenantId(UUID tenantId);
 

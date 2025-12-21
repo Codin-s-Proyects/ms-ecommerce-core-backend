@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface ProductCategoryDomainService {
     ProductCategory createProductCategory(UUID tenantId, Product product, Category category);
+    void deleteProductCategory(UUID tenantId, UUID productCategoryId);
 }

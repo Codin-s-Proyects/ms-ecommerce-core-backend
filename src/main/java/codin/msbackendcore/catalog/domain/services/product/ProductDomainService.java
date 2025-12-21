@@ -20,4 +20,5 @@ public interface ProductDomainService {
     CursorPage<Product> getProductsByTenantId(UUID tenantId, CursorPaginationQuery query);
     List<Product> getProductsByBrand(UUID tenantId, Brand brand);
     void deleteProductsByTenant(UUID tenantId);
+    Product deactivateProduct(UUID productId, UUID tenantId);
 }
