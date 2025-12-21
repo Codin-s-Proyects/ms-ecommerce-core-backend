@@ -3,6 +3,7 @@ package codin.msbackendcore.pricing.application.internal.commandservice;
 import codin.msbackendcore.pricing.application.internal.outboundservices.ExternalCatalogService;
 import codin.msbackendcore.pricing.application.internal.outboundservices.ExternalCoreService;
 import codin.msbackendcore.pricing.domain.model.commands.productprice.CreateProductPriceCommand;
+import codin.msbackendcore.pricing.domain.model.commands.productprice.DeleteProductPriceCommand;
 import codin.msbackendcore.pricing.domain.model.commands.productprice.UpdateProductPriceCommand;
 import codin.msbackendcore.pricing.domain.model.entities.ProductPrice;
 import codin.msbackendcore.pricing.domain.services.pricelist.PriceListDomainService;
@@ -69,5 +70,10 @@ public class ProductPriceCommandServiceImpl implements ProductPriceCommandServic
                 command.minQuantity(),
                 command.validTo()
         );
+    }
+
+    @Override
+    public void handle(DeleteProductPriceCommand command) {
+        productPriceDomainService.deleteProductPrice(command.tenantId(), command.productPriceId());
     }
 }

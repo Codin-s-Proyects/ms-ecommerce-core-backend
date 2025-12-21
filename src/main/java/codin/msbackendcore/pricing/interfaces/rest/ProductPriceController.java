@@ -1,5 +1,7 @@
 package codin.msbackendcore.pricing.interfaces.rest;
 
+import codin.msbackendcore.pricing.domain.model.commands.pricelist.DeletePriceListCommand;
+import codin.msbackendcore.pricing.domain.model.commands.productprice.DeleteProductPriceCommand;
 import codin.msbackendcore.pricing.domain.model.queries.GetAllProductPriceByProductVariantIdQuery;
 import codin.msbackendcore.pricing.domain.services.productprice.ProductPriceCommandService;
 import codin.msbackendcore.pricing.domain.services.productprice.ProductPriceQueryService;
@@ -101,5 +103,15 @@ public class ProductPriceController {
         return ResponseEntity.status(200).body(responseList);
     }
 
+    @Operation(summary = "Eliminar el precio de producto")
+    @DeleteMapping("/{productPriceId}/tenant/{tenantId}")
+    public ResponseEntity<Void> deleteProductPrice(@PathVariable UUID productPriceId, @PathVariable UUID tenantId) {
+
+        var command = new DeleteProductPriceCommand(productPriceId, tenantId);
+
+        productPriceCommandService.handle(command);
+
+        return ResponseEntity.noContent().build();
+    }
 }
 

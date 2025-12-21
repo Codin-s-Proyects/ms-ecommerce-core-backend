@@ -62,4 +62,14 @@ public class ProductPriceDomainServiceImpl implements ProductPriceDomainService 
     public List<ProductPrice> getProductPricesByProductVariantId(UUID tenantId, UUID productVariantId) {
         return productPriceRepository.findAllByTenantIdAndProductVariantId(tenantId, productVariantId);
     }
+
+    @Override
+    public void deleteProductPrice(UUID tenantId, UUID productPriceId) {
+        var productPrice = productPriceRepository.findByIdAndTenantId(productPriceId, tenantId)
+                .orElseThrow(
+                        () -> new NotFoundException("error.not_found", new String[]{productPriceId.toString()}, "productPriceId")
+                );
+
+        productPriceRepository.delete(productPrice);
+    }
 }
