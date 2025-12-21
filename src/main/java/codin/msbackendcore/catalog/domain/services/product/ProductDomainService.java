@@ -12,6 +12,7 @@ import java.util.UUID;
 
 public interface ProductDomainService {
     Product createProduct(UUID tenantId, Brand brand, String name, String description, Map<String, Object> meta);
+    Product updateProduct(UUID productId, UUID tenantId, Brand brand, String name, String description, Map<String, Object> meta);
     void updateHasVariant(UUID productId, boolean hasVariant);
     Product getProductById(UUID productId);
     List<Product> getProductsByCategory(UUID tenantId, Category category);
@@ -19,4 +20,5 @@ public interface ProductDomainService {
     CursorPage<Product> getProductsByTenantId(UUID tenantId, CursorPaginationQuery query);
     List<Product> getProductsByBrand(UUID tenantId, Brand brand);
     void deleteProductsByTenant(UUID tenantId);
+    Product deactivateProduct(UUID productId, UUID tenantId);
 }

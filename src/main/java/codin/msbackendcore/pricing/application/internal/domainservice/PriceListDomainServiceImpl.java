@@ -45,6 +45,30 @@ public class PriceListDomainServiceImpl implements PriceListDomainService {
     }
 
     @Override
+    public PriceList updatePriceList(UUID priceListId, UUID tenantId, String name, String description, String currencyCode, Instant validFrom, Instant validTo) {
+        var priceList = priceListRepository.findPriceListByTenantIdAndId(tenantId, priceListId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{priceListId.toString()}, "priceListId")
+                );
+
+        if (!priceList.getName().equals(name)) {
+            if (priceListRepository.existsPriceListByTenantIdAndName(tenantId, name)) {
+                throw new BadRequestException("error.already_exist", new String[]{name}, "name");
+            }
+
+            priceList.setCode(generatePriceListCode(name, tenantId));
+        }
+
+        priceList.setName(name);
+        priceList.setDescription(description);
+        priceList.setCurrencyCode(currencyCode);
+        priceList.setValidFrom(validFrom);
+        priceList.setValidTo(validTo);
+
+        return priceListRepository.save(priceList);
+    }
+
+    @Override
     public PriceList getPriceListByTenantAndId(UUID tenantId, UUID priceListId) {
         return priceListRepository.findPriceListByTenantIdAndId(tenantId, priceListId)
                 .orElseThrow(() ->

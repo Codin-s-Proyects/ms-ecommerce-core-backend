@@ -4,6 +4,7 @@ import codin.msbackendcore.core.domain.model.commands.mediaasset.DeleteMediaAsse
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetCommandService;
 import codin.msbackendcore.core.interfaces.dto.mediaasset.CreateMediaAssetRequest;
 import codin.msbackendcore.core.interfaces.dto.mediaasset.MediaAssetResponse;
+import codin.msbackendcore.core.interfaces.dto.mediaasset.UpdateMediaAssetRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -50,6 +51,38 @@ public class MediaAssetController {
                         mediaAssetCreated.getSortOrder(),
                         mediaAssetCreated.getAltText(),
                         mediaAssetCreated.getContext()
+                )
+        );
+    }
+
+    @Operation(summary = "Actualizar un recurso multimedia", description = "Actualizar un recurso multimedia asociado a una entidad específica.")
+    @ApiResponse(responseCode = "200", description = "Recurso multimedia actualizado exitosamente")
+    @PutMapping("/{mediaAssetId}/tenant/{tenantId}")
+    public ResponseEntity<MediaAssetResponse> updateMediaAsset(
+            @Valid @RequestBody UpdateMediaAssetRequest request,
+            @PathVariable("mediaAssetId") UUID mediaAssetId,
+            @PathVariable("tenantId") UUID tenantId
+    ) {
+        var command = request.toCommand(mediaAssetId, tenantId);
+
+        var mediaAssetUpdated = mediaAssetCommandService.handle(command);
+
+        return ResponseEntity.status(200).body(
+                new MediaAssetResponse(
+                        mediaAssetUpdated.getId(),
+                        mediaAssetUpdated.getTenantId(),
+                        mediaAssetUpdated.getEntityType().toString(),
+                        mediaAssetUpdated.getEntityId(),
+                        mediaAssetUpdated.getUrl(),
+                        mediaAssetUpdated.getPublicId(),
+                        mediaAssetUpdated.getFormat(),
+                        mediaAssetUpdated.getWidth(),
+                        mediaAssetUpdated.getHeight(),
+                        mediaAssetUpdated.getBytes(),
+                        mediaAssetUpdated.getIsMain(),
+                        mediaAssetUpdated.getSortOrder(),
+                        mediaAssetUpdated.getAltText(),
+                        mediaAssetUpdated.getContext()
                 )
         );
     }

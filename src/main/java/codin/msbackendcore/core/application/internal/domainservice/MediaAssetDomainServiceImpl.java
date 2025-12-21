@@ -48,6 +48,27 @@ public class MediaAssetDomainServiceImpl implements MediaAssetDomainService {
     }
 
     @Override
+    public MediaAsset updateMediaAsset(UUID mediaAssetId, UUID tenantId, String url, String publicId, String format, Integer width, Integer height, Long bytes, Boolean isMain, Integer sortOrder, String altText, Map<String, Object> context) {
+        var mediaAsset = mediaAssetRepository.findAllByTenantIdAndId(tenantId, mediaAssetId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{mediaAssetId.toString()}, "mediaAssetId")
+                );
+
+        mediaAsset.setUrl(url);
+        mediaAsset.setPublicId(publicId);
+        mediaAsset.setFormat(format);
+        mediaAsset.setWidth(width);
+        mediaAsset.setHeight(height);
+        mediaAsset.setBytes(bytes);
+        mediaAsset.setIsMain(isMain);
+        mediaAsset.setSortOrder(sortOrder);
+        mediaAsset.setAltText(altText);
+        mediaAsset.setContext(context);
+
+        return mediaAssetRepository.save(mediaAsset);
+    }
+
+    @Override
     public List<MediaAsset> getAllByEntityTypeAndEntityId(UUID tenantId, EntityType entityType, UUID entityId) {
         return mediaAssetRepository.findAllByTenantIdAndEntityTypeAndEntityId(tenantId, entityType, entityId);
     }

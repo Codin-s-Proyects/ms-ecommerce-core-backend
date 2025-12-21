@@ -2,7 +2,9 @@ package codin.msbackendcore.pricing.application.internal.commandservice;
 
 import codin.msbackendcore.pricing.application.internal.outboundservices.ExternalCatalogService;
 import codin.msbackendcore.pricing.application.internal.outboundservices.ExternalCoreService;
-import codin.msbackendcore.pricing.domain.model.commands.CreateProductPriceCommand;
+import codin.msbackendcore.pricing.domain.model.commands.productprice.CreateProductPriceCommand;
+import codin.msbackendcore.pricing.domain.model.commands.productprice.DeleteProductPriceCommand;
+import codin.msbackendcore.pricing.domain.model.commands.productprice.UpdateProductPriceCommand;
 import codin.msbackendcore.pricing.domain.model.entities.ProductPrice;
 import codin.msbackendcore.pricing.domain.services.pricelist.PriceListDomainService;
 import codin.msbackendcore.pricing.domain.services.productprice.ProductPriceCommandService;
@@ -50,5 +52,28 @@ public class ProductPriceCommandServiceImpl implements ProductPriceCommandServic
                 command.validTo()
         );
 
+    }
+
+    @Override
+    public ProductPrice handle(UpdateProductPriceCommand command) {
+        if (!externalCoreService.existTenantById(command.tenantId())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
+        }
+
+        var priceList = priceListDomainService.getPriceListByTenantAndId(command.tenantId(), command.priceListId());
+
+        return productPriceDomainService.updateProductPrice(
+                command.productPriceId(),
+                command.tenantId(),
+                priceList,
+                command.basePrice(),
+                command.minQuantity(),
+                command.validTo()
+        );
+    }
+
+    @Override
+    public void handle(DeleteProductPriceCommand command) {
+        productPriceDomainService.deleteProductPrice(command.tenantId(), command.productPriceId());
     }
 }

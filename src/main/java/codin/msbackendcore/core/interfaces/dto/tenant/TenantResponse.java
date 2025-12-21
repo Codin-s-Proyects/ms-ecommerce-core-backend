@@ -14,7 +14,7 @@ public record TenantResponse(
         UUID id,
         String slug,
         String name,
-        String plan,
+        UUID planId,
         String status,
         String currencyCode,
         String locale,

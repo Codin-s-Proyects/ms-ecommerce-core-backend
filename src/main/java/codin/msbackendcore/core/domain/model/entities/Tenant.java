@@ -30,9 +30,9 @@ public class Tenant {
     @Column(name = "complaint_book_url", columnDefinition = "TEXT")
     private String complaintBookUrl;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "plan", columnDefinition = "TEXT", nullable = false)
-    private TenantPlan plan = TenantPlan.STARTER;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_id", nullable = false)
+    private Plan plan;
 
     @Embedded
     private LegalInfo legal;

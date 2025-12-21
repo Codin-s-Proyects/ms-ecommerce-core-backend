@@ -39,4 +39,6 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
     @Query("SELECT pv FROM ProductVariant pv WHERE pv.id = :id AND pv.tenantId = :tenantId")
     Optional<ProductVariant> findByIdForUpdate(UUID id, UUID tenantId);
 
+    Optional<ProductVariant> findProductVariantByTenantIdAndId(UUID tenantId, UUID id);
+
 }

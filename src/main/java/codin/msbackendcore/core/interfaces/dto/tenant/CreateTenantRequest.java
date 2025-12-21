@@ -11,10 +11,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 public record CreateTenantRequest(
         @NotBlank String name,
-        @NotBlank String plan,
+        @NotBlank UUID planId,
         @NotBlank String legalName,
         String taxId,
         @NotBlank String contactName,
@@ -43,7 +44,7 @@ public record CreateTenantRequest(
 
         return new CreateTenantCommand(
                 name,
-                plan.toUpperCase(),
+                planId,
                 currencyCode,
                 complaintBookUrl,
                 locale,

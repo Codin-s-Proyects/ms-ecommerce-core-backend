@@ -3,8 +3,11 @@ package codin.msbackendcore.catalog.application.internal.commandservice;
 import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalCoreService;
 import codin.msbackendcore.catalog.domain.model.commands.productvariant.CreateProductVariantBulkCommand;
 import codin.msbackendcore.catalog.domain.model.commands.productvariant.CreateProductVariantCommand;
+import codin.msbackendcore.catalog.domain.model.commands.productvariant.DeleteProductVariantCommand;
+import codin.msbackendcore.catalog.domain.model.commands.productvariant.UpdateProductVariantCommand;
 import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.catalog.domain.model.events.ProductCreatedEvent;
+import codin.msbackendcore.catalog.domain.model.events.ProductVariantUpdatedEvent;
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantCommandService;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantDomainService;
@@ -56,6 +59,27 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
     }
 
     @Override
+    public ProductVariant handle(UpdateProductVariantCommand command) {
+
+        if (!externalCoreService.existTenantById(command.tenantId())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
+        }
+
+        var productVariant = productVariantDomainService.updateProductVariant(
+                command.tenantId(),
+                command.productVariantId(),
+                command.name(),
+                command.attributes(),
+                command.productQuantity()
+        );
+
+        eventPublisher.publish(new ProductVariantUpdatedEvent(productVariant));
+
+        return productVariant;
+    }
+
+
+    @Override
     public void handle(CreateProductVariantBulkCommand command) {
         if (!externalCoreService.existTenantById(command.tenantId())) {
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
@@ -72,5 +96,10 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
         if (!product.isHasVariants()) productDomainService.updateHasVariant(product.getId(), true);
 
         eventPublisher.publish(new ProductCreatedEvent(command.tenantId(), productVariants));
+    }
+
+    @Override
+    public void handle(DeleteProductVariantCommand command) {
+        productVariantDomainService.deactivateProductVariant(command.tenantId(), command.productVariantId());
     }
 }

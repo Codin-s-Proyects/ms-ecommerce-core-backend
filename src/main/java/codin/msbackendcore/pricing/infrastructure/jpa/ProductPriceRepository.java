@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface ProductPriceRepository extends JpaRepository<ProductPrice, UUID> {
     boolean existsByTenantIdAndProductVariantIdAndPriceList(UUID tenantId, UUID productVariantId, PriceList priceList);
     List<ProductPrice> findAllByTenantIdAndProductVariantId(UUID tenantId, UUID productVariantId);
+    Optional<ProductPrice> findByIdAndTenantId(UUID id, UUID tenantId);
 }

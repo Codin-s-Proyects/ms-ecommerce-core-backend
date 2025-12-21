@@ -1,6 +1,6 @@
 package codin.msbackendcore.pricing.interfaces.dto.productprice;
 
-import codin.msbackendcore.pricing.domain.model.commands.CreateProductPriceCommand;
+import codin.msbackendcore.pricing.domain.model.commands.productprice.CreateProductPriceCommand;
 
 import java.math.BigDecimal;
 import java.time.Instant;

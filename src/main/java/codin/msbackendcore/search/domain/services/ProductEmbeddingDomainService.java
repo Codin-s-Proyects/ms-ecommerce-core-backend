@@ -11,5 +11,8 @@ public interface ProductEmbeddingDomainService {
     CompletableFuture<Void> generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
                                                      String variantName, Map<String, Object> variantAttributes);
 
+    CompletableFuture<Void> updateEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
+                                                     String variantName, Map<String, Object> variantAttributes);
+
     CompletableFuture<List<ProductEmbedding>> semanticSearch(UUID tenantId, String query, int limit, Double distanceThreshold);
 }

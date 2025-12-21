@@ -1,8 +1,9 @@
 package codin.msbackendcore.pricing.application.internal.commandservice;
 
 import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalCoreService;
-import codin.msbackendcore.pricing.domain.model.commands.CreatePriceListCommand;
-import codin.msbackendcore.pricing.domain.model.commands.DeletePriceListCommand;
+import codin.msbackendcore.pricing.domain.model.commands.pricelist.CreatePriceListCommand;
+import codin.msbackendcore.pricing.domain.model.commands.pricelist.DeletePriceListCommand;
+import codin.msbackendcore.pricing.domain.model.commands.pricelist.UpdatePriceListCommand;
 import codin.msbackendcore.pricing.domain.model.entities.PriceList;
 import codin.msbackendcore.pricing.domain.services.pricelist.PriceListCommandService;
 import codin.msbackendcore.pricing.domain.services.pricelist.PriceListDomainService;
@@ -38,6 +39,23 @@ public class PriceListCommandServiceImpl implements PriceListCommandService {
                 command.validTo()
         );
 
+    }
+
+    @Override
+    public PriceList handle(UpdatePriceListCommand command) {
+        if (!externalCoreService.existTenantById(command.tenantId())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
+        }
+
+        return priceListDomainService.updatePriceList(
+                command.priceListId(),
+                command.tenantId(),
+                command.name(),
+                command.description(),
+                command.currencyCode(),
+                command.validFrom(),
+                command.validTo()
+        );
     }
 
     @Override

@@ -6,6 +6,7 @@ import codin.msbackendcore.catalog.domain.model.entities.ProductCategory;
 import codin.msbackendcore.catalog.domain.services.productcategory.ProductCategoryDomainService;
 import codin.msbackendcore.catalog.infrastructure.persistence.jpa.ProductCategoryRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
+import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -34,5 +35,15 @@ public class ProductCategoryDomainServiceImpl implements ProductCategoryDomainSe
                 .build();
 
         return productCategoryRepository.save(productCategory);
+    }
+
+    @Override
+    public void deleteProductCategory(UUID tenantId, UUID productCategoryId) {
+        var productCategory = productCategoryRepository.findByTenantIdAndId(tenantId, productCategoryId)
+                .orElseThrow(
+                        () -> new NotFoundException("error.not_found", new String[]{productCategoryId.toString()}, "productCategoryId")
+                );
+
+        productCategoryRepository.delete(productCategory);
     }
 }

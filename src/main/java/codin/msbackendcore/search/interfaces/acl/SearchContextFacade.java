@@ -19,4 +19,9 @@ public class SearchContextFacade {
                                                              String variantName, Map<String, Object> variantAttributes) {
         return productEmbeddingDomainService.generateAndSaveEmbedding(tenantId, variantId, productName, categoryName, brandName, productDescription, variantName, variantAttributes);
     }
+
+    public CompletableFuture<Void> updateEmbeddingForVariant(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
+                                                             String variantName, Map<String, Object> variantAttributes) {
+        return productEmbeddingDomainService.updateEmbedding(tenantId, variantId, productName, categoryName, brandName, productDescription, variantName, variantAttributes);
+    }
 }
