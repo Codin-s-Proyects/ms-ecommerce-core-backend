@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -29,4 +30,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     List<Product> findByBrandAndTenantId(Brand brand, UUID tenantId);
 
     void deleteAllByTenantId(UUID tenantId);
+
+    Optional<Product> findByIdAndTenantId(UUID productId, UUID tenantId);
 }

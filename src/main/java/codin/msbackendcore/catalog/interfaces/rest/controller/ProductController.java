@@ -9,6 +9,7 @@ import codin.msbackendcore.catalog.domain.services.product.ProductCommandService
 import codin.msbackendcore.catalog.domain.services.product.ProductQueryService;
 import codin.msbackendcore.catalog.interfaces.dto.product.ProductCreateRequest;
 import codin.msbackendcore.catalog.interfaces.dto.product.ProductResponse;
+import codin.msbackendcore.catalog.interfaces.dto.product.ProductUpdatedRequest;
 import codin.msbackendcore.shared.infrastructure.pagination.model.CursorPage;
 import codin.msbackendcore.shared.infrastructure.pagination.model.CursorPaginationQuery;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,6 +52,26 @@ public class ProductController {
         );
 
         return ResponseEntity.status(201).body(response);
+    }
+
+    @Operation(summary = "Actualizar un nuevo producto")
+    @PutMapping("/{productId}/tenant/{tenantiId}")
+    public ResponseEntity<ProductResponse> updateProduct(@Valid @RequestBody ProductUpdatedRequest req, @PathVariable UUID productId, @PathVariable UUID tenantiId) {
+
+        var command = req.toCommand(productId, tenantiId);
+
+        var saved = productCommandService.handle(command);
+
+        var response = new ProductResponse(
+                saved.getId(),
+                saved.getTenantId(),
+                saved.getName(),
+                saved.getSlug(),
+                saved.getDescription(),
+                saved.isHasVariants()
+        );
+
+        return ResponseEntity.status(200).body(response);
     }
 
     @Operation(summary = "Obtener todos los productos por categoría y tenantId")

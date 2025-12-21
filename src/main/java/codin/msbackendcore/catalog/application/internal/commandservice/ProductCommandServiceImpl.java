@@ -3,6 +3,7 @@ package codin.msbackendcore.catalog.application.internal.commandservice;
 import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalCoreService;
 import codin.msbackendcore.catalog.domain.model.commands.product.CreateProductCommand;
 import codin.msbackendcore.catalog.domain.model.commands.product.DeleteProductByTenantCommand;
+import codin.msbackendcore.catalog.domain.model.commands.product.UpdateProductCommand;
 import codin.msbackendcore.catalog.domain.model.entities.Product;
 import codin.msbackendcore.catalog.domain.services.brand.BrandDomainService;
 import codin.msbackendcore.catalog.domain.services.product.ProductCommandService;
@@ -35,6 +36,24 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         var brand = command.brandId() != null ? brandDomainService.getBrandById(command.brandId()) : null;
 
         return productDomainService.createProduct(
+                command.tenantId(),
+                brand,
+                command.name(),
+                command.description(),
+                command.meta()
+        );
+    }
+
+    @Override
+    public Product handle(UpdateProductCommand command) {
+        if (!externalCoreService.existTenantById(command.tenantId())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
+        }
+
+        var brand = command.brandId() != null ? brandDomainService.getBrandById(command.brandId()) : null;
+
+        return productDomainService.updateProduct(
+                command.productId(),
                 command.tenantId(),
                 brand,
                 command.name(),

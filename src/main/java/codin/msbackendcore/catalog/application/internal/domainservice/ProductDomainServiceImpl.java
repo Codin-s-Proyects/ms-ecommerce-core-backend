@@ -50,6 +50,26 @@ public class ProductDomainServiceImpl implements ProductDomainService {
     }
 
     @Override
+    public Product updateProduct(UUID productId, UUID tenantId, Brand brand, String name, String description, Map<String, Object> meta) {
+        var product = productRepository.findByIdAndTenantId(productId, tenantId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{productId.toString()}, "productId")
+                );
+
+        if (Boolean.TRUE.equals(productRepository.existsByNameAndTenantId(name, tenantId)))
+            throw new BadRequestException("error.already_exist", new String[]{name}, "name");
+
+        product.setTenantId(tenantId);
+        product.setBrand(brand);
+        product.setName(name);
+        product.setSlug(generateSlug(name));
+        product.setDescription(description);
+        product.setMeta(meta);
+
+        return productRepository.save(product);
+    }
+
+    @Override
     public void updateHasVariant(UUID productId, boolean hasVariant) {
         var product = productRepository.findById(productId)
                 .orElseThrow(() ->
@@ -77,7 +97,7 @@ public class ProductDomainServiceImpl implements ProductDomainService {
     @Override
     public CursorPage<Product> getProductsByCategory(UUID tenantId, UUID categoryId, CursorPaginationQuery query) {
 
-        if(tenantId == null)
+        if (tenantId == null)
             return productPaginationRepository.findByCategory(categoryId, query);
 
         return productPaginationRepository.findByTenantAndCategory(tenantId, categoryId, query);
