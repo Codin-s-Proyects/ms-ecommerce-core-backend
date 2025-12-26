@@ -22,10 +22,6 @@ public class Plan {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tenant_id", nullable = false)
-    private Tenant tenant;
-
     @Column(name = "name", columnDefinition = "TEXT", nullable = false)
     private String name;
 

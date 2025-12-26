@@ -1,10 +1,10 @@
-package codin.msbackendcore.core.interfaces.dto.plan;
+package codin.msbackendcore.payments.application.internal.dto;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-public record PlanResponse(
+public record PlanDto(
         UUID id,
         String name,
         String description,

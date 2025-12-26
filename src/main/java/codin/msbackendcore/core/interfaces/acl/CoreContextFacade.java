@@ -1,9 +1,12 @@
 package codin.msbackendcore.core.interfaces.acl;
 
+import codin.msbackendcore.catalog.interfaces.dto.product.ProductResponse;
 import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetDomainService;
+import codin.msbackendcore.core.domain.services.tenant.PlanDomainService;
 import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
 import codin.msbackendcore.core.interfaces.dto.mediaasset.MediaAssetResponse;
+import codin.msbackendcore.core.interfaces.dto.plan.PlanResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,5 +48,24 @@ public class CoreContextFacade {
                         mediaAsset.getContext()
                 ))
                 .toList();
+    }
+
+    public PlanResponse getPlanByTenantId(UUID tenantId) {
+        var tenant = tenantDomainService.getTenantById(tenantId);
+
+        var plan = tenant.getPlan();
+
+        return new PlanResponse(
+                plan.getId(),
+                plan.getName(),
+                plan.getDescription(),
+                plan.getCommissionRate(),
+                plan.getMonthlyFee(),
+                plan.getOnboardingFee(),
+                plan.getGmvMin(),
+                plan.getGmvMax(),
+                plan.getStatus().toString(),
+                plan.getCreatedAt()
+        );
     }
 }

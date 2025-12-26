@@ -1,4 +1,4 @@
-package codin.msbackendcore.payments.domain.services;
+package codin.msbackendcore.payments.domain.services.payment;
 
 import codin.msbackendcore.payments.domain.model.commands.CreatePaymentCommand;
 import codin.msbackendcore.payments.domain.model.commands.IzipayTokenPaymentCommand;

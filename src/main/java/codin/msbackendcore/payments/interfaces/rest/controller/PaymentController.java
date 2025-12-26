@@ -1,8 +1,8 @@
 package codin.msbackendcore.payments.interfaces.rest.controller;
 
 import codin.msbackendcore.payments.domain.model.queries.GetAllPaymentsByUserIdQuery;
-import codin.msbackendcore.payments.domain.services.PaymentCommandService;
-import codin.msbackendcore.payments.domain.services.PaymentQueryService;
+import codin.msbackendcore.payments.domain.services.payment.PaymentCommandService;
+import codin.msbackendcore.payments.domain.services.payment.PaymentQueryService;
 import codin.msbackendcore.payments.interfaces.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

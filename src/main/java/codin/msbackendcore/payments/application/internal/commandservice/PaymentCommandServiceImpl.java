@@ -9,9 +9,11 @@ import codin.msbackendcore.payments.domain.model.commands.UpdatePaymentStatusCom
 import codin.msbackendcore.payments.domain.model.entities.Payment;
 import codin.msbackendcore.payments.domain.model.valueobjects.PaymentMethod;
 import codin.msbackendcore.payments.domain.model.valueobjects.PaymentStatus;
-import codin.msbackendcore.payments.domain.services.PaymentCommandService;
-import codin.msbackendcore.payments.domain.services.PaymentDomainService;
+import codin.msbackendcore.payments.domain.services.payment.PaymentCommandService;
+import codin.msbackendcore.payments.domain.services.payment.PaymentDomainService;
+import codin.msbackendcore.payments.domain.services.salecommission.SaleCommissionDomainService;
 import codin.msbackendcore.payments.infrastructure.izipay.IzipayClient;
+import codin.msbackendcore.payments.infrastructure.persistence.jpa.SaleCommissionRepository;
 import codin.msbackendcore.payments.interfaces.dto.IzipayTokenResponse;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.transaction.Transactional;
@@ -26,13 +28,15 @@ import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.*;
 public class PaymentCommandServiceImpl implements PaymentCommandService {
 
     private final PaymentDomainService paymentDomainService;
+    private final SaleCommissionDomainService saleCommissionDomainService;
     private final ExternalCoreService externalCoreService;
     private final ExternalOrderingService externalOrderingService;
     private final ExternalIamService externalIamService;
     private final IzipayClient izipayClient;
 
-    public PaymentCommandServiceImpl(PaymentDomainService paymentDomainService, ExternalCoreService externalCoreService, ExternalOrderingService externalOrderingService, ExternalIamService externalIamService, IzipayClient izipayClient) {
+    public PaymentCommandServiceImpl(PaymentDomainService paymentDomainService, SaleCommissionDomainService saleCommissionDomainService, ExternalCoreService externalCoreService, ExternalOrderingService externalOrderingService, ExternalIamService externalIamService, IzipayClient izipayClient) {
         this.paymentDomainService = paymentDomainService;
+        this.saleCommissionDomainService = saleCommissionDomainService;
         this.externalCoreService = externalCoreService;
         this.externalOrderingService = externalOrderingService;
         this.externalIamService = externalIamService;
@@ -61,7 +65,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
-        return paymentDomainService.createPayment(
+        var payment = paymentDomainService.createPayment(
                 command.tenantId(),
                 command.orderId(),
                 command.userId(),
@@ -69,6 +73,18 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
                 command.paymentMethod() != null ? PaymentMethod.valueOf(command.paymentMethod()) : null,
                 PaymentStatus.valueOf(command.paymentStatus())
         );
+
+
+        if(payment.getStatus() == PaymentStatus.CONFIRMED) {
+            var plan = externalCoreService.getPlanByTenantId(payment.getTenantId());
+
+            saleCommissionDomainService.createSaleCommission(
+                    payment.getTenantId(), payment.getOrderId(), payment, payment.getUserId(), payment.getAmount(),
+                    plan.commissionRate(), plan.id()
+            );
+        }
+
+        return payment;
     }
 
     @Override
@@ -81,12 +97,23 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
             throw new BadRequestException("error.bad_request", new String[]{command.paymentMethod()}, "paymentMethod");
         }
 
-        return paymentDomainService.updatePayment(
+        var payment =  paymentDomainService.updatePayment(
                 command.paymentId(),
                 command.tenantId(),
                 command.paymentMethod() != null ? PaymentMethod.valueOf(command.paymentMethod()) : null,
                 PaymentStatus.valueOf(command.paymentStatus())
         );
+
+        if(payment.getStatus() == PaymentStatus.CONFIRMED) {
+            var plan = externalCoreService.getPlanByTenantId(payment.getTenantId());
+
+            saleCommissionDomainService.createSaleCommission(
+                    payment.getTenantId(), payment.getOrderId(), payment, payment.getUserId(), payment.getAmount(),
+                    plan.commissionRate(), plan.id()
+            );
+        }
+
+        return payment;
     }
 
     @Override
