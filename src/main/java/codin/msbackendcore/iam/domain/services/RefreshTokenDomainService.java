@@ -9,5 +9,5 @@ import java.util.UUID;
 public interface RefreshTokenDomainService {
     RefreshToken createRefreshToken(String identifier, Session session);
     void revokeAllTokensBySession(Session session);
-    RefreshToken useRefreshToken(UUID userId, String plainRefreshToken, UUID tenantId, String deviceInfo);
+    RefreshToken useRefreshToken(String identifier, String plainRefreshToken, Session session);
 }

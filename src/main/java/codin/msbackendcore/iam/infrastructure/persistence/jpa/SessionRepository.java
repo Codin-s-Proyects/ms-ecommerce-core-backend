@@ -12,5 +12,5 @@ import java.util.UUID;
 public interface SessionRepository extends JpaRepository<Session, UUID> {
     boolean existsByDeviceInfoAndRevokedIsFalse(String deviceInfo);
     long countByUser_IdAndRevokedFalse(UUID userId);
-    Optional<Session> findByUserAndIp(User user, String ip);
+    Optional<Session> findByUser_IdAndId(UUID userId, UUID id);
 }

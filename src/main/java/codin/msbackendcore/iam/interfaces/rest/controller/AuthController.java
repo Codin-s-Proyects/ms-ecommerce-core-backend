@@ -5,6 +5,7 @@ import codin.msbackendcore.iam.interfaces.dto.*;
 import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/v1/authentication", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Authentication", description = "Operaciociones relacionadas a autenticacion y autorizacion de un usuario")
 public class AuthController {
 
     private final UserCommandService userCommandService;

@@ -17,6 +17,7 @@ import codin.msbackendcore.iam.domain.services.credential.CredentialDomainServic
 import codin.msbackendcore.iam.domain.services.role.RoleDomainService;
 import codin.msbackendcore.iam.domain.services.user.UserCommandService;
 import codin.msbackendcore.iam.domain.services.user.UserDomainService;
+import codin.msbackendcore.shared.domain.exceptions.AuthenticatedException;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.infrastructure.utils.CommonUtils;
 import jakarta.transaction.Transactional;
@@ -129,21 +130,29 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public Optional<SignInResult> handle(RefreshTokenCommand command) {
-//        var newRefreshToken = refreshTokenDomainService.validateAndRotate(
-//                command.userId(), command.refreshToken(), command.tenantId(), command.deviceInfo()
-//        );
-//
-//        var identifier = newRefreshToken.getUser().getPrimaryCredential().getIdentifier();
-//        var accessToken = tokenService.generateToken(identifier);
-//
-//        return new AuthResponse(
-//                newRefreshToken.getUser().getId(),
-//                accessToken,
-//                newRefreshToken.getPlainToken(),
-//                newRefreshToken.getUser().getUserType()
-//        );
 
-        return Optional.empty();
+        var session = sessionDomainService.findByIdAndUserId(command.sessionId(), command.userId());
+
+        if (session.isRevoked())
+            throw new AuthenticatedException("error.session.revoked", new String[]{}, "sessionId");
+
+        var refreshResult = refreshTokenDomainService.useRefreshToken(
+                command.identifier(),
+                command.refreshToken(),
+                session
+        );
+
+        var accessToken = tokenService.generateToken(command.identifier());
+
+        return Optional.of(
+                new SignInResult(
+                        command.userId(),
+                        command.userType(),
+                        accessToken,
+                        refreshResult.getPlainToken(),
+                        session.getId()
+                )
+        );
     }
 
     @Override
