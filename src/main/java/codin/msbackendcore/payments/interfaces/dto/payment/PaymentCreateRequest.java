@@ -1,4 +1,4 @@
-package codin.msbackendcore.payments.interfaces.dto;
+package codin.msbackendcore.payments.interfaces.dto.payment;
 
 import codin.msbackendcore.payments.domain.model.commands.CreatePaymentCommand;
 import jakarta.validation.constraints.Min;

@@ -1,4 +1,4 @@
-package codin.msbackendcore.payments.interfaces.dto;
+package codin.msbackendcore.payments.interfaces.dto.izipay;
 
 import codin.msbackendcore.payments.domain.model.commands.IzipayTokenPaymentCommand;
 import jakarta.validation.constraints.NotNull;

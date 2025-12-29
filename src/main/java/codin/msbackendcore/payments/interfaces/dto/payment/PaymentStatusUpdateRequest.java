@@ -1,4 +1,4 @@
-package codin.msbackendcore.payments.interfaces.dto;
+package codin.msbackendcore.payments.interfaces.dto.payment;
 
 import codin.msbackendcore.payments.domain.model.commands.UpdatePaymentStatusCommand;
 import jakarta.validation.constraints.NotBlank;

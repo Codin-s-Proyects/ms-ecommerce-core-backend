@@ -13,8 +13,7 @@ import codin.msbackendcore.payments.domain.services.payment.PaymentCommandServic
 import codin.msbackendcore.payments.domain.services.payment.PaymentDomainService;
 import codin.msbackendcore.payments.domain.services.salecommission.SaleCommissionDomainService;
 import codin.msbackendcore.payments.infrastructure.izipay.IzipayClient;
-import codin.msbackendcore.payments.infrastructure.persistence.jpa.SaleCommissionRepository;
-import codin.msbackendcore.payments.interfaces.dto.IzipayTokenResponse;
+import codin.msbackendcore.payments.interfaces.dto.izipay.IzipayTokenResponse;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;

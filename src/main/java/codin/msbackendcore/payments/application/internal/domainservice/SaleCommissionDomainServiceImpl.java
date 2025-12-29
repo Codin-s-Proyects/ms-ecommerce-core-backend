@@ -9,6 +9,7 @@ import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -42,5 +43,10 @@ public class SaleCommissionDomainServiceImpl implements SaleCommissionDomainServ
                 .build();
 
         return saleCommissionRepository.save(saleCommission);
+    }
+
+    @Override
+    public List<SaleCommission> getAllSaleCommissionByTenantId(UUID tenantId) {
+        return saleCommissionRepository.findAllByTenantId(tenantId);
     }
 }

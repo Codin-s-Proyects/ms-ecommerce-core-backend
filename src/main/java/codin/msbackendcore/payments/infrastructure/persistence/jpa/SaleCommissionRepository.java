@@ -10,4 +10,5 @@ import java.util.UUID;
 
 public interface SaleCommissionRepository extends JpaRepository<SaleCommission, UUID> {
     boolean existsByOrderId(UUID orderId);
+    List<SaleCommission> findAllByTenantId(UUID tenantId);
 }

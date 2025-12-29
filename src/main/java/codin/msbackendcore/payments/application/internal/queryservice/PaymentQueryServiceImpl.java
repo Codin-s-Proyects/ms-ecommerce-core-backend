@@ -1,7 +1,7 @@
 package codin.msbackendcore.payments.application.internal.queryservice;
 
 import codin.msbackendcore.payments.domain.model.entities.Payment;
-import codin.msbackendcore.payments.domain.model.queries.GetAllPaymentsByUserIdQuery;
+import codin.msbackendcore.payments.domain.model.queries.payment.GetAllPaymentsByUserIdQuery;
 import codin.msbackendcore.payments.domain.services.payment.PaymentDomainService;
 import codin.msbackendcore.payments.domain.services.payment.PaymentQueryService;
 import org.springframework.stereotype.Service;
