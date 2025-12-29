@@ -1,7 +1,6 @@
 package codin.msbackendcore.iam.infrastructure.persistence.jpa;
 
 import codin.msbackendcore.iam.domain.model.entities.Session;
-import codin.msbackendcore.iam.domain.model.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

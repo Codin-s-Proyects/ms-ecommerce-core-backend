@@ -11,7 +11,6 @@ import codin.msbackendcore.catalog.domain.services.product.ProductCommandService
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.catalog.domain.services.productcategory.ProductCategoryDomainService;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantDomainService;
-import codin.msbackendcore.catalog.infrastructure.persistence.jpa.ProductRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;

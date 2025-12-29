@@ -2,7 +2,6 @@ package codin.msbackendcore.payments.interfaces.rest.controller;
 
 import codin.msbackendcore.payments.domain.model.queries.salecommission.GetAllSaleCommissionByTenantIdQuery;
 import codin.msbackendcore.payments.domain.services.salecommission.SaleCommissionQueryService;
-import codin.msbackendcore.payments.interfaces.dto.payment.PaymentResponse;
 import codin.msbackendcore.payments.interfaces.dto.salecommission.SaleCommissionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

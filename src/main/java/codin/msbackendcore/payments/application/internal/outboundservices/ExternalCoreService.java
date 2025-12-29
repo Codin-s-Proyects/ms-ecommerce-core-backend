@@ -2,7 +2,6 @@ package codin.msbackendcore.payments.application.internal.outboundservices;
 
 import codin.msbackendcore.core.interfaces.acl.CoreContextFacade;
 import codin.msbackendcore.payments.application.internal.dto.PlanDto;
-import codin.msbackendcore.search.application.internal.dto.ProductDto;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

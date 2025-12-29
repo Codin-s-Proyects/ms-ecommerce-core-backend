@@ -4,14 +4,12 @@ import codin.msbackendcore.iam.application.internal.outboundservices.hashing.Has
 import codin.msbackendcore.iam.application.internal.outboundservices.token.TokenService;
 import codin.msbackendcore.iam.domain.model.entities.RefreshToken;
 import codin.msbackendcore.iam.domain.model.entities.Session;
-import codin.msbackendcore.iam.domain.model.entities.User;
 import codin.msbackendcore.iam.domain.services.RefreshTokenDomainService;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.RefreshTokenRepository;
 import codin.msbackendcore.shared.domain.exceptions.AuthenticatedException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.UUID;
 
 import static codin.msbackendcore.shared.infrastructure.utils.Constants.REFRESH_TOKEN_EXPIRES_AT;
 

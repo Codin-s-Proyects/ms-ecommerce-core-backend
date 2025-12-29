@@ -2,7 +2,6 @@ package codin.msbackendcore.payments.application.internal.domainservice;
 
 import codin.msbackendcore.payments.domain.model.entities.Payment;
 import codin.msbackendcore.payments.domain.model.entities.SaleCommission;
-import codin.msbackendcore.payments.domain.model.valueobjects.PaymentStatus;
 import codin.msbackendcore.payments.domain.services.salecommission.SaleCommissionDomainService;
 import codin.msbackendcore.payments.infrastructure.persistence.jpa.SaleCommissionRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;

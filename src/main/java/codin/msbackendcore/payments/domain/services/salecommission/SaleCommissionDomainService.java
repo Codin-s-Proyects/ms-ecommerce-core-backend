@@ -2,8 +2,6 @@ package codin.msbackendcore.payments.domain.services.salecommission;
 
 import codin.msbackendcore.payments.domain.model.entities.Payment;
 import codin.msbackendcore.payments.domain.model.entities.SaleCommission;
-import codin.msbackendcore.payments.domain.model.valueobjects.PaymentMethod;
-import codin.msbackendcore.payments.domain.model.valueobjects.PaymentStatus;
 
 import java.math.BigDecimal;
 import java.util.List;

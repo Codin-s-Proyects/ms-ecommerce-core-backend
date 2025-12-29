@@ -1,7 +1,10 @@
 package codin.msbackendcore.core.domain.model.entities;
 
 
-import codin.msbackendcore.core.domain.model.valueobjects.*;
+import codin.msbackendcore.core.domain.model.valueobjects.ContactInfo;
+import codin.msbackendcore.core.domain.model.valueobjects.LegalInfo;
+import codin.msbackendcore.core.domain.model.valueobjects.SocialInfo;
+import codin.msbackendcore.core.domain.model.valueobjects.SupportInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

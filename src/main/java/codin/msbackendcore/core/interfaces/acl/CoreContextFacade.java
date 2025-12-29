@@ -1,9 +1,7 @@
 package codin.msbackendcore.core.interfaces.acl;
 
-import codin.msbackendcore.catalog.interfaces.dto.product.ProductResponse;
 import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetDomainService;
-import codin.msbackendcore.core.domain.services.tenant.PlanDomainService;
 import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
 import codin.msbackendcore.core.interfaces.dto.mediaasset.MediaAssetResponse;
 import codin.msbackendcore.core.interfaces.dto.plan.PlanResponse;

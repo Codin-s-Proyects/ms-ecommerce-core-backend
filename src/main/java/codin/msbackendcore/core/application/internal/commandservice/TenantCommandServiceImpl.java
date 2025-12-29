@@ -6,11 +6,8 @@ import codin.msbackendcore.core.domain.model.entities.Tenant;
 import codin.msbackendcore.core.domain.services.tenant.PlanDomainService;
 import codin.msbackendcore.core.domain.services.tenant.TenantCommandService;
 import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
-import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
-import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.isValidEnum;
 
 @Service
 @Transactional
