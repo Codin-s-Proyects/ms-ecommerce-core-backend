@@ -1,4 +1,4 @@
-package codin.msbackendcore.payments.domain.model.commands;
+package codin.msbackendcore.payments.domain.model.commands.izipay;
 
 import java.math.BigDecimal;
 import java.util.UUID;

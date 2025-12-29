@@ -18,6 +18,10 @@ public class ExternalCoreService {
         return coreContextFacade.getTenantById(tenantId) != null;
     }
 
+    public boolean existPlanById(UUID planId) {
+        return coreContextFacade.getPlanById(planId) != null;
+    }
+
     public PlanDto getPlanByTenantId(UUID tenantId) {
 
         var planResponse = coreContextFacade.getPlanByTenantId(tenantId);

@@ -1,8 +1,8 @@
 package codin.msbackendcore.payments.domain.services.payment;
 
-import codin.msbackendcore.payments.domain.model.commands.CreatePaymentCommand;
-import codin.msbackendcore.payments.domain.model.commands.IzipayTokenPaymentCommand;
-import codin.msbackendcore.payments.domain.model.commands.UpdatePaymentStatusCommand;
+import codin.msbackendcore.payments.domain.model.commands.payment.CreatePaymentCommand;
+import codin.msbackendcore.payments.domain.model.commands.izipay.IzipayTokenPaymentCommand;
+import codin.msbackendcore.payments.domain.model.commands.payment.UpdatePaymentStatusCommand;
 import codin.msbackendcore.payments.domain.model.entities.Payment;
 import codin.msbackendcore.payments.interfaces.dto.izipay.IzipayTokenResponse;
 
