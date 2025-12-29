@@ -1,6 +1,5 @@
 package codin.msbackendcore.pricing.interfaces.rest;
 
-import codin.msbackendcore.pricing.domain.model.commands.pricelist.DeletePriceListCommand;
 import codin.msbackendcore.pricing.domain.model.commands.productprice.DeleteProductPriceCommand;
 import codin.msbackendcore.pricing.domain.model.queries.GetAllProductPriceByProductVariantIdQuery;
 import codin.msbackendcore.pricing.domain.services.productprice.ProductPriceCommandService;

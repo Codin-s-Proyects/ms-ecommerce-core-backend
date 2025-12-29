@@ -3,7 +3,7 @@ package codin.msbackendcore.payments.application.internal.domainservice;
 import codin.msbackendcore.payments.domain.model.entities.Payment;
 import codin.msbackendcore.payments.domain.model.valueobjects.PaymentMethod;
 import codin.msbackendcore.payments.domain.model.valueobjects.PaymentStatus;
-import codin.msbackendcore.payments.domain.services.PaymentDomainService;
+import codin.msbackendcore.payments.domain.services.payment.PaymentDomainService;
 import codin.msbackendcore.payments.infrastructure.persistence.jpa.PaymentRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;

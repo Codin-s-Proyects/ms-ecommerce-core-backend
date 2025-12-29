@@ -1,7 +1,7 @@
-package codin.msbackendcore.payments.domain.services;
+package codin.msbackendcore.payments.domain.services.payment;
 
 import codin.msbackendcore.payments.domain.model.entities.Payment;
-import codin.msbackendcore.payments.domain.model.queries.GetAllPaymentsByUserIdQuery;
+import codin.msbackendcore.payments.domain.model.queries.payment.GetAllPaymentsByUserIdQuery;
 
 import java.util.List;
 

@@ -11,5 +11,4 @@ import java.util.UUID;
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID> {
     List<RefreshToken> getAllBySession(Session session);
-    boolean existsByTokenHash(String tokenHash);
 }

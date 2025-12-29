@@ -1,6 +1,5 @@
 package codin.msbackendcore.catalog.interfaces.dto.productvariant;
 
-import codin.msbackendcore.catalog.domain.model.commands.productvariant.CreateProductVariantCommand;
 import codin.msbackendcore.catalog.domain.model.commands.productvariant.UpdateProductVariantCommand;
 
 import java.util.Map;

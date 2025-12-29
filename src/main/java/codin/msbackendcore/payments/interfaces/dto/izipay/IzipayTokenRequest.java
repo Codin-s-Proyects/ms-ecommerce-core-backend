@@ -1,6 +1,6 @@
-package codin.msbackendcore.payments.interfaces.dto;
+package codin.msbackendcore.payments.interfaces.dto.izipay;
 
-import codin.msbackendcore.payments.domain.model.commands.IzipayTokenPaymentCommand;
+import codin.msbackendcore.payments.domain.model.commands.izipay.IzipayTokenPaymentCommand;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;

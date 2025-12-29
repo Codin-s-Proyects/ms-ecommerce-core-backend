@@ -31,6 +31,14 @@ public class SessionDomainServiceImpl implements SessionDomainService {
     }
 
     @Override
+    public Session findByIdAndUserId(UUID sessionId, UUID userId) {
+        return sessionRepository.findByUser_IdAndId(userId, sessionId)
+                .orElseThrow(
+                        () -> new NotFoundException("error.not_found", new String[]{sessionId.toString()}, "sessionId")
+                );
+    }
+
+    @Override
     public Session createSession(User user, String ipAddress, String deviceInfo) {
 
         if (sessionRepository.existsByDeviceInfoAndRevokedIsFalse(deviceInfo)) {

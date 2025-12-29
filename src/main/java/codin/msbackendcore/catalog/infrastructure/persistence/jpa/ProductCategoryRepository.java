@@ -3,7 +3,6 @@ package codin.msbackendcore.catalog.infrastructure.persistence.jpa;
 import codin.msbackendcore.catalog.domain.model.entities.Category;
 import codin.msbackendcore.catalog.domain.model.entities.Product;
 import codin.msbackendcore.catalog.domain.model.entities.ProductCategory;
-import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

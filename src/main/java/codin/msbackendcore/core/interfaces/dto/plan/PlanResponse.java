@@ -6,7 +6,6 @@ import java.util.UUID;
 
 public record PlanResponse(
         UUID id,
-        UUID tenantId,
         String name,
         String description,
         BigDecimal commissionRate,

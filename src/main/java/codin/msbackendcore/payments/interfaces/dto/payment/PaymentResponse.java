@@ -1,4 +1,4 @@
-package codin.msbackendcore.payments.interfaces.dto;
+package codin.msbackendcore.payments.interfaces.dto.payment;
 
 import java.math.BigDecimal;
 import java.time.Instant;

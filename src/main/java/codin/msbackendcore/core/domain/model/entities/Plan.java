@@ -1,15 +1,13 @@
 package codin.msbackendcore.core.domain.model.entities;
 
 
-import codin.msbackendcore.core.domain.model.valueobjects.*;
+import codin.msbackendcore.core.domain.model.valueobjects.PlanStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -21,10 +19,6 @@ public class Plan {
     @Id
     @GeneratedValue
     private UUID id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tenant_id", nullable = false)
-    private Tenant tenant;
 
     @Column(name = "name", columnDefinition = "TEXT", nullable = false)
     private String name;

@@ -1,4 +1,4 @@
-package codin.msbackendcore.payments.domain.model.queries;
+package codin.msbackendcore.payments.domain.model.queries.payment;
 
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package codin.msbackendcore.payments.interfaces.dto;
+package codin.msbackendcore.payments.interfaces.dto.izipay;
 
 public record IzipayTokenResponse(
         String transactionId,
