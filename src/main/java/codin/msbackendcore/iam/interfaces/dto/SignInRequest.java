@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public record SignInRequest(
-        @NotNull UUID tenantId,
+        UUID tenantId,
         @NotBlank String identifier,
         @NotBlank String password,
         @NotBlank String deviceId,

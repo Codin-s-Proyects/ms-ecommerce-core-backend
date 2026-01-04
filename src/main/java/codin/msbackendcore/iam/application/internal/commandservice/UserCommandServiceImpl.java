@@ -23,7 +23,6 @@ import codin.msbackendcore.shared.infrastructure.utils.CommonUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -62,14 +61,16 @@ public class UserCommandServiceImpl implements UserCommandService {
     public Optional<SignInResult> handle(SignInCommand command) {
         var existedSession = sessionDomainService.findByDeviceId(command.deviceId());
 
-        if(existedSession != null) {
+        if (existedSession != null) {
             sessionDomainService.revokeSession(existedSession);
             refreshTokenDomainService.revokeAllTokensBySession(existedSession);
         }
 
         var credential = credentialDomainService.findByIdentifier(command.identifier());
 
-        var user = userDomainService.getUserByIdAndTenantId(credential.getUser().getId(), command.tenantId());
+        var user = command.tenantId() != null
+                ? userDomainService.getUserByIdAndTenantId(credential.getUser().getId(), command.tenantId())
+                : userDomainService.getUserById(credential.getUser().getId());
 
         if (!userDomainService.isPasswordValid(credential, command.password())) {
             throw new BadRequestException("error.authorization", new String[]{command.password()}, "password");
