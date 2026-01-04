@@ -1,12 +1,14 @@
 package codin.msbackendcore.iam.domain.model.commands;
 
+import java.util.Map;
 import java.util.UUID;
 
 public record SignInCommand(
         UUID tenantId,
         String identifier,
         String password,
-        String deviceInfo,
+        String deviceId,
+        Map<String, Object> deviceInfo,
         String ip
 ) {
 }

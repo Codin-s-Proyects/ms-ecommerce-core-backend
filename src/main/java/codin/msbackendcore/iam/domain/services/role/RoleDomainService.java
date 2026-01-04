@@ -1,5 +1,7 @@
 package codin.msbackendcore.iam.domain.services.role;
 
+import codin.msbackendcore.iam.domain.model.entities.Role;
+
 public interface RoleDomainService {
-    boolean existsByRole(String role);
+    Role findByRole(String code);
 }

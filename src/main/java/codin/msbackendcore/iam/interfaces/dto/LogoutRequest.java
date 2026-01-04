@@ -6,15 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record LogoutRequest(
-        @NotNull UUID userId,
-        @NotNull UUID sessionId,
-        UUID tenantId
+        @NotNull UUID sessionId
 ) {
     public LogoutCommand toCommand() {
         return new LogoutCommand(
-                userId,
-                sessionId,
-                tenantId
+                sessionId
         );
     }
 }

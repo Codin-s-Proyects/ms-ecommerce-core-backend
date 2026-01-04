@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface SessionRepository extends JpaRepository<Session, UUID> {
-    boolean existsByDeviceInfoAndRevokedIsFalse(String deviceInfo);
+    Optional<Session> getSessionByDeviceIdAndRevokedIsFalse(String deviceId);
     long countByUser_IdAndRevokedFalse(UUID userId);
     Optional<Session> findByUser_IdAndId(UUID userId, UUID id);
 }

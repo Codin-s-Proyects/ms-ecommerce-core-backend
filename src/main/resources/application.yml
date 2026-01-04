@@ -50,11 +50,16 @@ izipay:
   merchant-code: ${IZIPAY_MERCHANT_CODE}
 
 resilience4j:
+  bulkhead:
+    instances:
+      openaiBulkhead:
+        maxConcurrentCalls: 5
+        maxWaitDuration: 500ms
   retry:
     instances:
       openaiRetry:
-        maxAttempts: 3
-        waitDuration: 500ms
+        maxAttempts: 2
+        waitDuration: 1s
         retryExceptions:
           - org.springframework.web.reactive.function.client.WebClientRequestException
           - java.io.IOException

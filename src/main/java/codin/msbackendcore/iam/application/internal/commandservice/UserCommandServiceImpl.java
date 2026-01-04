@@ -23,7 +23,6 @@ import codin.msbackendcore.shared.infrastructure.utils.CommonUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -60,15 +59,24 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public Optional<SignInResult> handle(SignInCommand command) {
+        var existedSession = sessionDomainService.findByDeviceId(command.deviceId());
+
+        if (existedSession != null) {
+            sessionDomainService.revokeSession(existedSession);
+            refreshTokenDomainService.revokeAllTokensBySession(existedSession);
+        }
+
         var credential = credentialDomainService.findByIdentifier(command.identifier());
 
-        var user = userDomainService.getUserByIdAndTenantId(credential.getUser().getId(), command.tenantId());
+        var user = command.tenantId() != null
+                ? userDomainService.getUserByIdAndTenantId(credential.getUser().getId(), command.tenantId())
+                : userDomainService.getUserById(credential.getUser().getId());
 
         if (!userDomainService.isPasswordValid(credential, command.password())) {
             throw new BadRequestException("error.authorization", new String[]{command.password()}, "password");
         }
 
-        var session = sessionDomainService.createSession(user, command.ip(), command.deviceInfo());
+        var session = sessionDomainService.createSession(user, command.ip(), command.deviceInfo(), command.deviceId());
 
         var refreshToken = refreshTokenDomainService.createRefreshToken(command.identifier(), session);
 
@@ -89,7 +97,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     public Optional<User> handle(SignUpCommand command) {
 
-        if (!externalCoreService.existTenantById(command.tenantId())) {
+        if (command.tenantId() != null && !externalCoreService.existTenantById(command.tenantId())) {
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
@@ -105,25 +113,23 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new BadRequestException("error.already_exist", new String[]{command.identifier()}, "identifier");
         }
 
-        if (!roleDomainService.existsByRole(command.role())) {
-            throw new BadRequestException("error.not_found", new String[]{command.role()}, "role");
-        }
+        var role = roleDomainService.findByRole(command.role());
 
         UUID systemUserId = userDomainService.findSystemUserId();
 
-        User user = userDomainService.registerNewUser(command, systemUserId);
+        User user = userDomainService.registerNewUser(command, systemUserId, role);
 
 
-        auditLogDomainService.recordAction(
-                user.getTenantId(),
-                systemUserId,
-                user.getId(),
-                "USER_SIGNUP",
-                Map.of(
-                        "type", command.type(),
-                        "identifier", command.identifier()
-                )
-        );
+//        auditLogDomainService.recordAction(
+//                user.getTenantId(),
+//                systemUserId,
+//                user.getId(),
+//                "USER_SIGNUP",
+//                Map.of(
+//                        "type", command.type(),
+//                        "identifier", command.identifier()
+//                )
+//        );
 
         return Optional.of(user);
     }
@@ -160,10 +166,6 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         var session = sessionDomainService.findById(command.sessionId());
 
-        if (!session.getUser().getId().equals(command.userId())) {
-            throw new BadRequestException("error.bad_request", new String[]{command.sessionId().toString()}, "sessionId");
-        }
-
         if (session.isRevoked()) {
             throw new BadRequestException("session.revoked", new String[]{command.sessionId().toString()}, "sessionId");
         }
@@ -171,15 +173,15 @@ public class UserCommandServiceImpl implements UserCommandService {
         sessionDomainService.revokeSession(session);
         refreshTokenDomainService.revokeAllTokensBySession(session);
 
-        auditLogDomainService.recordAction(
-                session.getUser().getTenantId(),
-                command.userId(),
-                command.userId(),
-                "USER_LOGOUT",
-                Map.of(
-                        "sessionId", command.sessionId().toString()
-                )
-        );
+//        auditLogDomainService.recordAction(
+//                session.getUser().getTenantId(),
+//                command.userId(),
+//                command.userId(),
+//                "USER_LOGOUT",
+//                Map.of(
+//                        "sessionId", command.sessionId().toString()
+//                )
+//        );
 
         return Optional.empty();
     }

@@ -9,6 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, UUID> {
-    boolean existsByCode(String code);
-    Optional<Role> findByTenantIdAndCode(UUID tenantId, String code);
+    Optional<Role> findRoleByCode(String code);
 }

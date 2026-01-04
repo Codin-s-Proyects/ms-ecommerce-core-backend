@@ -1,6 +1,7 @@
 package codin.msbackendcore.search.application.internal.outboundservices.embedding;
 
 import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
@@ -31,6 +32,7 @@ public class OpenAIEmbeddingClient {
         this.virtualThreadExecutor = Executors.newVirtualThreadPerTaskExecutor();
     }
 
+    @Bulkhead(name = "openaiBulkhead", type = Bulkhead.Type.SEMAPHORE)
     @Retry(name = "openaiRetry")
     @CircuitBreaker(name = "openaiCB", fallbackMethod = "fallbackEmbedding")
     @TimeLimiter(name = "openaiTimeout")
@@ -79,7 +81,7 @@ public class OpenAIEmbeddingClient {
         return out;
     }
 
-    private CompletableFuture<float[]> fallbackEmbedding(String text, Throwable ex) {
+    public CompletableFuture<float[]> fallbackEmbedding(String text, Throwable ex) {
         return CompletableFuture.failedFuture(
                 new ServerErrorException("error.openai_unavailable", new String[]{})
         );

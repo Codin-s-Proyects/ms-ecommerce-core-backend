@@ -9,6 +9,7 @@ import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static codin.msbackendcore.shared.infrastructure.utils.Constants.MAX_ACTIVE_SESSIONS;
@@ -39,11 +40,13 @@ public class SessionDomainServiceImpl implements SessionDomainService {
     }
 
     @Override
-    public Session createSession(User user, String ipAddress, String deviceInfo) {
+    public Session findByDeviceId(String  deviceId) {
+        return sessionRepository.getSessionByDeviceIdAndRevokedIsFalse(deviceId)
+                .orElse(null);
+    }
 
-        if (sessionRepository.existsByDeviceInfoAndRevokedIsFalse(deviceInfo)) {
-            throw new BadRequestException("error.already_exist", new String[]{deviceInfo}, "deviceInfo");
-        }
+    @Override
+    public Session createSession(User user, String ipAddress, Map<String, Object> deviceInfo, String deviceId) {
 
         long activeSessions = sessionRepository.countByUser_IdAndRevokedFalse(user.getId());
 
@@ -55,6 +58,7 @@ public class SessionDomainServiceImpl implements SessionDomainService {
         session.setTenantId(user.getTenantId());
         session.setUser(user);
         session.setDeviceInfo(deviceInfo);
+        session.setDeviceId(deviceId);
         session.setIp(ipAddress);
         session.setRevoked(false);
         return sessionRepository.save(session);
