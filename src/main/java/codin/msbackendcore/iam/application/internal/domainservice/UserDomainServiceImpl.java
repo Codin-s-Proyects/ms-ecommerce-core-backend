@@ -18,19 +18,16 @@ import java.util.UUID;
 
 @Service
 public class UserDomainServiceImpl implements UserDomainService {
-
     private final UserRepository userRepository;
     private final HashingService hashingService;
-    private final RoleRepository roleRepository;
 
-    public UserDomainServiceImpl(UserRepository userRepository, HashingService hashingService, RoleRepository roleRepository) {
+    public UserDomainServiceImpl(UserRepository userRepository, HashingService hashingService) {
         this.userRepository = userRepository;
         this.hashingService = hashingService;
-        this.roleRepository = roleRepository;
     }
 
     @Override
-    public User registerNewUser(SignUpCommand command, UUID systemUserId) {
+    public User registerNewUser(SignUpCommand command, UUID systemUserId, Role role) {
         User user = new User();
         user.setTenantId(command.tenantId());
         user.setUserType(command.userType());
@@ -41,9 +38,6 @@ public class UserDomainServiceImpl implements UserDomainService {
         credential.setIdentifier(command.identifier());
         credential.setSecretHash(hashingService.encode(command.secretHash()));
         credential.setPrimary(true);
-
-        Role role = roleRepository.findByTenantIdAndCode(command.tenantId(), command.role())
-                .orElseThrow(() -> new NotFoundException("error.not_found", new String[]{command.role()}, "role"));
 
         UserRole userRole = new UserRole();
         userRole.setAssignedBy(systemUserId);

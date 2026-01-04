@@ -96,7 +96,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     public Optional<User> handle(SignUpCommand command) {
 
-        if (!externalCoreService.existTenantById(command.tenantId())) {
+        if (command.tenantId() != null && !externalCoreService.existTenantById(command.tenantId())) {
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
@@ -112,13 +112,11 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new BadRequestException("error.already_exist", new String[]{command.identifier()}, "identifier");
         }
 
-        if (!roleDomainService.existsByRole(command.role())) {
-            throw new BadRequestException("error.not_found", new String[]{command.role()}, "role");
-        }
+        var role = roleDomainService.findByRole(command.role());
 
         UUID systemUserId = userDomainService.findSystemUserId();
 
-        User user = userDomainService.registerNewUser(command, systemUserId);
+        User user = userDomainService.registerNewUser(command, systemUserId, role);
 
 
 //        auditLogDomainService.recordAction(
@@ -166,10 +164,6 @@ public class UserCommandServiceImpl implements UserCommandService {
     public Optional<Void> handle(LogoutCommand command) {
 
         var session = sessionDomainService.findById(command.sessionId());
-
-        if (!session.getUser().getId().equals(command.userId())) {
-            throw new BadRequestException("error.bad_request", new String[]{command.sessionId().toString()}, "sessionId");
-        }
 
         if (session.isRevoked()) {
             throw new BadRequestException("session.revoked", new String[]{command.sessionId().toString()}, "sessionId");

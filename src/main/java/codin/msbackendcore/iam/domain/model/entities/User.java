@@ -21,8 +21,7 @@ public class User {
     @GeneratedValue
     private UUID id;
 
-    @Column(name = "tenant_id", nullable = false)
-    @NotNull
+    @Column(name = "tenant_id")
     private UUID tenantId;
 
     @Column(name = "user_type", nullable = false)

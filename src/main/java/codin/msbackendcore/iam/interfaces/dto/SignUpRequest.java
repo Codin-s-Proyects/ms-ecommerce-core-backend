@@ -2,13 +2,12 @@ package codin.msbackendcore.iam.interfaces.dto;
 
 import codin.msbackendcore.iam.domain.model.commands.SignUpCommand;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.UUID;
 
 public record SignUpRequest(
-        @NotNull UUID tenantId,
+        UUID tenantId,
         @NotBlank String userType,
         @NotBlank String type,
         @NotBlank String identifier,
