@@ -49,6 +49,7 @@ public class AuthController {
 
         var response = new AuthResponse(
                 result.userId(),
+                result.sessionId(),
                 result.accessToken(),
                 result.refreshToken(),
                 result.userType()
@@ -65,6 +66,7 @@ public class AuthController {
 
         var response = new AuthResponse(
                 result.userId(),
+                result.sessionId(),
                 result.accessToken(),
                 result.refreshToken(),
                 result.userType()

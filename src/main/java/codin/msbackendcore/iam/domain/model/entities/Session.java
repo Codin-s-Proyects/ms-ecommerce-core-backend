@@ -8,6 +8,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Getter
@@ -29,7 +31,13 @@ public class Session {
     @NotNull
     private User user;
 
-    private String deviceInfo;
+    @NotNull
+    @Column(name = "device_id", nullable = false)
+    private String deviceId;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "device_info", columnDefinition = "jsonb", nullable = false)
+    private Map<String, Object> deviceInfo = new HashMap<>();
 
     @JdbcTypeCode(SqlTypes.INET)
     @Column(name = "ip", columnDefinition = "inet")
