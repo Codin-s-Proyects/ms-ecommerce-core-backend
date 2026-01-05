@@ -10,6 +10,7 @@ public record ProductVariantResponse(
         String sku,
         String name,
         Map<String, Object> attributes,
-        Integer productQuantity
+        Integer productQuantity,
+        String status
 ) {
 }

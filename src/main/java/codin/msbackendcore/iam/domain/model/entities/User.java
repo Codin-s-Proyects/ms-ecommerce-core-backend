@@ -1,5 +1,6 @@
 package codin.msbackendcore.iam.domain.model.entities;
 
+import codin.msbackendcore.iam.domain.model.valueobjects.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,8 +29,10 @@ public class User {
     @NotBlank
     private String userType;
 
-    @Column(name = "is_active", nullable = false)
-    private boolean active = true;
+    @Column(name = "status", nullable = false)
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 
     @Column(name = "mfa_enabled", nullable = false)
     private boolean mfaEnabled = false;

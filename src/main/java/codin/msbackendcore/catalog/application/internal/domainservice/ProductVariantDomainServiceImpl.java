@@ -3,6 +3,7 @@ package codin.msbackendcore.catalog.application.internal.domainservice;
 import codin.msbackendcore.catalog.domain.model.commands.productvariant.CreateProductVariantBulkCommand;
 import codin.msbackendcore.catalog.domain.model.entities.Product;
 import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
+import codin.msbackendcore.catalog.domain.model.valueobjects.ProductVariantStatus;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantDomainService;
 import codin.msbackendcore.catalog.infrastructure.persistence.jpa.ProductVariantRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
@@ -209,7 +210,7 @@ public class ProductVariantDomainServiceImpl implements ProductVariantDomainServ
                         new NotFoundException("error.not_found", new String[]{productVariantId.toString()}, "productVariantId")
                 );
 
-        productVariant.setIsActive(false);
+        productVariant.setStatus(ProductVariantStatus.INACTIVE);
 
         productVariantRepository.save(productVariant);
     }

@@ -1,5 +1,6 @@
 package codin.msbackendcore.catalog.domain.model.entities;
 
+import codin.msbackendcore.catalog.domain.model.valueobjects.ProductStatus;
 import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -45,8 +46,10 @@ public class Product {
     @Column(columnDefinition = "text")
     private String description;
 
-    @Column(name = "is_active", nullable = false)
-    private boolean isActive;
+    @Column(name = "status", nullable = false)
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private ProductStatus status;
 
     @Column(name = "has_variants", nullable = false)
     private boolean hasVariants;
@@ -74,7 +77,7 @@ public class Product {
             this.name = rs.getString("name");
             this.slug = rs.getString("slug");
             this.description = rs.getString("description");
-            this.isActive = rs.getBoolean("is_active");
+            this.status = ProductStatus.valueOf(rs.getString("status"));
             this.hasVariants = rs.getBoolean("has_variants");
             String metaJson = rs.getString("meta");
 
@@ -97,7 +100,7 @@ public class Product {
     void prePersist() {
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
-        this.isActive = true;
+        this.status = ProductStatus.ACTIVE;
         this.hasVariants = false;
     }
 

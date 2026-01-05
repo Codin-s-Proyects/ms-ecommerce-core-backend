@@ -12,6 +12,6 @@ public record PriceListDto(
         String currencyCode,
         Instant validFrom,
         Instant validTo,
-        Boolean isActive
+        String status
 ) {
 }

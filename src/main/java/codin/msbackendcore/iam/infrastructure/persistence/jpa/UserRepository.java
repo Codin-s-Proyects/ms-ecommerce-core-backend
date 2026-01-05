@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
         SELECT u.id 
         FROM User u 
         WHERE u.userType = 'system'
-          AND u.active = true
+          AND u.status = 'ACTIVE'
         """)
     Optional<UUID> findSystemUserId();
 

@@ -8,5 +8,6 @@ public record ProductResponse(
     String name,
     String slug,
     String description,
-    boolean hasVariants
+    boolean hasVariants,
+    String status
 ){}

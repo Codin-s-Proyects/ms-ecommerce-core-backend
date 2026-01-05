@@ -12,6 +12,6 @@ public record PriceListResponse(
         String currencyCode,
         Instant validFrom,
         Instant validTo,
-        Boolean isActive
+        String status
 ) {
 }

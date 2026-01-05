@@ -2,6 +2,7 @@ package codin.msbackendcore.catalog.infrastructure.persistence.jpa;
 
 import codin.msbackendcore.catalog.domain.model.entities.Brand;
 import codin.msbackendcore.catalog.domain.model.entities.Product;
+import codin.msbackendcore.catalog.domain.model.valueobjects.ProductStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,7 +29,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
             @Param("tenantId") UUID tenantId
     );
 
-    List<Product> findByBrandAndTenantIdAndIsActiveTrue(Brand brand, UUID tenantId);
+    List<Product> findByBrandAndTenantIdAndStatus(Brand brand, UUID tenantId, ProductStatus status);
 
     void deleteAllByTenantId(UUID tenantId);
 

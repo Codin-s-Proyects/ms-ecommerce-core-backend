@@ -2,6 +2,7 @@ package codin.msbackendcore.iam.infrastructure.authorization.sfs.model;
 
 import codin.msbackendcore.iam.domain.model.entities.Credential;
 import codin.msbackendcore.iam.domain.model.entities.User;
+import codin.msbackendcore.iam.domain.model.valueobjects.UserStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -66,7 +67,7 @@ public class UserDetailsImpl implements UserDetails {
                 primaryCredential.getIdentifier(),
                 primaryCredential.getSecretHash(),
                 authorities,
-                user.isActive()
+                user.getStatus() == UserStatus.ACTIVE
         );
     }
 

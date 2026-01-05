@@ -22,7 +22,8 @@ public record ProductVariantDetailResponse(
                 dto.product().getName(),
                 dto.product().getSlug(),
                 dto.product().getDescription(),
-                dto.product().isHasVariants()
+                dto.product().isHasVariants(),
+                dto.product().getStatus().name()
         );
 
         var variants = dto.variants().stream()
@@ -34,7 +35,8 @@ public record ProductVariantDetailResponse(
                             variantDto.productVariant().getSku(),
                             variantDto.productVariant().getName(),
                             variantDto.productVariant().getAttributes(),
-                            variantDto.productVariant().getProductQuantity()
+                            variantDto.productVariant().getProductQuantity(),
+                            variantDto.productVariant().getStatus().name()
                     );
 
                     var mediaAssets = variantDto.mediaAssets().stream()
@@ -87,7 +89,7 @@ public record ProductVariantDetailResponse(
                 dto.currencyCode(),
                 dto.validFrom(),
                 dto.validTo(),
-                dto.isActive()
+                dto.status()
         );
     }
 
@@ -138,7 +140,7 @@ public record ProductVariantDetailResponse(
             String currencyCode,
             Instant validFrom,
             Instant validTo,
-            Boolean isActive
+            String status
     ) {
     }
 }

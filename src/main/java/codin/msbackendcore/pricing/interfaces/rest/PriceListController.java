@@ -46,7 +46,7 @@ public class PriceListController {
                 saved.getCurrencyCode(),
                 saved.getValidFrom(),
                 saved.getValidTo(),
-                saved.getIsActive()
+                saved.getStatus().name()
         );
 
         return ResponseEntity.status(201).body(response);
@@ -69,7 +69,7 @@ public class PriceListController {
                 saved.getCurrencyCode(),
                 saved.getValidFrom(),
                 saved.getValidTo(),
-                saved.getIsActive()
+                saved.getStatus().name()
         );
 
         return ResponseEntity.status(200).body(response);
@@ -93,7 +93,7 @@ public class PriceListController {
                         priceList.getCurrencyCode(),
                         priceList.getValidFrom(),
                         priceList.getValidTo(),
-                        priceList.getIsActive()
+                        priceList.getStatus().name()
                 )).toList();
 
         return ResponseEntity.status(200).body(responseList);

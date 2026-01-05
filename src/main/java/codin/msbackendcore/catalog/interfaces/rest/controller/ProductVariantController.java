@@ -52,7 +52,8 @@ public class ProductVariantController {
                 saved.getSku(),
                 saved.getName(),
                 saved.getAttributes(),
-                saved.getProductQuantity()
+                saved.getProductQuantity(),
+                saved.getStatus().name()
         );
 
         return ResponseEntity.status(201).body(response);
@@ -84,7 +85,8 @@ public class ProductVariantController {
                 saved.getSku(),
                 saved.getName(),
                 saved.getAttributes(),
-                saved.getProductQuantity()
+                saved.getProductQuantity(),
+                saved.getStatus().name()
         );
 
         return ResponseEntity.status(201).body(response);

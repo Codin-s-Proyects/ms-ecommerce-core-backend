@@ -1,5 +1,6 @@
 package codin.msbackendcore.catalog.domain.model.entities;
 
+import codin.msbackendcore.catalog.domain.model.valueobjects.ProductVariantStatus;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -48,8 +49,10 @@ public class ProductVariant {
     @Column(name = "reserved_quantity", nullable = false)
     private Integer reservedQuantity;
 
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
+    @Column(name = "status", nullable = false)
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private ProductVariantStatus status;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
@@ -62,7 +65,7 @@ public class ProductVariant {
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
         this.reservedQuantity = 0;
-        this.isActive = true;
+        this.status = ProductVariantStatus.ACTIVE;
     }
 
     @PreUpdate

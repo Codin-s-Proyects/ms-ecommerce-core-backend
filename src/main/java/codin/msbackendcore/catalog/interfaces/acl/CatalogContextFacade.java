@@ -29,7 +29,8 @@ public class CatalogContextFacade {
                 product.getName(),
                 product.getSlug(),
                 product.getDescription(),
-                product.isHasVariants()
+                product.isHasVariants(),
+                product.getStatus().name()
         );
     }
 
@@ -43,7 +44,8 @@ public class CatalogContextFacade {
                 product.getSku(),
                 product.getName(),
                 product.getAttributes(),
-                product.getProductQuantity() - product.getReservedQuantity()
+                product.getProductQuantity() - product.getReservedQuantity(),
+                product.getStatus().name()
         );
     }
 
