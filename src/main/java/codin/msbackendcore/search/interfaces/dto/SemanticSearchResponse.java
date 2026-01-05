@@ -80,7 +80,7 @@ public record SemanticSearchResponse(
                 dto.currencyCode(),
                 dto.validFrom(),
                 dto.validTo(),
-                dto.isActive()
+                dto.status()
         );
     }
 
@@ -144,7 +144,7 @@ public record SemanticSearchResponse(
             String currencyCode,
             Instant validFrom,
             Instant validTo,
-            Boolean isActive
+            String status
     ) {
     }
 }

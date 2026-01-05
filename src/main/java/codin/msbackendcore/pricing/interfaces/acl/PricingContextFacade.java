@@ -48,7 +48,7 @@ public class PricingContextFacade {
                 priceList.getCurrencyCode(),
                 priceList.getValidFrom(),
                 priceList.getValidTo(),
-                priceList.getIsActive()
+                priceList.getStatus().name()
         );
     }
 }

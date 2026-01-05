@@ -3,6 +3,7 @@ package codin.msbackendcore.catalog.application.internal.domainservice;
 import codin.msbackendcore.catalog.domain.model.entities.Brand;
 import codin.msbackendcore.catalog.domain.model.entities.Category;
 import codin.msbackendcore.catalog.domain.model.entities.Product;
+import codin.msbackendcore.catalog.domain.model.valueobjects.ProductStatus;
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.catalog.infrastructure.persistence.jdbc.ProductPaginationRepository;
 import codin.msbackendcore.catalog.infrastructure.persistence.jpa.ProductRepository;
@@ -110,7 +111,7 @@ public class ProductDomainServiceImpl implements ProductDomainService {
 
     @Override
     public List<Product> getProductsByBrand(UUID tenantId, Brand brand) {
-        return productRepository.findByBrandAndTenantIdAndIsActiveTrue(brand, tenantId);
+        return productRepository.findByBrandAndTenantIdAndStatus(brand, tenantId, ProductStatus.PUBLISHED);
     }
 
     @Override
@@ -125,7 +126,7 @@ public class ProductDomainServiceImpl implements ProductDomainService {
                         new NotFoundException("error.not_found", new String[]{productId.toString()}, "productId")
                 );
 
-        product.setActive(false);
+        product.setStatus(ProductStatus.ARCHIVED);
 
         return productRepository.save(product);
     }

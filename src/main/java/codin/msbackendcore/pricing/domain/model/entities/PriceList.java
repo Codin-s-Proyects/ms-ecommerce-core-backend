@@ -1,6 +1,8 @@
 package codin.msbackendcore.pricing.domain.model.entities;
 
+import codin.msbackendcore.pricing.domain.model.valueobjects.PriceListStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.Instant;
@@ -35,8 +37,10 @@ public class PriceList {
     @Column(name = "currency_code", columnDefinition = "TEXT", nullable = false)
     private String currencyCode;
 
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    @Column(name = "status", nullable = false)
+    private PriceListStatus status;
 
     @Column(name = "valid_from", nullable = false)
     private Instant validFrom;
@@ -53,7 +57,7 @@ public class PriceList {
     @PrePersist
     void prePersist() {
         if (this.currencyCode == null) this.currencyCode = DEFAULT_CURRENCY_CODE;
-        this.isActive = Boolean.TRUE;
+        this.status = PriceListStatus.ACTIVE;
         this.validFrom = Instant.now();
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();

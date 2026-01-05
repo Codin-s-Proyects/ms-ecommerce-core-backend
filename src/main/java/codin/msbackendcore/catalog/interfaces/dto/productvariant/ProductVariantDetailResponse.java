@@ -87,7 +87,7 @@ public record ProductVariantDetailResponse(
                 dto.currencyCode(),
                 dto.validFrom(),
                 dto.validTo(),
-                dto.isActive()
+                dto.status()
         );
     }
 
@@ -138,7 +138,7 @@ public record ProductVariantDetailResponse(
             String currencyCode,
             Instant validFrom,
             Instant validTo,
-            Boolean isActive
+            String status
     ) {
     }
 }

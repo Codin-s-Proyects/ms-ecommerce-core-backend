@@ -51,7 +51,7 @@ public class ExternalPricingService {
                 priceListResponse.currencyCode(),
                 priceListResponse.validFrom(),
                 priceListResponse.validTo(),
-                priceListResponse.isActive()
+                priceListResponse.status()
         );
     }
 }
