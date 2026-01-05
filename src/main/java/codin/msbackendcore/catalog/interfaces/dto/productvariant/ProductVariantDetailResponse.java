@@ -22,7 +22,8 @@ public record ProductVariantDetailResponse(
                 dto.product().getName(),
                 dto.product().getSlug(),
                 dto.product().getDescription(),
-                dto.product().isHasVariants()
+                dto.product().isHasVariants(),
+                dto.product().getStatus().name()
         );
 
         var variants = dto.variants().stream()
@@ -34,7 +35,8 @@ public record ProductVariantDetailResponse(
                             variantDto.productVariant().getSku(),
                             variantDto.productVariant().getName(),
                             variantDto.productVariant().getAttributes(),
-                            variantDto.productVariant().getProductQuantity()
+                            variantDto.productVariant().getProductQuantity(),
+                            variantDto.productVariant().getStatus().name()
                     );
 
                     var mediaAssets = variantDto.mediaAssets().stream()

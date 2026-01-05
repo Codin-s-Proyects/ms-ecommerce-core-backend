@@ -111,7 +111,7 @@ public class ProductDomainServiceImpl implements ProductDomainService {
 
     @Override
     public List<Product> getProductsByBrand(UUID tenantId, Brand brand) {
-        return productRepository.findByBrandAndTenantIdAndStatus(brand, tenantId, ProductStatus.PUBLISHED);
+        return productRepository.findByBrandAndTenantIdAndStatus(brand, tenantId, ProductStatus.ACTIVE);
     }
 
     @Override

@@ -100,7 +100,7 @@ public class Product {
     void prePersist() {
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
-        this.status = ProductStatus.PUBLISHED;
+        this.status = ProductStatus.ACTIVE;
         this.hasVariants = false;
     }
 

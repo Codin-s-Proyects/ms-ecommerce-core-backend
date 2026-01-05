@@ -49,7 +49,8 @@ public class ProductController {
                 saved.getName(),
                 saved.getSlug(),
                 saved.getDescription(),
-                saved.isHasVariants()
+                saved.isHasVariants(),
+                saved.getStatus().name()
         );
 
         return ResponseEntity.status(201).body(response);
@@ -69,7 +70,8 @@ public class ProductController {
                 saved.getName(),
                 saved.getSlug(),
                 saved.getDescription(),
-                saved.isHasVariants()
+                saved.isHasVariants(),
+                saved.getStatus().name()
         );
 
         return ResponseEntity.status(200).body(response);
@@ -97,7 +99,8 @@ public class ProductController {
                         product.getName(),
                         product.getSlug(),
                         product.getDescription(),
-                        product.isHasVariants()
+                        product.isHasVariants(),
+                        product.getStatus().name()
                 )).toList();
 
         var paginatedResponse = new CursorPage<>(
@@ -131,7 +134,8 @@ public class ProductController {
                         product.getName(),
                         product.getSlug(),
                         product.getDescription(),
-                        product.isHasVariants()
+                        product.isHasVariants(),
+                        product.getStatus().name()
                 )).toList();
 
         var paginatedResponse = new CursorPage<>(
@@ -159,7 +163,8 @@ public class ProductController {
                         getList.getName(),
                         getList.getSlug(),
                         getList.getDescription(),
-                        getList.isHasVariants()
+                        getList.isHasVariants(),
+                        getList.getStatus().name()
                 );
 
         return ResponseEntity.status(200).body(response);
@@ -180,7 +185,8 @@ public class ProductController {
                         product.getName(),
                         product.getSlug(),
                         product.getDescription(),
-                        product.isHasVariants()
+                        product.isHasVariants(),
+                        product.getStatus().name()
                 )).toList();
 
         return ResponseEntity.status(200).body(responseList);
