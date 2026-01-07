@@ -58,6 +58,7 @@ public class User {
     @PrePersist
     void prePersist() {
         this.createdAt = Instant.now();
+        this.status = UserStatus.ACTIVE;
     }
 
 
