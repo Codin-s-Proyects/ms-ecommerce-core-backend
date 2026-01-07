@@ -1,7 +1,9 @@
 package codin.msbackendcore.core.domain.model.entities;
 
 import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
+import codin.msbackendcore.core.domain.model.valueobjects.MediaAssetUsage;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -41,30 +43,27 @@ public class MediaAsset {
     @Column(name = "public_id", nullable = false)
     private String publicId;
 
-    @Column(name = "format")
-    private String format;
-
-    @Column(name = "width")
-    private Integer width;
-
-    @Column(name = "height")
-    private Integer height;
-
-    @Column(name = "bytes")
-    private Long bytes;
-
     @Column(name = "is_main", nullable = false)
     private Boolean isMain;
 
     @Column(name = "sort_order", nullable = false)
     private Integer sortOrder;
 
-    @Column(name = "alt_text")
-    private String altText;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "asset_meta", columnDefinition = "jsonb")
+    private  Map<String, Object> assetMeta = new HashMap<>();
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "context", columnDefinition = "jsonb")
     private Map<String, Object> context = new HashMap<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "usage", nullable = false)
+    private MediaAssetUsage usage;
+
+    @NotBlank
+    @Column(columnDefinition = "ai_context", nullable = false)
+    private String aiContext;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;

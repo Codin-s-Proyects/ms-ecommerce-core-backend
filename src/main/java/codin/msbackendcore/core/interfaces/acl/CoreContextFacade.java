@@ -44,14 +44,12 @@ public class CoreContextFacade {
                         mediaAsset.getEntityId(),
                         mediaAsset.getUrl(),
                         mediaAsset.getPublicId(),
-                        mediaAsset.getFormat(),
-                        mediaAsset.getWidth(),
-                        mediaAsset.getHeight(),
-                        mediaAsset.getBytes(),
                         mediaAsset.getIsMain(),
                         mediaAsset.getSortOrder(),
-                        mediaAsset.getAltText(),
-                        mediaAsset.getContext()
+                        mediaAsset.getAssetMeta(),
+                        mediaAsset.getContext(),
+                        mediaAsset.getUsage().name(),
+                        mediaAsset.getAiContext()
                 ))
                 .toList();
     }

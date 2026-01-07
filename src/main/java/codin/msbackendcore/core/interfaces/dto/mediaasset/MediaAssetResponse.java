@@ -10,13 +10,11 @@ public record MediaAssetResponse(
         UUID entityId,
         String url,
         String publicId,
-        String format,
-        Integer width,
-        Integer height,
-        Long bytes,
         Boolean isMain,
         Integer sortOrder,
-        String altText,
-        Map<String, Object> context
+        Map<String, Object> assetMeta,
+        Map<String, Object> context,
+        String usage,
+        String aiContext
 ) {
 }
