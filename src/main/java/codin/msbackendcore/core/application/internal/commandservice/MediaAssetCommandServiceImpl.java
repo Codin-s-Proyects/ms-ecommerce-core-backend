@@ -5,6 +5,7 @@ import codin.msbackendcore.core.domain.model.commands.mediaasset.DeleteMediaAsse
 import codin.msbackendcore.core.domain.model.commands.mediaasset.UpdateMediaAssetCommand;
 import codin.msbackendcore.core.domain.model.entities.MediaAsset;
 import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
+import codin.msbackendcore.core.domain.model.valueobjects.MediaAssetUsage;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetCommandService;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetDomainService;
 import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
@@ -37,20 +38,22 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
             throw new BadRequestException("error.bad_request", new String[]{command.entityType()}, "entityType");
         }
 
+        if (!isValidEnum(MediaAssetUsage.class, command.usage())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.usage()}, "usage");
+        }
+
         return mediaAssetDomainService.createMediaAsset(
                 command.tenantId(),
                 EntityType.valueOf(command.entityType()),
                 command.entityId(),
                 command.url(),
                 command.publicId(),
-                command.format(),
-                command.width(),
-                command.height(),
-                command.bytes(),
                 command.isMain(),
                 command.sortOrder(),
-                command.altText(),
-                command.context()
+                command.assetMeta(),
+                command.context(),
+                MediaAssetUsage.valueOf(command.usage()),
+                command.aiContext()
         );
     }
 
@@ -59,19 +62,21 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
         if (tenantDomainService.getTenantById(command.tenantId()) == null)
             throw new NotFoundException("error.not_found", new String[]{command.tenantId().toString()}, "tenantId");
 
+        if (!isValidEnum(MediaAssetUsage.class, command.usage())) {
+            throw new BadRequestException("error.bad_request", new String[]{command.usage()}, "usage");
+        }
+
         return mediaAssetDomainService.updateMediaAsset(
                 command.mediaAssetId(),
                 command.tenantId(),
                 command.url(),
                 command.publicId(),
-                command.format(),
-                command.width(),
-                command.height(),
-                command.bytes(),
                 command.isMain(),
                 command.sortOrder(),
-                command.altText(),
-                command.context()
+                command.assetMeta(),
+                command.context(),
+                MediaAssetUsage.valueOf(command.usage()),
+                command.aiContext()
         );
     }
 

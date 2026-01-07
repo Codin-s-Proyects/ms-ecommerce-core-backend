@@ -2,6 +2,7 @@ package codin.msbackendcore.core.infrastructure.persistence.jpa;
 
 import codin.msbackendcore.core.domain.model.entities.MediaAsset;
 import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
+import codin.msbackendcore.core.domain.model.valueobjects.MediaAssetUsage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -20,5 +21,7 @@ public interface MediaAssetRepository extends JpaRepository<MediaAsset, UUID> {
     );
 
     Optional<MediaAsset> findAllByTenantIdAndId(UUID tenantId, UUID id);
+
+    List<MediaAsset> findAllByTenantIdAndUsage(UUID tenantId, MediaAssetUsage usage);
 
 }

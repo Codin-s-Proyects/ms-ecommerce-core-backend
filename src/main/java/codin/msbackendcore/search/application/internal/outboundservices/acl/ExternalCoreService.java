@@ -17,8 +17,7 @@ public class ExternalCoreService {
     }
 
     public List<MediaAssetDto> getMediaAssetsByVariantId(UUID tenantId, UUID variantId) {
-        //TODO: CHANGE TO PRODUCT VARIANT - ACTUAL IS VARIANT ID
-        var mediaAssetResponseList = coreContextFacade.getMediaAssetByEntityIdAndEntityType(tenantId, EntityType.PRODUCT, variantId);
+        var mediaAssetResponseList = coreContextFacade.getMediaAssetByEntityIdAndEntityType(tenantId, EntityType.PRODUCT_VARIANT, variantId);
 
         return mediaAssetResponseList.stream()
                 .map(mediaAssetResponse -> new MediaAssetDto(
@@ -27,14 +26,12 @@ public class ExternalCoreService {
                         mediaAssetResponse.entityId(),
                         mediaAssetResponse.url(),
                         mediaAssetResponse.publicId(),
-                        mediaAssetResponse.format(),
-                        mediaAssetResponse.width(),
-                        mediaAssetResponse.height(),
-                        mediaAssetResponse.bytes(),
                         mediaAssetResponse.isMain(),
                         mediaAssetResponse.sortOrder(),
-                        mediaAssetResponse.altText(),
-                        mediaAssetResponse.context()
+                        mediaAssetResponse.assetMeta(),
+                        mediaAssetResponse.context(),
+                        mediaAssetResponse.usage(),
+                        mediaAssetResponse.aiContext()
                 )).toList();
     }
 

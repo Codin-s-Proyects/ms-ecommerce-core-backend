@@ -13,14 +13,12 @@ public record CreateMediaAssetRequest(
         @NotNull UUID entityId,
         @NotBlank String url,
         @NotBlank String publicId,
-        String format,
-        Integer width,
-        Integer height,
-        Long bytes,
         @NotNull Boolean isMain,
         @NotNull Integer sortOrder,
-        String altText,
-        @NotNull Map<String, Object> context
+        @NotNull Map<String, Object> assetMeta,
+        @NotNull Map<String, Object> context,
+        @NotBlank String usage,
+        @NotBlank String aiContext
 ) {
     public CreateMediaAssetCommand toCommand() {
         return new CreateMediaAssetCommand(
@@ -29,14 +27,12 @@ public record CreateMediaAssetRequest(
                 entityId,
                 url,
                 publicId,
-                format,
-                width,
-                height,
-                bytes,
                 isMain,
                 sortOrder,
-                altText,
-                context
+                assetMeta,
+                context,
+                usage,
+                aiContext
         );
     }
 }

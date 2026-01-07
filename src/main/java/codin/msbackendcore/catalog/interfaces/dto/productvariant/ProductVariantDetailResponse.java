@@ -46,14 +46,12 @@ public record ProductVariantDetailResponse(
                                     mediaAssetDto.entityId(),
                                     mediaAssetDto.url(),
                                     mediaAssetDto.publicId(),
-                                    mediaAssetDto.format(),
-                                    mediaAssetDto.width(),
-                                    mediaAssetDto.height(),
-                                    mediaAssetDto.bytes(),
                                     mediaAssetDto.isMain(),
                                     mediaAssetDto.sortOrder(),
-                                    mediaAssetDto.altText(),
-                                    mediaAssetDto.context()
+                                    mediaAssetDto.assetMeta(),
+                                    mediaAssetDto.context(),
+                                    mediaAssetDto.usage(),
+                                    mediaAssetDto.aiContext()
                             ))
                             .toList();
 
@@ -106,14 +104,12 @@ public record ProductVariantDetailResponse(
             UUID entityId,
             String url,
             String publicId,
-            String format,
-            Integer width,
-            Integer height,
-            Long bytes,
             Boolean isMain,
             Integer sortOrder,
-            String altText,
-            Map<String, Object> context
+            Map<String, Object> assetMeta,
+            Map<String, Object> context,
+            String usage,
+            String aiContext
     ) {
     }
 

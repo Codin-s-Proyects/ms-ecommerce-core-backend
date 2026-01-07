@@ -63,14 +63,12 @@ public class TenantController {
                                     m.getEntityId(),
                                     m.getUrl(),
                                     m.getPublicId(),
-                                    m.getFormat(),
-                                    m.getWidth(),
-                                    m.getHeight(),
-                                    m.getBytes(),
                                     m.getIsMain(),
                                     m.getSortOrder(),
-                                    m.getAltText(),
-                                    m.getContext()
+                                    m.getAssetMeta(),
+                                    m.getContext(),
+                                    m.getUsage().name(),
+                                    m.getAiContext()
                             )).toList();
 
                     return new TenantResponse(
@@ -119,14 +117,12 @@ public class TenantController {
                         m.getEntityId(),
                         m.getUrl(),
                         m.getPublicId(),
-                        m.getFormat(),
-                        m.getWidth(),
-                        m.getHeight(),
-                        m.getBytes(),
                         m.getIsMain(),
                         m.getSortOrder(),
-                        m.getAltText(),
-                        m.getContext()
+                        m.getAssetMeta(),
+                        m.getContext(),
+                        m.getUsage().name(),
+                        m.getAiContext()
                 )).toList();
 
         var tenantResponse = new TenantResponse(

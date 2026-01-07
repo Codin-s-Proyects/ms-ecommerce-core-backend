@@ -26,14 +26,12 @@ public class ExternalCoreService {
                         mediaAssetResponse.entityId(),
                         mediaAssetResponse.url(),
                         mediaAssetResponse.publicId(),
-                        mediaAssetResponse.format(),
-                        mediaAssetResponse.width(),
-                        mediaAssetResponse.height(),
-                        mediaAssetResponse.bytes(),
                         mediaAssetResponse.isMain(),
                         mediaAssetResponse.sortOrder(),
-                        mediaAssetResponse.altText(),
-                        mediaAssetResponse.context()
+                        mediaAssetResponse.assetMeta(),
+                        mediaAssetResponse.context(),
+                        mediaAssetResponse.usage(),
+                        mediaAssetResponse.aiContext()
                 )).toList();
     }
 
