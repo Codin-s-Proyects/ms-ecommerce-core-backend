@@ -1,7 +1,9 @@
 package codin.msbackendcore.search.application.internal.domainservice;
 
+import codin.msbackendcore.search.application.internal.builders.EmbeddingTextBuilder;
 import codin.msbackendcore.search.application.internal.outboundservices.embedding.OpenAIEmbeddingClient;
 import codin.msbackendcore.search.domain.model.entities.ProductEmbedding;
+import codin.msbackendcore.search.domain.model.valueobjects.ProductEmbeddingSourceType;
 import codin.msbackendcore.search.domain.services.ProductEmbeddingDomainService;
 import codin.msbackendcore.search.infrastructure.persistence.jpa.ProductEmbeddingRepository;
 import codin.msbackendcore.search.infrastructure.persistence.jpa.ProductEmbeddingRepositoryJdbc;
@@ -30,19 +32,20 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
     @Override
     public CompletableFuture<Void> generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
                                                             String variantName, Map<String, Object> variantAttributes) {
-        String text = buildText(productName, categoryName, brandName, productDescription, variantName, variantAttributes);
-        return openAI.embedAsync(text)
+        String textOnly = EmbeddingTextBuilder.buildTextOnly(productName, categoryName, brandName, productDescription, variantName, variantAttributes);
+
+        return openAI.embedAsync(textOnly)
                 .thenAccept(vector -> {
                     Map<String, Object> metadata = Map.of("name", variantName.replace("\"", "'"));
-                    repo.upsertEmbedding(tenantId, variantId, toVectorString(vector), metadata);
+                    repo.saveEmbedding(tenantId, variantId, toVectorString(vector), metadata, ProductEmbeddingSourceType.TEXT_ONLY);
                 });
     }
 
     @Override
     public CompletableFuture<Void> updateEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
                                                             String variantName, Map<String, Object> variantAttributes) {
-        String text = buildText(productName, categoryName, brandName, productDescription, variantName, variantAttributes);
-        return openAI.embedAsync(text)
+        String textOnly = EmbeddingTextBuilder.buildTextOnly(productName, categoryName, brandName, productDescription, variantName, variantAttributes);
+        return openAI.embedAsync(textOnly)
                 .thenAccept(vector -> {
                     Map<String, Object> metadata = Map.of("name", variantName.replace("\"", "'"));
                     repo.updateEmbedding(tenantId, variantId, toVectorString(vector), metadata);
@@ -60,35 +63,4 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
                 .thenApply(queryEmbedding -> productEmbeddingRepository.findNearestEmbeddingsByTenant(tenantId, queryEmbedding, limit, distanceThreshold));
     }
 
-    private String buildText(String productName, String categoryName, String brandName, String productDescription,
-                             String variantName, Map<String, Object> variantAttributes) {
-
-        StringBuilder textBuilder = new StringBuilder();
-
-        if (categoryName != null) {
-            textBuilder.append(categoryName).append(" ");
-        }
-
-        if (brandName != null) {
-            textBuilder.append(brandName).append(" ");
-        }
-
-        if (productName != null) {
-            textBuilder.append(productName).append(" ");
-        }
-
-        if (productDescription != null) {
-            textBuilder.append(productDescription).append(" ");
-        }
-
-        if (variantName != null) {
-            textBuilder.append(variantName).append(" ");
-        }
-
-        if (variantAttributes != null) {
-            textBuilder.append(variantAttributes);
-        }
-
-        return textBuilder.toString().trim();
-    }
 }

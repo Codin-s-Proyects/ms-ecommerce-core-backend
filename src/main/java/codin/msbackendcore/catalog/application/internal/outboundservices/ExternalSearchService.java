@@ -1,5 +1,6 @@
 package codin.msbackendcore.catalog.application.internal.outboundservices;
 
+import codin.msbackendcore.search.domain.model.valueobjects.ProductEmbeddingSourceType;
 import codin.msbackendcore.search.interfaces.acl.SearchContextFacade;
 import org.springframework.stereotype.Service;
 

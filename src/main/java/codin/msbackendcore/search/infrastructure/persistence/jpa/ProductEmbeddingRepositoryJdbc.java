@@ -1,5 +1,6 @@
 package codin.msbackendcore.search.infrastructure.persistence.jpa;
 
+import codin.msbackendcore.search.domain.model.valueobjects.ProductEmbeddingSourceType;
 import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -21,10 +22,10 @@ public class ProductEmbeddingRepositoryJdbc {
         this.jdbc = jdbc;
     }
 
-    public void upsertEmbedding(UUID tenantId, UUID productVariantId, String vector, Map<String, Object> metadata) {
+    public void saveEmbedding(UUID tenantId, UUID productVariantId, String vector, Map<String, Object> metadata, ProductEmbeddingSourceType sourceType){
         String sql = """
-                INSERT INTO search.product_embeddings (id, tenant_id, product_variant_id, vector, metadata, created_at)
-                VALUES (:id, :tenantId, :variantId, :vector::vector, :metadata::jsonb, :createdAt)
+                INSERT INTO search.product_embeddings (id, tenant_id, product_variant_id, vector, metadata, created_at, source_type)
+                VALUES (:id, :tenantId, :variantId, :vector::vector, :metadata::jsonb, :createdAt, :sourceType)
                 ON CONFLICT (tenant_id, product_variant_id)
                 DO UPDATE SET vector = EXCLUDED.vector, metadata = EXCLUDED.metadata, created_at = EXCLUDED.created_at;
                 """;
@@ -34,6 +35,8 @@ public class ProductEmbeddingRepositoryJdbc {
         params.put("tenantId", tenantId);
         params.put("variantId", productVariantId);
         params.put("vector", vector);
+        params.put("sourceType", sourceType.name());
+
         try {
             params.put("metadata", objectMapper.writeValueAsString(metadata));
         } catch (Exception e) {

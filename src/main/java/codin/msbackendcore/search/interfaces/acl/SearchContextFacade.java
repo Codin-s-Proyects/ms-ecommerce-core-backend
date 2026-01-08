@@ -1,5 +1,6 @@
 package codin.msbackendcore.search.interfaces.acl;
 
+import codin.msbackendcore.search.domain.model.valueobjects.ProductEmbeddingSourceType;
 import codin.msbackendcore.search.domain.services.ProductEmbeddingDomainService;
 import org.springframework.stereotype.Service;
 

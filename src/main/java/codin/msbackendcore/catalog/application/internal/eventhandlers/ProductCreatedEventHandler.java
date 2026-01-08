@@ -3,6 +3,7 @@ package codin.msbackendcore.catalog.application.internal.eventhandlers;
 import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalSearchService;
 import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.catalog.domain.model.events.ProductCreatedEvent;
+import codin.msbackendcore.search.domain.model.valueobjects.ProductEmbeddingSourceType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
