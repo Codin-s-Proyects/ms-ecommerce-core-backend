@@ -19,9 +19,4 @@ public class ExternalSearchService {
                                                             String variantName, Map<String, Object> variantAttributes) {
         return searchContextFacade.createEmbeddingForImage(tenantId, variantId, aiContext, productName, categoryName, brandName, productDescription, variantName, variantAttributes);
     }
-
-    public CompletableFuture<Void> updateProductEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
-                                                            String variantName, Map<String, Object> variantAttributes) {
-        return searchContextFacade.updateEmbeddingForVariant(tenantId, variantId, productName, categoryName, brandName, productDescription, variantName, variantAttributes);
-    }
 }

@@ -76,22 +76,42 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
         if (tenantDomainService.getTenantById(command.tenantId()) == null)
             throw new NotFoundException("error.not_found", new String[]{command.tenantId().toString()}, "tenantId");
 
-        if (!isValidEnum(MediaAssetUsage.class, command.usage())) {
-            throw new BadRequestException("error.bad_request", new String[]{command.usage()}, "usage");
+        var mediaAsset = mediaAssetDomainService.getMediaAsset(command.mediaAssetId(), command.tenantId());
+
+        boolean wasMain = mediaAsset.getIsMain();
+        String previousAiContext = mediaAsset.getAiContext();
+
+        boolean isMainChanged =
+                command.isMain() != null && !command.isMain().equals(wasMain);
+
+        boolean aiContextChanged =
+                command.aiContext() != null && !command.aiContext().equals(previousAiContext);
+
+        if (Boolean.TRUE.equals(command.isMain()) && isMainChanged) {
+            mediaAssetDomainService.unsetMainAsset(
+                    command.tenantId(),
+                    mediaAsset.getEntityType().name(),
+                    mediaAsset.getEntityId()
+            );
         }
 
-        return mediaAssetDomainService.updateMediaAsset(
+        var updatedMediaAsset = mediaAssetDomainService.updateMediaAsset(
                 command.mediaAssetId(),
                 command.tenantId(),
-                command.url(),
-                command.publicId(),
                 command.isMain(),
                 command.sortOrder(),
                 command.assetMeta(),
                 command.context(),
-                MediaAssetUsage.valueOf(command.usage()),
                 command.aiContext()
         );
+
+        boolean affectsImageEmbedding = updatedMediaAsset.getIsMain() && (isMainChanged || aiContextChanged);
+
+        if (affectsImageEmbedding) {
+            eventPublisher.publish(new MainMediaAssetCreatedEvent(command.tenantId(), updatedMediaAsset.getEntityId(), command.aiContext()));
+        }
+
+        return updatedMediaAsset;
     }
 
     @Override

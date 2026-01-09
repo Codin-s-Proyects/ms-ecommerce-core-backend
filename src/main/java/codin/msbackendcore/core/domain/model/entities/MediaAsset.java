@@ -58,11 +58,11 @@ public class MediaAsset {
     private Map<String, Object> context = new HashMap<>();
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "usage", nullable = false)
+    @Column(name = "usage", nullable = false)
     private MediaAssetUsage usage;
 
     @NotBlank
-    @Column(columnDefinition = "ai_context", nullable = false)
+    @Column(name = "ai_context", nullable = false)
     private String aiContext;
 
     @Column(name = "created_at", nullable = false)

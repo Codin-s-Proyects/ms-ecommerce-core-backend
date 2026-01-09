@@ -47,22 +47,27 @@ public class MediaAssetDomainServiceImpl implements MediaAssetDomainService {
     }
 
     @Override
-    public MediaAsset updateMediaAsset(UUID mediaAssetId, UUID tenantId, String url, String publicId, Boolean isMain, Integer sortOrder, Map<String, Object> assetMeta, Map<String, Object> context, MediaAssetUsage usage, String aiContext) {
+    public MediaAsset updateMediaAsset(UUID mediaAssetId, UUID tenantId, Boolean isMain, Integer sortOrder, Map<String, Object> assetMeta, Map<String, Object> context, String aiContext) {
         var mediaAsset = mediaAssetRepository.findAllByTenantIdAndId(tenantId, mediaAssetId)
                 .orElseThrow(() ->
                         new NotFoundException("error.not_found", new String[]{mediaAssetId.toString()}, "mediaAssetId")
                 );
 
-        mediaAsset.setUrl(url);
-        mediaAsset.setPublicId(publicId);
         mediaAsset.setIsMain(isMain);
         mediaAsset.setSortOrder(sortOrder);
         mediaAsset.setAssetMeta(assetMeta);
         mediaAsset.setContext(context);
-        mediaAsset.setUsage(usage);
         mediaAsset.setAiContext(aiContext);
 
         return mediaAssetRepository.save(mediaAsset);
+    }
+
+    @Override
+    public MediaAsset getMediaAsset(UUID mediaAssetId, UUID tenantId) {
+        return mediaAssetRepository.findAllByTenantIdAndId(tenantId, mediaAssetId)
+                .orElseThrow(() ->
+                        new NotFoundException("error.not_found", new String[]{mediaAssetId.toString()}, "mediaAssetId")
+                );
     }
 
     @Override
