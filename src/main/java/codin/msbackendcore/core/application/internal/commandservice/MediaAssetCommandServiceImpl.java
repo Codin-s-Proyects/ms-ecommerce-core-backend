@@ -4,11 +4,13 @@ import codin.msbackendcore.core.domain.model.commands.mediaasset.CreateMediaAsse
 import codin.msbackendcore.core.domain.model.commands.mediaasset.DeleteMediaAssetCommand;
 import codin.msbackendcore.core.domain.model.commands.mediaasset.UpdateMediaAssetCommand;
 import codin.msbackendcore.core.domain.model.entities.MediaAsset;
+import codin.msbackendcore.core.domain.model.events.MainMediaAssetCreatedEvent;
 import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.domain.model.valueobjects.MediaAssetUsage;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetCommandService;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetDomainService;
 import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
+import codin.msbackendcore.shared.domain.events.SimpleDomainEventPublisher;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
@@ -22,10 +24,12 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
 
     private final MediaAssetDomainService mediaAssetDomainService;
     private final TenantDomainService tenantDomainService;
+    private final SimpleDomainEventPublisher eventPublisher;
 
-    public MediaAssetCommandServiceImpl(MediaAssetDomainService mediaAssetDomainService, TenantDomainService tenantDomainService) {
+    public MediaAssetCommandServiceImpl(MediaAssetDomainService mediaAssetDomainService, TenantDomainService tenantDomainService, SimpleDomainEventPublisher eventPublisher) {
         this.mediaAssetDomainService = mediaAssetDomainService;
         this.tenantDomainService = tenantDomainService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -42,7 +46,11 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
             throw new BadRequestException("error.bad_request", new String[]{command.usage()}, "usage");
         }
 
-        return mediaAssetDomainService.createMediaAsset(
+        if (Boolean.TRUE.equals(command.isMain())) {
+            mediaAssetDomainService.unsetMainAsset(command.tenantId(), command.entityType(), command.entityId());
+        }
+
+        var mediaAsset = mediaAssetDomainService.createMediaAsset(
                 command.tenantId(),
                 EntityType.valueOf(command.entityType()),
                 command.entityId(),
@@ -55,6 +63,12 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
                 MediaAssetUsage.valueOf(command.usage()),
                 command.aiContext()
         );
+
+        if (Boolean.TRUE.equals(command.isMain()) && command.entityType().equals(EntityType.PRODUCT.name()) && !command.aiContext().isEmpty())
+                eventPublisher.publish(new MainMediaAssetCreatedEvent(command.tenantId(), command.entityId(), command.aiContext()));
+
+
+        return mediaAsset;
     }
 
     @Override
@@ -62,22 +76,42 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
         if (tenantDomainService.getTenantById(command.tenantId()) == null)
             throw new NotFoundException("error.not_found", new String[]{command.tenantId().toString()}, "tenantId");
 
-        if (!isValidEnum(MediaAssetUsage.class, command.usage())) {
-            throw new BadRequestException("error.bad_request", new String[]{command.usage()}, "usage");
+        var mediaAsset = mediaAssetDomainService.getMediaAsset(command.mediaAssetId(), command.tenantId());
+
+        boolean wasMain = mediaAsset.getIsMain();
+        String previousAiContext = mediaAsset.getAiContext();
+
+        boolean isMainChanged =
+                command.isMain() != null && !command.isMain().equals(wasMain);
+
+        boolean aiContextChanged =
+                command.aiContext() != null && !command.aiContext().equals(previousAiContext);
+
+        if (Boolean.TRUE.equals(command.isMain()) && isMainChanged) {
+            mediaAssetDomainService.unsetMainAsset(
+                    command.tenantId(),
+                    mediaAsset.getEntityType().name(),
+                    mediaAsset.getEntityId()
+            );
         }
 
-        return mediaAssetDomainService.updateMediaAsset(
+        var updatedMediaAsset = mediaAssetDomainService.updateMediaAsset(
                 command.mediaAssetId(),
                 command.tenantId(),
-                command.url(),
-                command.publicId(),
                 command.isMain(),
                 command.sortOrder(),
                 command.assetMeta(),
                 command.context(),
-                MediaAssetUsage.valueOf(command.usage()),
                 command.aiContext()
         );
+
+        boolean affectsImageEmbedding = updatedMediaAsset.getIsMain() && (isMainChanged || aiContextChanged);
+
+        if (affectsImageEmbedding) {
+            eventPublisher.publish(new MainMediaAssetCreatedEvent(command.tenantId(), updatedMediaAsset.getEntityId(), command.aiContext()));
+        }
+
+        return updatedMediaAsset;
     }
 
     @Override

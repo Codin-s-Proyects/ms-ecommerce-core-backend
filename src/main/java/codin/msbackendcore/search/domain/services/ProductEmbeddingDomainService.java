@@ -1,18 +1,22 @@
 package codin.msbackendcore.search.domain.services;
 
 import codin.msbackendcore.search.domain.model.entities.ProductEmbedding;
+import codin.msbackendcore.search.domain.model.valueobjects.SemanticSearchMode;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface ProductEmbeddingDomainService {
     CompletableFuture<Void> generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
-                                                     String variantName, Map<String, Object> variantAttributes);
+                                                     String variantName, Map<String, Object> variantAttributes, Optional<String> aiContextOptional, boolean isCreated);
 
-    CompletableFuture<Void> updateEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
-                                                     String variantName, Map<String, Object> variantAttributes);
+    CompletableFuture<Void> generateAndSaveEmbeddingWithImageCase(
+            UUID tenantId, UUID variantId, String aiContext, String productName, String categoryName, String brandName, String productDescription,
+            String variantName, Map<String, Object> variantAttributes
+    );
 
-    CompletableFuture<List<ProductEmbedding>> semanticSearch(UUID tenantId, String query, int limit, Double distanceThreshold);
+    CompletableFuture<List<ProductEmbedding>> semanticSearch(UUID tenantId, String query, int limit, SemanticSearchMode mode, Double distanceThreshold);
 }

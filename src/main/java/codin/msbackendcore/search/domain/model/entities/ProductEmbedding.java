@@ -1,5 +1,6 @@
 package codin.msbackendcore.search.domain.model.entities;
 
+import codin.msbackendcore.search.domain.model.valueobjects.ProductEmbeddingSourceType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -35,6 +36,10 @@ public class ProductEmbedding {
     @Column(name = "vector", columnDefinition = "vector(1536)", nullable = false)
     @JsonIgnore
     private String vector;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "source_type", nullable = false)
+    private ProductEmbeddingSourceType sourceType;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")

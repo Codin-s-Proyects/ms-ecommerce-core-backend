@@ -1,5 +1,6 @@
 package codin.msbackendcore.search.infrastructure.persistence.jpa;
 
+import codin.msbackendcore.search.domain.model.valueobjects.ProductEmbeddingSourceType;
 import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -21,12 +22,15 @@ public class ProductEmbeddingRepositoryJdbc {
         this.jdbc = jdbc;
     }
 
-    public void upsertEmbedding(UUID tenantId, UUID productVariantId, String vector, Map<String, Object> metadata) {
+    public void saveEmbedding(UUID tenantId, UUID productVariantId, String vector, Map<String, Object> metadata, ProductEmbeddingSourceType sourceType){
         String sql = """
-                INSERT INTO search.product_embeddings (id, tenant_id, product_variant_id, vector, metadata, created_at)
-                VALUES (:id, :tenantId, :variantId, :vector::vector, :metadata::jsonb, :createdAt)
-                ON CONFLICT (tenant_id, product_variant_id)
-                DO UPDATE SET vector = EXCLUDED.vector, metadata = EXCLUDED.metadata, created_at = EXCLUDED.created_at;
+                INSERT INTO search.product_embeddings (id, tenant_id, product_variant_id, vector, metadata, created_at, source_type)
+                VALUES (:id, :tenantId, :variantId, :vector::vector, :metadata::jsonb, :createdAt, :sourceType)
+                ON CONFLICT (tenant_id, product_variant_id, source_type)
+                DO UPDATE SET
+                    vector = EXCLUDED.vector,
+                    metadata = EXCLUDED.metadata,
+                    created_at = EXCLUDED.created_at;
                 """;
 
         Map<String, Object> params = new HashMap<>();
@@ -34,37 +38,14 @@ public class ProductEmbeddingRepositoryJdbc {
         params.put("tenantId", tenantId);
         params.put("variantId", productVariantId);
         params.put("vector", vector);
+        params.put("sourceType", sourceType.name());
+
         try {
             params.put("metadata", objectMapper.writeValueAsString(metadata));
         } catch (Exception e) {
             throw new ServerErrorException("error.server_error", new String[]{});
         }
         params.put("createdAt", Timestamp.from(Instant.now()));
-
-        jdbc.update(sql, params);
-    }
-
-    public void updateEmbedding(UUID tenantId, UUID productVariantId, String vector, Map<String, Object> metadata) {
-
-        String sql = """
-                UPDATE search.product_embeddings
-                SET vector = :vector::vector,
-                    metadata = :metadata::jsonb
-                WHERE tenant_id = :tenantId
-                  AND product_variant_id = :variantId;
-                """;
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("tenantId", tenantId);
-        params.put("variantId", productVariantId);
-        params.put("vector", vector);
-
-
-        try {
-            params.put("metadata", objectMapper.writeValueAsString(metadata));
-        } catch (Exception e) {
-            throw new ServerErrorException("error.server_error", new String[]{});
-        }
 
         jdbc.update(sql, params);
     }
