@@ -7,8 +7,10 @@ import codin.msbackendcore.search.domain.model.valueobjects.ProductEmbeddingSour
 import codin.msbackendcore.search.domain.services.ProductEmbeddingDomainService;
 import codin.msbackendcore.search.infrastructure.persistence.jpa.ProductEmbeddingRepository;
 import codin.msbackendcore.search.infrastructure.persistence.jpa.ProductEmbeddingRepositoryJdbc;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -30,15 +32,50 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
     }
 
     @Override
+    @Transactional
     public CompletableFuture<Void> generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
                                                             String variantName, Map<String, Object> variantAttributes) {
         String textOnly = EmbeddingTextBuilder.buildTextOnly(productName, categoryName, brandName, productDescription, variantName, variantAttributes);
 
-        return openAI.embedAsync(textOnly)
-                .thenAccept(vector -> {
-                    Map<String, Object> metadata = Map.of("name", variantName.replace("\"", "'"));
-                    repo.saveEmbedding(tenantId, variantId, toVectorString(vector), metadata, ProductEmbeddingSourceType.TEXT_ONLY);
-                });
+        saveEmbedding(
+                textOnly,
+                tenantId,
+                variantId,
+                ProductEmbeddingSourceType.COMPOSITE
+        );
+
+        return saveEmbedding(
+                textOnly,
+                tenantId,
+                variantId,
+                ProductEmbeddingSourceType.TEXT_ONLY
+        );
+    }
+
+    @Override
+    @Transactional
+    public CompletableFuture<Void> generateAndSaveEmbeddingWithImageCase(
+            UUID tenantId, UUID variantId, String aiContext, String productName, String categoryName, String brandName, String productDescription,
+            String variantName, Map<String, Object> variantAttributes
+    ) {
+        String imageText = EmbeddingTextBuilder
+                .buildFromAiContext(aiContext);
+
+        saveEmbedding(
+                imageText,
+                tenantId,
+                variantId,
+                ProductEmbeddingSourceType.IMAGE_ONLY
+        );
+
+        String textOnly = EmbeddingTextBuilder.buildTextOnly(productName, categoryName, brandName, productDescription, variantName, variantAttributes);
+
+        return saveEmbedding(
+                EmbeddingTextBuilder.buildComposite(textOnly, imageText),
+                tenantId,
+                variantId,
+                ProductEmbeddingSourceType.COMPOSITE
+        );
     }
 
     @Override
@@ -63,4 +100,14 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
                 .thenApply(queryEmbedding -> productEmbeddingRepository.findNearestEmbeddingsByTenant(tenantId, queryEmbedding, limit, distanceThreshold));
     }
 
+
+    private CompletableFuture<Void> saveEmbedding(String embeddingText, UUID tenantId, UUID variantId, ProductEmbeddingSourceType sourceType) {
+        return openAI.embedAsync(embeddingText)
+                .thenAccept(vector -> {
+                    Map<String, Object> metadata = new HashMap<>(Map.of("length", embeddingText.length()));
+                    metadata.put("sourceType", sourceType.name());
+
+                    repo.saveEmbedding(tenantId, variantId, toVectorString(vector), metadata, sourceType);
+                });
+    }
 }

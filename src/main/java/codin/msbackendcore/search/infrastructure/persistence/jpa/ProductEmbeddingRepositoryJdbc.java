@@ -26,8 +26,11 @@ public class ProductEmbeddingRepositoryJdbc {
         String sql = """
                 INSERT INTO search.product_embeddings (id, tenant_id, product_variant_id, vector, metadata, created_at, source_type)
                 VALUES (:id, :tenantId, :variantId, :vector::vector, :metadata::jsonb, :createdAt, :sourceType)
-                ON CONFLICT (tenant_id, product_variant_id)
-                DO UPDATE SET vector = EXCLUDED.vector, metadata = EXCLUDED.metadata, created_at = EXCLUDED.created_at;
+                ON CONFLICT (tenant_id, product_variant_id, source_type)
+                DO UPDATE SET
+                    vector = EXCLUDED.vector,
+                    metadata = EXCLUDED.metadata,
+                    created_at = EXCLUDED.created_at;
                 """;
 
         Map<String, Object> params = new HashMap<>();
