@@ -12,32 +12,20 @@ import java.util.UUID;
 @Repository
 public interface ProductEmbeddingRepository extends JpaRepository<ProductEmbedding, UUID> {
 
-    @Query(value = """
-            SELECT
-                emb.*
-            FROM search.product_embeddings emb
-            WHERE emb.tenant_id = :tenantId
-            AND (emb.vector <-> CAST(:queryEmbedding AS vector)) < :distanceThreshold
-            ORDER BY emb.vector <-> CAST(:queryEmbedding AS vector)
-            LIMIT :limit
-            """, nativeQuery = true)
-    List<ProductEmbedding> findNearestEmbeddingsByTenant(
-            @Param("tenantId") UUID tenantId,
-            @Param("queryEmbedding") float[] queryEmbedding,
-            @Param("limit") int limit,
-            @Param("distanceThreshold") Double distanceThreshold
-    );
 
     @Query(value = """
-            SELECT
-                emb.*
-            FROM search.product_embeddings emb
-            WHERE (emb.vector <-> CAST(:queryEmbedding AS vector)) < :distanceThreshold
-            ORDER BY emb.vector <-> CAST(:queryEmbedding AS vector)
-            LIMIT :limit
+                SELECT *
+                FROM search.product_embeddings emb
+                WHERE (:tenantId IS NULL OR emb.tenant_id = :tenantId)
+                  AND emb.source_type = :sourceType
+                  AND (emb.vector <-> CAST(:queryEmbedding AS vector)) < :distanceThreshold
+                ORDER BY emb.vector <-> CAST(:queryEmbedding AS vector)
+                LIMIT :limit
             """, nativeQuery = true)
-    List<ProductEmbedding> findNearestEmbeddings(
+    List<ProductEmbedding> search(
+            @Param("tenantId") UUID tenantId,
             @Param("queryEmbedding") float[] queryEmbedding,
+            @Param("sourceType") String sourceType,
             @Param("limit") int limit,
             @Param("distanceThreshold") Double distanceThreshold
     );
