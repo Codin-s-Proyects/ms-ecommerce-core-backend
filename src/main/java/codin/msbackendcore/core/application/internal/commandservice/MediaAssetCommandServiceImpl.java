@@ -1,18 +1,23 @@
 package codin.msbackendcore.core.application.internal.commandservice;
 
+import codin.msbackendcore.catalog.domain.model.events.ProductCreatedEvent;
 import codin.msbackendcore.core.domain.model.commands.mediaasset.CreateMediaAssetCommand;
 import codin.msbackendcore.core.domain.model.commands.mediaasset.DeleteMediaAssetCommand;
 import codin.msbackendcore.core.domain.model.commands.mediaasset.UpdateMediaAssetCommand;
 import codin.msbackendcore.core.domain.model.entities.MediaAsset;
+import codin.msbackendcore.core.domain.model.events.MainMediaAssetCreatedEvent;
 import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.core.domain.model.valueobjects.MediaAssetUsage;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetCommandService;
 import codin.msbackendcore.core.domain.services.mediaasset.MediaAssetDomainService;
 import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
+import codin.msbackendcore.shared.domain.events.SimpleDomainEventPublisher;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.isValidEnum;
 
@@ -22,10 +27,12 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
 
     private final MediaAssetDomainService mediaAssetDomainService;
     private final TenantDomainService tenantDomainService;
+    private final SimpleDomainEventPublisher eventPublisher;
 
-    public MediaAssetCommandServiceImpl(MediaAssetDomainService mediaAssetDomainService, TenantDomainService tenantDomainService) {
+    public MediaAssetCommandServiceImpl(MediaAssetDomainService mediaAssetDomainService, TenantDomainService tenantDomainService, SimpleDomainEventPublisher eventPublisher) {
         this.mediaAssetDomainService = mediaAssetDomainService;
         this.tenantDomainService = tenantDomainService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -42,7 +49,7 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
             throw new BadRequestException("error.bad_request", new String[]{command.usage()}, "usage");
         }
 
-        return mediaAssetDomainService.createMediaAsset(
+        var mediaAsset = mediaAssetDomainService.createMediaAsset(
                 command.tenantId(),
                 EntityType.valueOf(command.entityType()),
                 command.entityId(),
@@ -55,6 +62,11 @@ public class MediaAssetCommandServiceImpl implements MediaAssetCommandService {
                 MediaAssetUsage.valueOf(command.usage()),
                 command.aiContext()
         );
+
+        if(Boolean.TRUE.equals(command.isMain()) && command.entityType().equals(EntityType.PRODUCT.name()) && !command.aiContext().isEmpty())
+            eventPublisher.publish(new MainMediaAssetCreatedEvent(command.tenantId(), command.entityId(), command.aiContext()));
+
+        return mediaAsset;
     }
 
     @Override

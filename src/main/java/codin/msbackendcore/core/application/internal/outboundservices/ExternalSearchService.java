@@ -1,6 +1,5 @@
-package codin.msbackendcore.catalog.application.internal.outboundservices;
+package codin.msbackendcore.core.application.internal.outboundservices;
 
-import codin.msbackendcore.search.domain.model.valueobjects.ProductEmbeddingSourceType;
 import codin.msbackendcore.search.interfaces.acl.SearchContextFacade;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@Service("CatalogExternalSearchService")
+@Service("CoreExternalSearchService")
 public class ExternalSearchService {
     private final SearchContextFacade searchContextFacade;
 
@@ -16,9 +15,9 @@ public class ExternalSearchService {
         this.searchContextFacade = searchContextFacade;
     }
 
-    public CompletableFuture<Void> registerProductEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
+    public CompletableFuture<Void> registerMainMediaAssetEmbedding(UUID tenantId, UUID variantId, String aiContext, String productName, String categoryName, String brandName, String productDescription,
                                                             String variantName, Map<String, Object> variantAttributes) {
-        return searchContextFacade.createEmbeddingForVariant(tenantId, variantId, productName, categoryName, brandName, productDescription, variantName, variantAttributes);
+        return searchContextFacade.createEmbeddingForImage(tenantId, variantId, aiContext, productName, categoryName, brandName, productDescription, variantName, variantAttributes);
     }
 
     public CompletableFuture<Void> updateProductEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,

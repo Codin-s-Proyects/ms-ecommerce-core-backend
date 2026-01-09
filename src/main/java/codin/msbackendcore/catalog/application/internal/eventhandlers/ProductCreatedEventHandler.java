@@ -1,15 +1,13 @@
 package codin.msbackendcore.catalog.application.internal.eventhandlers;
 
 import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalSearchService;
-import codin.msbackendcore.catalog.domain.model.entities.ProductVariant;
 import codin.msbackendcore.catalog.domain.model.events.ProductCreatedEvent;
-import codin.msbackendcore.search.domain.model.valueobjects.ProductEmbeddingSourceType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -25,39 +23,47 @@ public class ProductCreatedEventHandler {
         this.externalSearchService = externalSearchService;
     }
 
+    @Async("applicationTaskExecutor")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handle(ProductCreatedEvent event) {
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        List<CompletableFuture<Void>> futures = event.variants().stream()
+                .map(variant -> {
+                    var product = variant.getProduct();
 
-        for (ProductVariant variant : event.variants()) {
-            var product = variant.getProduct();
-            String categoryName = (product.getCategories() != null && !product.getCategories().isEmpty())
-                    ? product.getCategories().stream()
-                    .map(pc -> pc.getCategory().getName())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.joining(" "))
-                    : "";
+                    String categoryName = (product.getCategories() != null && !product.getCategories().isEmpty())
+                            ? product.getCategories().stream()
+                            .map(pc -> pc.getCategory().getName())
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.joining(" "))
+                            : "";
 
-            var brandName = product.getBrand() != null ? product.getBrand().getName() : "";
+                    var brandName = product.getBrand() != null ? product.getBrand().getName() : "";
 
-            try {
-                log.debug("Execute ProductCreated Event Handler for variant {}", variant.getId());
-                CompletableFuture<Void> future = externalSearchService.registerProductEmbedding(
-                        event.tenantId(), variant.getId(), product.getName(), categoryName, brandName, product.getDescription(),
-                        variant.getName(), variant.getAttributes()
-                );
-                futures.add(future.exceptionally(ex -> {
-                    log.error("Error generating embedding for variant {}: {}", variant.getId(), ex.getMessage());
-                    return null;
-                }));
-            } catch (Exception ex) {
-                log.error("Error registering embedding for variant {}: {}", variant.getId(), ex.getMessage());
-            }
-        }
+                    return externalSearchService.registerProductEmbedding(
+                                    event.tenantId(), variant.getId(), product.getName(), categoryName,
+                                    brandName, product.getDescription(), variant.getName(),
+                                    variant.getAttributes()
+                            )
+                            .exceptionally(ex -> {
+                                log.error(
+                                        "Error generating product embedding | tenant={} variant={}",
+                                        event.tenantId(),
+                                        variant.getId(),
+                                        ex
+                                );
+                                return null;
+                            });
+                })
+                .toList();
+
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                 .exceptionally(ex -> {
-                    log.error("Error in one or more embedding operations: {}", ex.getMessage());
+                    log.error(
+                            "ProductCreatedEvent embeddings batch failed | tenant={}",
+                            event.tenantId(),
+                            ex
+                    );
                     return null;
                 });
     }
