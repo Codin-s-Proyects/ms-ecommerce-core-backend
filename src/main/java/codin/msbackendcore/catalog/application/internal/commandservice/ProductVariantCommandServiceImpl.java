@@ -65,7 +65,12 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
-        var productVariant = productVariantDomainService.updateProductVariant(
+        var productVariant = productVariantDomainService.getProductVariantById(command.productVariantId());
+
+        var attributeChanged = !productVariant.getAttributes().equals(command.attributes());
+        var nameChanged = !productVariant.getName().equals(command.name());
+
+        var updatedProductVariant = productVariantDomainService.updateProductVariant(
                 command.tenantId(),
                 command.productVariantId(),
                 command.name(),
@@ -73,9 +78,10 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
                 command.productQuantity()
         );
 
-        eventPublisher.publish(new ProductVariantUpdatedEvent(productVariant));
+        if(attributeChanged || nameChanged)
+            eventPublisher.publish(new ProductVariantUpdatedEvent(updatedProductVariant));
 
-        return productVariant;
+        return updatedProductVariant;
     }
 
 

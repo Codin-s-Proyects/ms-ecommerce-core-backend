@@ -7,6 +7,7 @@ import codin.msbackendcore.catalog.domain.model.queries.productvariant.GetProduc
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantDomainService;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantQueryService;
+import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,7 +31,7 @@ public class ProductVariantQueryServiceImpl implements ProductVariantQueryServic
         var productVariants = productVariantDomainService.getVariantsByProductId(product, query.tenantId());
 
         var variants = productVariants.stream().map(variant -> {
-            var mediaAssets = externalCoreService.getMediaAssetsByVariantId(variant.getTenantId(), variant.getId());
+            var mediaAssets = externalCoreService.getMediaAssetByEntityIdAndEntityType(variant.getTenantId(), variant.getId(), EntityType.PRODUCT_VARIANT);
             var productPrices = externalPricingService.getProductPriceByVariantId(variant.getTenantId(), variant.getId());
 
             return new ProductVariantDetailDto.VariantDetailDto(

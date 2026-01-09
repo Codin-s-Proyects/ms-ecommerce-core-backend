@@ -4,6 +4,7 @@ import codin.msbackendcore.search.domain.services.ProductEmbeddingDomainService;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -16,17 +17,17 @@ public class SearchContextFacade {
     }
 
     public CompletableFuture<Void> createEmbeddingForVariant(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
-                                                             String variantName, Map<String, Object> variantAttributes) {
-        return productEmbeddingDomainService.generateAndSaveEmbedding(tenantId, variantId, productName, categoryName, brandName, productDescription, variantName, variantAttributes);
+                                                             String variantName, Map<String, Object> variantAttributes, Optional<String> aiContext) {
+        return productEmbeddingDomainService.generateAndSaveEmbedding(tenantId, variantId, productName, categoryName, brandName, productDescription, variantName, variantAttributes, aiContext, true);
+    }
+
+    public CompletableFuture<Void> updateEmbeddingForVariant(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
+                                                             String variantName, Map<String, Object> variantAttributes, Optional<String> aiContext) {
+        return productEmbeddingDomainService.generateAndSaveEmbedding(tenantId, variantId, productName, categoryName, brandName, productDescription, variantName, variantAttributes, aiContext, false);
     }
 
     public CompletableFuture<Void> createEmbeddingForImage(UUID tenantId, UUID variantId, String aiContext, String productName, String categoryName, String brandName, String productDescription,
                                                              String variantName, Map<String, Object> variantAttributes) {
         return productEmbeddingDomainService.generateAndSaveEmbeddingWithImageCase(tenantId, variantId, aiContext, productName, categoryName, brandName, productDescription, variantName, variantAttributes);
-    }
-
-    public CompletableFuture<Void> updateEmbeddingForVariant(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
-                                                             String variantName, Map<String, Object> variantAttributes) {
-        return productEmbeddingDomainService.updateEmbedding(tenantId, variantId, productName, categoryName, brandName, productDescription, variantName, variantAttributes);
     }
 }

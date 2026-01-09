@@ -49,29 +49,4 @@ public class ProductEmbeddingRepositoryJdbc {
 
         jdbc.update(sql, params);
     }
-
-    public void updateEmbedding(UUID tenantId, UUID productVariantId, String vector, Map<String, Object> metadata) {
-
-        String sql = """
-                UPDATE search.product_embeddings
-                SET vector = :vector::vector,
-                    metadata = :metadata::jsonb
-                WHERE tenant_id = :tenantId
-                  AND product_variant_id = :variantId;
-                """;
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("tenantId", tenantId);
-        params.put("variantId", productVariantId);
-        params.put("vector", vector);
-
-
-        try {
-            params.put("metadata", objectMapper.writeValueAsString(metadata));
-        } catch (Exception e) {
-            throw new ServerErrorException("error.server_error", new String[]{});
-        }
-
-        jdbc.update(sql, params);
-    }
 }

@@ -10,10 +10,7 @@ import codin.msbackendcore.search.infrastructure.persistence.jpa.ProductEmbeddin
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.toVectorString;
@@ -34,22 +31,42 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
     @Override
     @Transactional
     public CompletableFuture<Void> generateAndSaveEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
-                                                            String variantName, Map<String, Object> variantAttributes) {
-        String textOnly = EmbeddingTextBuilder.buildTextOnly(productName, categoryName, brandName, productDescription, variantName, variantAttributes);
+                                                            String variantName, Map<String, Object> variantAttributes, Optional<String> aiContext, boolean isCreated) {
+        String textOnly = EmbeddingTextBuilder.
+                buildTextOnly(productName, categoryName, brandName, productDescription, variantName, variantAttributes);
 
-        saveEmbedding(
-                textOnly,
-                tenantId,
-                variantId,
-                ProductEmbeddingSourceType.COMPOSITE
-        );
+        CompletableFuture<Void> textOnlyFuture =
+                saveEmbedding(
+                        textOnly,
+                        tenantId,
+                        variantId,
+                        ProductEmbeddingSourceType.TEXT_ONLY
+                );
 
-        return saveEmbedding(
-                textOnly,
-                tenantId,
-                variantId,
-                ProductEmbeddingSourceType.TEXT_ONLY
-        );
+        String compositeText = aiContext
+                .map(imageText ->
+                        EmbeddingTextBuilder.buildComposite(textOnly, imageText)
+                )
+                .orElse(textOnly);
+
+
+        CompletableFuture<Void> compositeFuture =
+                saveEmbedding(
+                        compositeText,
+                        tenantId,
+                        variantId,
+                        ProductEmbeddingSourceType.COMPOSITE
+                );
+
+        if (isCreated)
+            aiContext.ifPresent(imageText -> saveEmbedding(
+                    imageText,
+                    tenantId,
+                    variantId,
+                    ProductEmbeddingSourceType.IMAGE_ONLY
+            ));
+
+        return CompletableFuture.allOf(textOnlyFuture, compositeFuture);
     }
 
     @Override
@@ -79,19 +96,8 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
     }
 
     @Override
-    public CompletableFuture<Void> updateEmbedding(UUID tenantId, UUID variantId, String productName, String categoryName, String brandName, String productDescription,
-                                                            String variantName, Map<String, Object> variantAttributes) {
-        String textOnly = EmbeddingTextBuilder.buildTextOnly(productName, categoryName, brandName, productDescription, variantName, variantAttributes);
-        return openAI.embedAsync(textOnly)
-                .thenAccept(vector -> {
-                    Map<String, Object> metadata = Map.of("name", variantName.replace("\"", "'"));
-                    repo.updateEmbedding(tenantId, variantId, toVectorString(vector), metadata);
-                });
-    }
-
-    @Override
     public CompletableFuture<List<ProductEmbedding>> semanticSearch(UUID tenantId, String query, int limit, Double distanceThreshold) {
-        if(tenantId == null) {
+        if (tenantId == null) {
             return openAI.embedAsync(query)
                     .thenApply(queryEmbedding -> productEmbeddingRepository.findNearestEmbeddings(queryEmbedding, limit, distanceThreshold));
         }
