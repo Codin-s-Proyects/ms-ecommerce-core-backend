@@ -76,6 +76,15 @@ public class MediaAssetDomainServiceImpl implements MediaAssetDomainService {
     }
 
     @Override
+    public void unsetMainAsset(UUID tenantId, String entityType, UUID entityId) {
+        mediaAssetRepository.unsetMain(
+                tenantId,
+                EntityType.valueOf(entityType),
+                entityId
+        );
+    }
+
+    @Override
     public void deleteMediaAsset(UUID tenantId, UUID mediaAssetId) {
         var mediaAsset = mediaAssetRepository.findAllByTenantIdAndId(tenantId, mediaAssetId)
                 .orElseThrow(() ->
