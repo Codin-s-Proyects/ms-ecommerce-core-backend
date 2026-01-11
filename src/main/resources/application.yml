@@ -53,15 +53,16 @@ resilience4j:
   bulkhead:
     instances:
       openaiBulkhead:
-        maxConcurrentCalls: 5
-        maxWaitDuration: 500ms
+        maxConcurrentCalls: 30
+        maxWaitDuration: 2s
   retry:
     instances:
       openaiRetry:
         maxAttempts: 2
-        waitDuration: 1s
+        waitDuration: 800ms
         retryExceptions:
           - org.springframework.web.reactive.function.client.WebClientRequestException
+          - org.springframework.web.reactive.function.client.WebClientResponseException
           - java.io.IOException
           - codin.msbackendcore.shared.domain.exceptions.ServerErrorException
       izipayRetry:
@@ -77,9 +78,9 @@ resilience4j:
       openaiCB:
         failureRateThreshold: 50
         slowCallRateThreshold: 70
-        slowCallDurationThreshold: 2s
-        waitDurationInOpenState: 10s
-        minimumNumberOfCalls: 5
+        slowCallDurationThreshold: 3s
+        waitDurationInOpenState: 15s
+        minimumNumberOfCalls: 10
       izipayCB:
         failureRateThreshold: 50
         slowCallRateThreshold: 70
@@ -90,4 +91,4 @@ resilience4j:
   timelimiter:
     instances:
       openaiTimeout:
-        timeoutDuration: 4s
+        timeoutDuration: 5s
