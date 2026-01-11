@@ -8,21 +8,27 @@ import codin.msbackendcore.catalog.domain.services.brand.BrandDomainService;
 import codin.msbackendcore.catalog.domain.services.category.CategoryDomainService;
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.catalog.domain.services.product.ProductQueryService;
+import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantDomainService;
+import codin.msbackendcore.catalog.interfaces.dto.product.ProductResponse;
+import codin.msbackendcore.catalog.interfaces.dto.product.ProductWithStockResponse;
 import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.shared.infrastructure.pagination.model.CursorPage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class ProductQueryServiceImpl implements ProductQueryService {
     private final ProductDomainService productDomainService;
+    private final ProductVariantDomainService productVariantDomainService;
     private final CategoryDomainService categoryDomainService;
     private final BrandDomainService brandDomainService;
     private final ExternalCoreService externalCoreService;
 
-    public ProductQueryServiceImpl(ProductDomainService productDomainService, CategoryDomainService categoryDomainService, BrandDomainService brandDomainService, ExternalCoreService externalCoreService) {
+    public ProductQueryServiceImpl(ProductDomainService productDomainService, ProductVariantDomainService productVariantDomainService, CategoryDomainService categoryDomainService, BrandDomainService brandDomainService, ExternalCoreService externalCoreService) {
         this.productDomainService = productDomainService;
+        this.productVariantDomainService = productVariantDomainService;
         this.categoryDomainService = categoryDomainService;
         this.brandDomainService = brandDomainService;
         this.externalCoreService = externalCoreService;
@@ -51,17 +57,68 @@ public class ProductQueryServiceImpl implements ProductQueryService {
     }
 
     @Override
-    public List<Product> handle(GetAllProductByCategoryAndTenantIdQuery query) {
+    public List<ProductWithStockResponse> handle(GetAllProductByCategoryAndTenantIdQuery query) {
         var category = categoryDomainService.getCategoryById(query.categoryId());
 
-        return productDomainService.getProductsByCategory(query.tenantId(), category);
+
+        return productDomainService.getProductsByCategory(query.tenantId(), category)
+                .stream()
+                .map(product -> {
+
+                    int totalStock = productVariantDomainService
+                            .getVariantsByProductId(product, product.getTenantId())
+                            .stream()
+                            .mapToInt(variant ->
+                                    variant.getProductQuantity() - variant.getReservedQuantity()
+                            )
+                            .sum();
+
+                    return new ProductWithStockResponse(
+                            product.getId(),
+                            product.getTenantId(),
+                            product.getName(),
+                            product.getSlug(),
+                            product.getDescription(),
+                            product.isHasVariants(),
+                            product.getStatus().name(),
+                            totalStock
+                    );
+                })
+                .toList();
     }
 
     @Override
-    public CursorPage<Product> handle(GetAllProductPaginatedByCategoryAndTenantIdQuery query) {
+    public CursorPage<ProductWithStockResponse> handle(GetAllProductPaginatedByCategoryAndTenantIdQuery query) {
         var category = categoryDomainService.getCategoryById(query.categoryId());
 
-        return productDomainService.getProductsByCategory(query.tenantId(), category.getId(), query.paginationQuery());
+        var cursorProduct = productDomainService.getProductsByCategory(query.tenantId(), category.getId(), query.paginationQuery());
+        var productWithStockResponse = cursorProduct.data()
+                .stream()
+                .map(product -> {
+
+                    int totalStock = productVariantDomainService
+                            .getVariantsByProductId(product, product.getTenantId())
+                            .stream()
+                            .mapToInt(variant ->
+                                    variant.getProductQuantity() - variant.getReservedQuantity()
+                            )
+                            .sum();
+
+                    return new ProductWithStockResponse(
+                            product.getId(),
+                            product.getTenantId(),
+                            product.getName(),
+                            product.getSlug(),
+                            product.getDescription(),
+                            product.isHasVariants(),
+                            product.getStatus().name(),
+                            totalStock
+                    );
+                })
+                .toList();
+
+        return new CursorPage<>(productWithStockResponse, cursorProduct.nextCursor(), cursorProduct.hasMore(), cursorProduct.totalApprox());
+
     }
 
     @Override
