@@ -12,18 +12,49 @@ import java.util.UUID;
 public record SemanticSearchResponse(
         SemanticSearchProduct product,
         SemanticSearchProductVariant variant,
-        List<SemanticSearchMediaAsset> mediaAssets,
         List<SemanticSearchProductPrice> prices) {
 
     public static SemanticSearchResponse fromDto(SemanticSearchDto dto) {
+
+        var productMediaAssets = dto.product().mediaAssets().stream()
+                .map(mediaAsset -> new SemanticSearchMediaAsset(
+                        mediaAsset.id(),
+                        mediaAsset.entityType(),
+                        mediaAsset.entityId(),
+                        mediaAsset.url(),
+                        mediaAsset.publicId(),
+                        mediaAsset.isMain(),
+                        mediaAsset.sortOrder(),
+                        mediaAsset.assetMeta(),
+                        mediaAsset.context(),
+                        mediaAsset.usage(),
+                        mediaAsset.aiContext()
+                )).toList();
+
         var product = new SemanticSearchProduct(
                 dto.product().id(),
                 dto.product().tenantId(),
                 dto.product().name(),
                 dto.product().slug(),
                 dto.product().description(),
-                dto.product().hasVariants()
+                dto.product().hasVariants(),
+                productMediaAssets
         );
+
+        var variantMediaAssets = dto.productVariant().mediaAssets().stream()
+                .map(mediaAsset -> new SemanticSearchMediaAsset(
+                        mediaAsset.id(),
+                        mediaAsset.entityType(),
+                        mediaAsset.entityId(),
+                        mediaAsset.url(),
+                        mediaAsset.publicId(),
+                        mediaAsset.isMain(),
+                        mediaAsset.sortOrder(),
+                        mediaAsset.assetMeta(),
+                        mediaAsset.context(),
+                        mediaAsset.usage(),
+                        mediaAsset.aiContext()
+                )).toList();
 
         var variant = new SemanticSearchProductVariant(
                 dto.productVariant().id(),
@@ -31,24 +62,9 @@ public record SemanticSearchResponse(
                 dto.productVariant().sku(),
                 dto.productVariant().name(),
                 dto.productVariant().attributes(),
-                dto.productVariant().productQuantity()
+                dto.productVariant().productQuantity(),
+                variantMediaAssets
         );
-
-        var mediaAssets = dto.mediaAssets().stream()
-                .map(mediaAssetDto -> new SemanticSearchMediaAsset(
-                        mediaAssetDto.id(),
-                        mediaAssetDto.entityType(),
-                        mediaAssetDto.entityId(),
-                        mediaAssetDto.url(),
-                        mediaAssetDto.publicId(),
-                        mediaAssetDto.isMain(),
-                        mediaAssetDto.sortOrder(),
-                        mediaAssetDto.assetMeta(),
-                        mediaAssetDto.context(),
-                        mediaAssetDto.usage(),
-                        mediaAssetDto.aiContext()
-                ))
-                .toList();
 
         var prices = dto.productPrices().stream()
                 .map(priceDto -> new SemanticSearchProductPrice(
@@ -65,7 +81,7 @@ public record SemanticSearchResponse(
                 ))
                 .toList();
 
-        return new SemanticSearchResponse(product, variant, mediaAssets, prices);
+        return new SemanticSearchResponse(product, variant, prices);
     }
 
     private static SemanticSearchPriceList fromDto(PriceListDto dto) {
@@ -88,7 +104,8 @@ public record SemanticSearchResponse(
             String name,
             String slug,
             String description,
-            boolean hasVariants
+            boolean hasVariants,
+            List<SemanticSearchMediaAsset> mediaAssets
     ) {
     }
 
@@ -98,7 +115,8 @@ public record SemanticSearchResponse(
             String sku,
             String name,
             Map<String, Object> attributes,
-            Integer productQuantity
+            Integer productQuantity,
+            List<SemanticSearchMediaAsset> mediaAssets
     ) {
     }
 
