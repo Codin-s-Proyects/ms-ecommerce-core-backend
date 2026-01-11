@@ -9,6 +9,7 @@ import codin.msbackendcore.catalog.domain.model.queries.product.GetProductByIdQu
 import codin.msbackendcore.catalog.domain.services.product.ProductCommandService;
 import codin.msbackendcore.catalog.domain.services.product.ProductQueryService;
 import codin.msbackendcore.catalog.interfaces.dto.product.ProductCreateRequest;
+import codin.msbackendcore.catalog.interfaces.dto.product.ProductDetailResponse;
 import codin.msbackendcore.catalog.interfaces.dto.product.ProductResponse;
 import codin.msbackendcore.catalog.interfaces.dto.product.ProductUpdatedRequest;
 import codin.msbackendcore.shared.infrastructure.pagination.model.CursorPage;
@@ -113,9 +114,9 @@ public class ProductController {
         return ResponseEntity.status(200).body(paginatedResponse);
     }
 
-    @Operation(summary = "Obtener todos los productos por categoría y tenantId")
+    @Operation(summary = "Obtener todos los productos por tenantId")
     @GetMapping("/tenant-id/{tenantId}")
-    public ResponseEntity<CursorPage<ProductResponse>> getAllProductByTenant(
+    public ResponseEntity<CursorPage<ProductDetailResponse>> getAllProductByTenant(
             @PathVariable UUID tenantId,
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "50") int limit,
@@ -127,16 +128,7 @@ public class ProductController {
 
         var getPaginatedList = productQueryService.handle(query);
 
-        var productResponseList = getPaginatedList.data().stream().map(product ->
-                new ProductResponse(
-                        product.getId(),
-                        product.getTenantId(),
-                        product.getName(),
-                        product.getSlug(),
-                        product.getDescription(),
-                        product.isHasVariants(),
-                        product.getStatus().name()
-                )).toList();
+        var productResponseList = getPaginatedList.data().stream().map(ProductDetailResponse::fromDto).toList();
 
         var paginatedResponse = new CursorPage<>(
                 productResponseList,
