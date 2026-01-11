@@ -16,8 +16,8 @@ public class ExternalCoreService {
         this.coreContextFacade = coreContextFacade;
     }
 
-    public List<MediaAssetDto> getMediaAssetsByVariantId(UUID tenantId, UUID variantId) {
-        var mediaAssetResponseList = coreContextFacade.getMediaAssetByEntityIdAndEntityType(tenantId, EntityType.PRODUCT_VARIANT, variantId);
+    public List<MediaAssetDto> getMediaAssetsByEntityIdAndEntityType(UUID tenantId, UUID entityId, EntityType entityType) {
+        var mediaAssetResponseList = coreContextFacade.getMediaAssetByEntityIdAndEntityType(tenantId,entityType, entityId);
 
         return mediaAssetResponseList.stream()
                 .map(mediaAssetResponse -> new MediaAssetDto(

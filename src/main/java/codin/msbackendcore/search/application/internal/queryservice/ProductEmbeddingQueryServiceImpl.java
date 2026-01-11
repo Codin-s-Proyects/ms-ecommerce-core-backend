@@ -52,13 +52,12 @@ public class ProductEmbeddingQueryServiceImpl implements ProductEmbeddingQuerySe
                     .map(pe -> CompletableFuture.supplyAsync(() -> {
                         var productVariantDto = externalCatalogService.getVariantById(pe.getProductVariantId());
                         var productDto = externalCatalogService.getProductById(productVariantDto.productId());
-                        var mediaAssetsDto = externalCoreService.getMediaAssetsByVariantId(pe.getTenantId(), productDto.id());
+                        /*var mediaAssetsDto = externalCoreService.getMediaAssetsByEntityIdAndEntityType(pe.getTenantId(), productDto.id());*/
                         var productPriceListDto = externalPricingService.getProductPriceByVariantId(pe.getTenantId(), pe.getProductVariantId());
 
                         return new SemanticSearchDto(
                                 productDto,
                                 productVariantDto,
-                                mediaAssetsDto,
                                 productPriceListDto
                         );
                     }))
