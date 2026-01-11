@@ -24,14 +24,10 @@ public class CommonUtils {
     }
 
     public static String generateSku(String productName, String categoryName, String brandName, Map<String, Object> attributes, UUID tenantId) {
-        String productPrefix = normalize(productName).substring(0, 3).toUpperCase();
-        String categoryPrefix = (categoryName != null && !categoryName.isEmpty())
-                ? normalize(categoryName).substring(0, 2).toUpperCase()
-                : null;
-        String brandPrefix = (brandName != null && !brandName.isEmpty())
-                ? normalize(brandName).substring(0, 2).toUpperCase()
-                : null;
-        String tenantPrefix = normalize(tenantId.toString()).substring(0, 2).toUpperCase();
+        String productPrefix = safePrefix(productName, 3);
+        String categoryPrefix = safePrefix(categoryName, 2);
+        String brandPrefix = safePrefix(brandName, 2);
+        String tenantPrefix = safePrefix(tenantId.toString(), 2);
 
         StringBuilder attrCode = new StringBuilder();
         attributes.forEach((key, value) -> {
@@ -58,11 +54,10 @@ public class CommonUtils {
     }
 
     public static String generatePriceListCode(String name, UUID tenantId) {
-        String namePart = normalize(name).length() >= 4
-                ? normalize(name).substring(0, 4).toLowerCase()
-                : normalize(name).toLowerCase();
-        String tenantPart = normalize(tenantId.toString()).substring(0, 4).toUpperCase();
-        String randomPart = String.format("%04d", new Random().nextInt(9999));
+        String namePart = safePrefix(name, 4);
+
+        String tenantPart = safePrefix(tenantId.toString(), 4);
+        String randomPart = String.format("%04d", new Random().nextInt(10000));
         return namePart + "-" + tenantPart + "-" + randomPart;
     }
 
@@ -94,5 +89,14 @@ public class CommonUtils {
 
     private static String normalize(String text) {
         return text.replaceAll("[^A-Za-z0-9]", "").toUpperCase();
+    }
+
+    private static String safePrefix(String value, int length) {
+        if (value == null) return null;
+
+        String normalized = normalize(value);
+        if (normalized.isEmpty()) return null;
+
+        return normalized.substring(0, Math.min(length, normalized.length()));
     }
 }
