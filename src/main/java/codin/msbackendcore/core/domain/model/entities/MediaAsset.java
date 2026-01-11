@@ -61,8 +61,7 @@ public class MediaAsset {
     @Column(name = "usage", nullable = false)
     private MediaAssetUsage usage;
 
-    @NotBlank
-    @Column(name = "ai_context", nullable = false)
+    @Column(name = "ai_context")
     private String aiContext;
 
     @Column(name = "created_at", nullable = false)

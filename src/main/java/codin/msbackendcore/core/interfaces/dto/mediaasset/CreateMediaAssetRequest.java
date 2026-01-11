@@ -15,10 +15,10 @@ public record CreateMediaAssetRequest(
         @NotBlank String publicId,
         @NotNull Boolean isMain,
         @NotNull Integer sortOrder,
-        @NotNull Map<String, Object> assetMeta,
-        @NotNull Map<String, Object> context,
+        Map<String, Object> assetMeta,
+        Map<String, Object> context,
         @NotBlank String usage,
-        @NotBlank String aiContext
+        String aiContext
 ) {
     public CreateMediaAssetCommand toCommand() {
         return new CreateMediaAssetCommand(
