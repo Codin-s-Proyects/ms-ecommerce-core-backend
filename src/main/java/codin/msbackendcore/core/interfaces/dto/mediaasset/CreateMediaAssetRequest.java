@@ -12,7 +12,7 @@ public record CreateMediaAssetRequest(
         @NotBlank String entityType,
         @NotNull UUID entityId,
         @NotBlank String url,
-        @NotBlank String publicId,
+        String publicId,
         @NotNull Boolean isMain,
         @NotNull Integer sortOrder,
         Map<String, Object> assetMeta,
