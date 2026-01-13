@@ -5,5 +5,6 @@ public enum EntityType {
     PRODUCT,
     TENANT,
     BRAND,
-    CATEGORY
+    CATEGORY,
+    ORDER
 }
