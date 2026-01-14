@@ -2,6 +2,14 @@ spring:
   application:
     name: ms-backend-core
   datasource:
+    hikari:
+      connection-init-sql: SET ivfflat.probes = 3;
+      maximum-pool-size: 40
+      minimum-idle: 15
+      connection-timeout: 3000
+      validation-timeout: 1000
+      idle-timeout: 30000
+      max-lifetime: 600000
     url: ${FLYWAY_URL}
     username: ${FLYWAY_USER}
     password: ${FLYWAY_PASSWORD}
@@ -34,6 +42,10 @@ openai:
   timeout-ms: 10000
 
 server:
+  tomcat:
+    threads:
+      max: 150
+      min-spare: 40
   forward-headers-strategy: native
 
 logging:
@@ -55,6 +67,9 @@ resilience4j:
       openaiBulkhead:
         maxConcurrentCalls: 30
         maxWaitDuration: 2s
+      searchBulkhead:
+         maxConcurrentCalls: 12
+         maxWaitDuration: 50ms
   retry:
     instances:
       openaiRetry:

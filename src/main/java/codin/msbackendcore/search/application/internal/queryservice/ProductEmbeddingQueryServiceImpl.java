@@ -9,10 +9,12 @@ import codin.msbackendcore.search.domain.model.queries.SemanticSearchQuery;
 import codin.msbackendcore.search.domain.model.valueobjects.SemanticSearchMode;
 import codin.msbackendcore.search.domain.services.ProductEmbeddingDomainService;
 import codin.msbackendcore.search.domain.services.ProductEmbeddingQueryService;
+import codin.msbackendcore.search.infrastructure.persistence.dto.ProductEmbeddingView;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.isValidEnum;
@@ -23,13 +25,11 @@ public class ProductEmbeddingQueryServiceImpl implements ProductEmbeddingQuerySe
     private final ProductEmbeddingDomainService productEmbeddingDomainService;
     private final ExternalCatalogService externalCatalogService;
     private final ExternalPricingService externalPricingService;
-    private final ExternalCoreService externalCoreService;
 
-    public ProductEmbeddingQueryServiceImpl(ProductEmbeddingDomainService productEmbeddingDomainService, ExternalCatalogService externalCatalogService, ExternalPricingService externalPricingService, ExternalCoreService externalCoreService) {
+    public ProductEmbeddingQueryServiceImpl(ProductEmbeddingDomainService productEmbeddingDomainService, ExternalCatalogService externalCatalogService, ExternalPricingService externalPricingService) {
         this.productEmbeddingDomainService = productEmbeddingDomainService;
         this.externalCatalogService = externalCatalogService;
         this.externalPricingService = externalPricingService;
-        this.externalCoreService = externalCoreService;
     }
 
     @Override
@@ -50,10 +50,9 @@ public class ProductEmbeddingQueryServiceImpl implements ProductEmbeddingQuerySe
         return productEmbeddingList.thenCompose(pel -> {
             List<CompletableFuture<SemanticSearchDto>> futures = pel.stream()
                     .map(pe -> CompletableFuture.supplyAsync(() -> {
-                        var productVariantDto = externalCatalogService.getVariantById(pe.getProductVariantId());
+                        var productVariantDto = externalCatalogService.getVariantById(pe.productVariantId());
                         var productDto = externalCatalogService.getProductById(productVariantDto.productId());
-                        /*var mediaAssetsDto = externalCoreService.getMediaAssetsByEntityIdAndEntityType(pe.getTenantId(), productDto.id());*/
-                        var productPriceListDto = externalPricingService.getProductPriceByVariantId(pe.getTenantId(), pe.getProductVariantId());
+                        var productPriceListDto = externalPricingService.getProductPriceByVariantId(pe.tenantId(), pe.productVariantId());
 
                         return new SemanticSearchDto(
                                 productDto,
