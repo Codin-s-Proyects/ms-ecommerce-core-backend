@@ -14,8 +14,8 @@ public class IamContextFacade {
         this.userDomainService = userDomainService;
     }
 
-    public UUID getUserById(UUID userId, UUID tenantId) {
-        var user = userDomainService.getUserByIdAndTenantId(userId, tenantId);
+    public UUID getUserById(UUID userId) {
+        var user = userDomainService.getUserById(userId);
 
         return user.getId();
     }

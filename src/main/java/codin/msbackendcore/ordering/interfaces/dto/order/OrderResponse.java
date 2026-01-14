@@ -13,6 +13,7 @@ public record OrderResponse(
         BigDecimal subtotal,
         BigDecimal discountTotal,
         BigDecimal total,
-        String notes
+        String notes,
+        String orderChannel
 ) {
 }

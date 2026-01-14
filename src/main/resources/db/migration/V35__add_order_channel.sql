@@ -1,0 +1,2 @@
+ALTER TABLE ordering.orders
+    ADD COLUMN order_channel TEXT NOT NULL DEFAULT 'MARKETPLACE';

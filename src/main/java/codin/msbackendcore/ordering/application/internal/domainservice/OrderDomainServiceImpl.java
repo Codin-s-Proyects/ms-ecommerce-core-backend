@@ -1,6 +1,7 @@
 package codin.msbackendcore.ordering.application.internal.domainservice;
 
 import codin.msbackendcore.ordering.domain.model.entities.Order;
+import codin.msbackendcore.ordering.domain.model.valueobjects.OrderChannel;
 import codin.msbackendcore.ordering.domain.model.valueobjects.OrderStatus;
 import codin.msbackendcore.ordering.domain.services.order.OrderDomainService;
 import codin.msbackendcore.ordering.infrastructure.persistence.jpa.OrderRepository;
@@ -23,7 +24,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
 
     @Transactional
     @Override
-    public Order createOrder(UUID tenantId, UUID userId, String orderNumber, String currencyCode, BigDecimal subtotal, BigDecimal discountTotal, BigDecimal total, String notes) {
+    public Order createOrder(UUID tenantId, UUID userId, String orderNumber, String currencyCode, BigDecimal subtotal, BigDecimal discountTotal, BigDecimal total, OrderChannel orderChannel, String notes) {
 
         if (orderRepository.existsByOrderNumberAndTenantId(orderNumber, tenantId))
             throw new BadRequestException("error.already_exist", new String[]{orderNumber}, "orderNumber");
@@ -38,6 +39,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
                 .discountTotal(discountTotal)
                 .total(total)
                 .notes(notes)
+                .orderChannel(orderChannel)
                 .build();
 
         return orderRepository.save(order);

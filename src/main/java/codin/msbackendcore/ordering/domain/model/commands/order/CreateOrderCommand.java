@@ -14,6 +14,7 @@ public record CreateOrderCommand(
         BigDecimal discountTotal,
         BigDecimal total,
         String notes,
+        String orderChannel,
         List<CreateOrderItemCommand> items
 ) {
 }

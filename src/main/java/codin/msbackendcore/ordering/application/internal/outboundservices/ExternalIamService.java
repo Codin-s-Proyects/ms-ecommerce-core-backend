@@ -13,7 +13,7 @@ public class ExternalIamService {
         this.iamContextFacade = iamContextFacade;
     }
 
-    public boolean existsUserById(UUID userId, UUID tenantId) {
-        return iamContextFacade.getUserById(userId, tenantId) != null;
+    public boolean existsUserById(UUID userId) {
+        return iamContextFacade.getUserById(userId) != null;
     }
 }
