@@ -48,7 +48,8 @@ public class OrderController {
                 saved.getSubtotal(),
                 saved.getDiscountTotal(),
                 saved.getTotal(),
-                saved.getNotes()
+                saved.getNotes(),
+                saved.getOrderChannel().name()
         );
 
         return ResponseEntity.status(201).body(response);
@@ -72,7 +73,8 @@ public class OrderController {
                 saved.getSubtotal(),
                 saved.getDiscountTotal(),
                 saved.getTotal(),
-                saved.getNotes()
+                saved.getNotes(),
+                saved.getOrderChannel().name()
         );
 
         return ResponseEntity.ok(response);
@@ -96,7 +98,8 @@ public class OrderController {
                 order.getSubtotal(),
                 order.getDiscountTotal(),
                 order.getTotal(),
-                order.getNotes()
+                order.getNotes(),
+                order.getOrderChannel().name()
         );
 
         return ResponseEntity.ok(orderResponse);
@@ -121,7 +124,8 @@ public class OrderController {
                         order.getSubtotal(),
                         order.getDiscountTotal(),
                         order.getTotal(),
-                        order.getNotes()
+                        order.getNotes(),
+                        order.getOrderChannel().name()
                 )).toList();
 
         return ResponseEntity.ok(responseList);
@@ -146,7 +150,8 @@ public class OrderController {
                         order.getSubtotal(),
                         order.getDiscountTotal(),
                         order.getTotal(),
-                        order.getNotes()
+                        order.getNotes(),
+                        order.getOrderChannel().name()
                 )).toList();
 
         return ResponseEntity.ok(responseList);

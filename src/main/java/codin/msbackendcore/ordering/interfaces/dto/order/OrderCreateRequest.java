@@ -16,7 +16,8 @@ public record OrderCreateRequest(
         @NotNull BigDecimal subtotal,
         @NotNull BigDecimal discountTotal,
         @NotNull BigDecimal total,
-        @NotBlank String notes,
+        String notes,
+        @NotBlank String orderChannel,
         List<OrderItemCreateRequest> items
 ) {
     public CreateOrderCommand toCommand() {
@@ -33,6 +34,7 @@ public record OrderCreateRequest(
                 discountTotal,
                 total,
                 notes,
+                orderChannel,
                 itemsCommand
         );
     }

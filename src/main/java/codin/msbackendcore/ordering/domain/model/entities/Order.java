@@ -1,5 +1,6 @@
 package codin.msbackendcore.ordering.domain.model.entities;
 
+import codin.msbackendcore.ordering.domain.model.valueobjects.OrderChannel;
 import codin.msbackendcore.ordering.domain.model.valueobjects.OrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -45,6 +46,10 @@ public class Order {
     @Column(name = "currency_code", columnDefinition = "TEXT", nullable = false)
     private String currencyCode;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "order_channel", columnDefinition = "TEXT", nullable = false)
+    private OrderChannel orderChannel;
+
     @Column(name = "subtotal", nullable = false)
     private BigDecimal subtotal;
 
@@ -54,8 +59,7 @@ public class Order {
     @Column(name = "total", nullable = false)
     private BigDecimal total;
 
-    @NotBlank
-    @Column(columnDefinition = "text", nullable = false, unique = true)
+    @Column(columnDefinition = "text")
     private String notes;
 
     @Column(name = "created_at", nullable = false)

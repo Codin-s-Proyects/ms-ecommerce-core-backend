@@ -6,6 +6,7 @@ import codin.msbackendcore.ordering.application.internal.outboundservices.Extern
 import codin.msbackendcore.ordering.domain.model.commands.order.CreateOrderCommand;
 import codin.msbackendcore.ordering.domain.model.commands.order.UpdateOrderStatusCommand;
 import codin.msbackendcore.ordering.domain.model.entities.Order;
+import codin.msbackendcore.ordering.domain.model.valueobjects.OrderChannel;
 import codin.msbackendcore.ordering.domain.model.valueobjects.OrderStatus;
 import codin.msbackendcore.ordering.domain.services.order.OrderCommandService;
 import codin.msbackendcore.ordering.domain.services.order.OrderDomainService;
@@ -47,8 +48,10 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
     @Override
     public Order handle(CreateOrderCommand command) {
+        if (!isValidEnum(OrderChannel.class, command.orderChannel()))
+            throw new BadRequestException("error.bad_request", new String[]{command.orderChannel()}, "orderChannel");
 
-        if (!externalIamService.existsUserById(command.userId(), command.tenantId())) {
+        if (!externalIamService.existsUserById(command.userId())) {
             throw new BadRequestException("error.bad_request", new String[]{command.userId().toString()}, "userId");
         }
 
@@ -69,6 +72,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
                 command.subtotal(),
                 command.discountTotal(),
                 command.total(),
+                OrderChannel.valueOf(command.orderChannel()),
                 command.notes()
         );
 
