@@ -5,7 +5,6 @@ import codin.msbackendcore.iam.domain.model.entities.User;
 import codin.msbackendcore.iam.domain.services.SessionDomainService;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.SessionRepository;
 import codin.msbackendcore.shared.domain.exceptions.AuthenticatedException;
-import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 

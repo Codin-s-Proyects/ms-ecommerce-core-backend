@@ -1,12 +1,7 @@
 package codin.msbackendcore.catalog.interfaces.dto.product;
 
-import codin.msbackendcore.catalog.application.internal.dto.PriceListDto;
 import codin.msbackendcore.catalog.application.internal.dto.ProductDetailDto;
-import codin.msbackendcore.catalog.application.internal.dto.ProductVariantDetailDto;
-import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantResponse;
 
-import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
