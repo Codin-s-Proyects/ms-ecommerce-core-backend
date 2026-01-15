@@ -1,7 +1,6 @@
 package codin.msbackendcore.search.interfaces.dto;
 
 import codin.msbackendcore.search.domain.model.queries.SemanticSearchQuery;
-import codin.msbackendcore.search.domain.model.valueobjects.SemanticSearchMode;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;

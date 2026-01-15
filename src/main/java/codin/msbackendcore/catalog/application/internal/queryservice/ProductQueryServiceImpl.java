@@ -9,14 +9,12 @@ import codin.msbackendcore.catalog.domain.services.category.CategoryDomainServic
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.catalog.domain.services.product.ProductQueryService;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantDomainService;
-import codin.msbackendcore.catalog.interfaces.dto.product.ProductResponse;
 import codin.msbackendcore.catalog.interfaces.dto.product.ProductWithStockResponse;
 import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.shared.infrastructure.pagination.model.CursorPage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class ProductQueryServiceImpl implements ProductQueryService {

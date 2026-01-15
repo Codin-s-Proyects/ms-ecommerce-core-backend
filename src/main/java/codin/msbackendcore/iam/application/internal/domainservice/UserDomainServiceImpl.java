@@ -7,7 +7,6 @@ import codin.msbackendcore.iam.domain.model.entities.Role;
 import codin.msbackendcore.iam.domain.model.entities.User;
 import codin.msbackendcore.iam.domain.model.entities.UserRole;
 import codin.msbackendcore.iam.domain.services.user.UserDomainService;
-import codin.msbackendcore.iam.infrastructure.persistence.jpa.RoleRepository;
 import codin.msbackendcore.iam.infrastructure.persistence.jpa.UserRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;

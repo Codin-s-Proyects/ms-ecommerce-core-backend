@@ -2,7 +2,6 @@ package codin.msbackendcore.search.application.internal.domainservice;
 
 import codin.msbackendcore.search.application.internal.builders.EmbeddingTextBuilder;
 import codin.msbackendcore.search.application.internal.outboundservices.embedding.OpenAIEmbeddingClient;
-import codin.msbackendcore.search.domain.model.entities.ProductEmbedding;
 import codin.msbackendcore.search.domain.model.valueobjects.ProductEmbeddingSourceType;
 import codin.msbackendcore.search.domain.model.valueobjects.SemanticSearchMode;
 import codin.msbackendcore.search.domain.services.ProductEmbeddingDomainService;

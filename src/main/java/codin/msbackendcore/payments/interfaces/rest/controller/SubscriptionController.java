@@ -1,24 +1,16 @@
 package codin.msbackendcore.payments.interfaces.rest.controller;
 
-import codin.msbackendcore.payments.domain.model.queries.payment.GetAllPaymentsByUserIdQuery;
-import codin.msbackendcore.payments.domain.services.payment.PaymentCommandService;
-import codin.msbackendcore.payments.domain.services.payment.PaymentQueryService;
 import codin.msbackendcore.payments.domain.services.subscription.SubscriptionCommandService;
-import codin.msbackendcore.payments.interfaces.dto.izipay.IzipayTokenRequest;
-import codin.msbackendcore.payments.interfaces.dto.izipay.IzipayTokenResponse;
-import codin.msbackendcore.payments.interfaces.dto.payment.PaymentCreateRequest;
-import codin.msbackendcore.payments.interfaces.dto.payment.PaymentResponse;
-import codin.msbackendcore.payments.interfaces.dto.payment.PaymentStatusUpdateRequest;
 import codin.msbackendcore.payments.interfaces.dto.subscription.SubscriptionCreateRequest;
 import codin.msbackendcore.payments.interfaces.dto.subscription.SubscriptionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.UUID;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/subscriptions")
