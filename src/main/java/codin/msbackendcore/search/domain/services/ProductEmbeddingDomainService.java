@@ -1,6 +1,5 @@
 package codin.msbackendcore.search.domain.services;
 
-import codin.msbackendcore.search.domain.model.entities.ProductEmbedding;
 import codin.msbackendcore.search.domain.model.valueobjects.SemanticSearchMode;
 import codin.msbackendcore.search.infrastructure.persistence.dto.ProductEmbeddingView;
 
@@ -20,4 +19,5 @@ public interface ProductEmbeddingDomainService {
     );
 
     CompletableFuture<List<ProductEmbeddingView>> semanticSearch(UUID tenantId, String query, int limit, SemanticSearchMode mode, Double distanceThreshold);
+    List<String> findSemanticDetails(UUID tenantId, UUID[] variantIds);
 }

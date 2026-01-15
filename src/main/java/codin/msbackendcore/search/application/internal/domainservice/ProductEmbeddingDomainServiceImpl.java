@@ -110,6 +110,11 @@ public class ProductEmbeddingDomainServiceImpl implements ProductEmbeddingDomain
                 .thenApply(queryEmbedding -> productEmbeddingRepository.search(tenantId, queryEmbedding, sourceType.name(), limit, distanceThreshold));
     }
 
+    @Override
+    public List<String> findSemanticDetails(UUID tenantId, UUID[] variantIds) {
+        return productEmbeddingRepository.findSemanticDetails(tenantId, variantIds);
+    }
+
 
     private CompletableFuture<Void> saveEmbedding(String embeddingText, UUID tenantId, UUID variantId, ProductEmbeddingSourceType sourceType) {
         return openAI.embedAsync(embeddingText)

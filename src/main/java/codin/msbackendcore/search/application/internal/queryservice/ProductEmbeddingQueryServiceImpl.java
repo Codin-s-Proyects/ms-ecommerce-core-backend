@@ -1,20 +1,15 @@
 package codin.msbackendcore.search.application.internal.queryservice;
 
-import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.search.application.internal.dto.SemanticSearchDto;
-import codin.msbackendcore.search.application.internal.outboundservices.acl.ExternalCatalogService;
-import codin.msbackendcore.search.application.internal.outboundservices.acl.ExternalCoreService;
-import codin.msbackendcore.search.application.internal.outboundservices.acl.ExternalPricingService;
 import codin.msbackendcore.search.domain.model.queries.SemanticSearchQuery;
 import codin.msbackendcore.search.domain.model.valueobjects.SemanticSearchMode;
 import codin.msbackendcore.search.domain.services.ProductEmbeddingDomainService;
 import codin.msbackendcore.search.domain.services.ProductEmbeddingQueryService;
-import codin.msbackendcore.search.infrastructure.persistence.dto.ProductEmbeddingView;
+import codin.msbackendcore.search.infrastructure.persistence.mapper.SemanticSearchMapper;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.isValidEnum;
@@ -23,13 +18,12 @@ import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.isVali
 public class ProductEmbeddingQueryServiceImpl implements ProductEmbeddingQueryService {
 
     private final ProductEmbeddingDomainService productEmbeddingDomainService;
-    private final ExternalCatalogService externalCatalogService;
-    private final ExternalPricingService externalPricingService;
+    private final SemanticSearchMapper semanticSearchMapper;
 
-    public ProductEmbeddingQueryServiceImpl(ProductEmbeddingDomainService productEmbeddingDomainService, ExternalCatalogService externalCatalogService, ExternalPricingService externalPricingService) {
+    public ProductEmbeddingQueryServiceImpl(ProductEmbeddingDomainService productEmbeddingDomainService, SemanticSearchMapper semanticSearchMapper) {
         this.productEmbeddingDomainService = productEmbeddingDomainService;
-        this.externalCatalogService = externalCatalogService;
-        this.externalPricingService = externalPricingService;
+        this.semanticSearchMapper = semanticSearchMapper;
+
     }
 
     @Override
@@ -47,25 +41,34 @@ public class ProductEmbeddingQueryServiceImpl implements ProductEmbeddingQuerySe
                 query.distanceThreshold()
         );
 
-        return productEmbeddingList.thenCompose(pel -> {
-            List<CompletableFuture<SemanticSearchDto>> futures = pel.stream()
-                    .map(pe -> CompletableFuture.supplyAsync(() -> {
-                        var productVariantDto = externalCatalogService.getVariantById(pe.productVariantId());
-                        var productDto = externalCatalogService.getProductById(productVariantDto.productId());
-                        var productPriceListDto = externalPricingService.getProductPriceByVariantId(pe.tenantId(), pe.productVariantId());
+        return productEmbeddingList.thenCompose(embeddings  -> {
+            if (embeddings .isEmpty()) {
+                return CompletableFuture.completedFuture(List.of());
+            }
 
-                        return new SemanticSearchDto(
-                                productDto,
-                                productVariantDto,
-                                productPriceListDto
-                        );
-                    }))
-                    .toList();
+            Map<UUID, Integer> ranking = new HashMap<>();
+            List<UUID> variantIds = new ArrayList<>();
 
-            return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                    .thenApply(v -> futures.stream()
-                            .map(CompletableFuture::join)
-                            .toList());
+            for (int i = 0; i < embeddings.size(); i++) {
+                variantIds.add(embeddings.get(i).productVariantId());
+                ranking.put(embeddings.get(i).productVariantId(), i);
+            }
+
+            List<String> rawJson =
+                    productEmbeddingDomainService.findSemanticDetails(
+                            query.tenantId(),
+                            variantIds.toArray(UUID[]::new)
+                    );
+
+            List<SemanticSearchDto> result = new ArrayList<>(rawJson.stream()
+                    .map(semanticSearchMapper::toDto)
+                    .toList());
+
+            result.sort(Comparator.comparingInt(
+                    dto -> ranking.get(dto.productVariant().id())
+            ));
+
+            return CompletableFuture.completedFuture(result);
         });
     }
 }
