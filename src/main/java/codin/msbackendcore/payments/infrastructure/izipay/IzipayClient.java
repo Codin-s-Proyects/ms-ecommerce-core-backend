@@ -48,7 +48,7 @@ public class IzipayClient {
 
 
         Map<String, Object> response = webClient.post()
-                .uri("/security/v1/Token/Generate")
+                .uri("/v1/Token/Generate")
                 .headers(httpHeaders -> headers.forEach(httpHeaders::add))
                 .bodyValue(payload)
                 .retrieve()

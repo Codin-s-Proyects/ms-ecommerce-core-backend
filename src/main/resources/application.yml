@@ -57,7 +57,7 @@ logging:
     io.github.resilience4j: WARN
 
 izipay:
-  api-url: https://sandbox-api-pw.izipay.pe
+  api-url: ${IZIPAY_API_URL}
   api-key: ${IZIPAY_API_KEY}
   merchant-code: ${IZIPAY_MERCHANT_CODE}
 
