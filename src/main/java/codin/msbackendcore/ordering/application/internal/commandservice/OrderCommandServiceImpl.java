@@ -59,10 +59,9 @@ public class OrderCommandServiceImpl implements OrderCommandService {
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
-        var currentYear = Year.now().getValue();
         var nextOrderNumber = orderCounterDomainService.getOrderCounterByTenant(command.tenantId());
 
-        var orderNumber = generateOrderNumber(currentYear, nextOrderNumber);
+        var orderNumber = generateOrderNumber(nextOrderNumber);
 
         var order = orderDomainService.createOrder(
                 command.tenantId(),

@@ -118,11 +118,10 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     @Override
     public IzipayTokenResponse handle(IzipayTokenPaymentCommand command) {
 
-        var currentYear = Year.now().getValue();
         var nextOrderNumber = externalOrderingService.getOrderCounterByTenant(command.tenantId());
 
         var transactionId = generateTransactionId(command.tenantId());
-        var orderNumber = generateOrderNumber(currentYear, nextOrderNumber);
+        var orderNumber = generateOrderNumber(nextOrderNumber);
 
         String securityToken = izipayClient.generateToken(transactionId, command.amount(), orderNumber);
 

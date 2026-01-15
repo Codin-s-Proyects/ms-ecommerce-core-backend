@@ -73,8 +73,10 @@ public class CommonUtils {
         return sb.toString();
     }
 
-    public static String generateOrderNumber(int currentYear, int nextNumber) {
-        return String.format("ORD-%d-%06d", currentYear, nextNumber);
+    public static String generateOrderNumber(int nextNumber) {
+        String currentMillis = String.valueOf(System.currentTimeMillis()).substring(0, 10);
+
+        return String.format("%s%05d", currentMillis, nextNumber);
     }
 
     public static String generateTransactionId(UUID tenantId) {
