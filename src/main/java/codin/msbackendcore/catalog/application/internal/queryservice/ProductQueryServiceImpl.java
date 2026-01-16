@@ -9,7 +9,7 @@ import codin.msbackendcore.catalog.domain.services.category.CategoryDomainServic
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.catalog.domain.services.product.ProductQueryService;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantDomainService;
-import codin.msbackendcore.catalog.interfaces.dto.product.ProductWithStockResponse;
+import codin.msbackendcore.catalog.interfaces.dto.product.ProductDetailWithStockResponse;
 import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import codin.msbackendcore.shared.infrastructure.pagination.model.CursorPage;
 import org.springframework.stereotype.Service;
@@ -55,7 +55,7 @@ public class ProductQueryServiceImpl implements ProductQueryService {
     }
 
     @Override
-    public List<ProductWithStockResponse> handle(GetAllProductByCategoryAndTenantIdQuery query) {
+    public List<ProductDetailWithStockResponse> handle(GetAllProductByCategoryAndTenantIdQuery query) {
         var category = categoryDomainService.getCategoryById(query.categoryId());
 
 
@@ -71,7 +71,9 @@ public class ProductQueryServiceImpl implements ProductQueryService {
                             )
                             .sum();
 
-                    return new ProductWithStockResponse(
+                    var mediaAsset = externalCoreService.getMediaAssetByEntityIdAndEntityType(query.tenantId(), product.getId(), EntityType.PRODUCT);
+
+                    return new ProductDetailWithStockResponse(
                             product.getId(),
                             product.getTenantId(),
                             product.getName(),
@@ -79,14 +81,15 @@ public class ProductQueryServiceImpl implements ProductQueryService {
                             product.getDescription(),
                             product.isHasVariants(),
                             product.getStatus().name(),
-                            totalStock
+                            totalStock,
+                            mediaAsset
                     );
                 })
                 .toList();
     }
 
     @Override
-    public CursorPage<ProductWithStockResponse> handle(GetAllProductPaginatedByCategoryAndTenantIdQuery query) {
+    public CursorPage<ProductDetailWithStockResponse> handle(GetAllProductPaginatedByCategoryAndTenantIdQuery query) {
         var category = categoryDomainService.getCategoryById(query.categoryId());
 
         var cursorProduct = productDomainService.getProductsByCategory(query.tenantId(), category.getId(), query.paginationQuery());
@@ -102,7 +105,9 @@ public class ProductQueryServiceImpl implements ProductQueryService {
                             )
                             .sum();
 
-                    return new ProductWithStockResponse(
+                    var mediaAsset = externalCoreService.getMediaAssetByEntityIdAndEntityType(query.tenantId(), product.getId(), EntityType.PRODUCT);
+
+                    return new ProductDetailWithStockResponse(
                             product.getId(),
                             product.getTenantId(),
                             product.getName(),
@@ -110,7 +115,8 @@ public class ProductQueryServiceImpl implements ProductQueryService {
                             product.getDescription(),
                             product.isHasVariants(),
                             product.getStatus().name(),
-                            totalStock
+                            totalStock,
+                            mediaAsset
                     );
                 })
                 .toList();

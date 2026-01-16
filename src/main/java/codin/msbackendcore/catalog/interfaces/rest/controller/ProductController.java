@@ -77,7 +77,7 @@ public class ProductController {
 
     @Operation(summary = "Obtener todos los productos por categoría y tenantId")
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<CursorPage<ProductWithStockResponse>> getAllProductByCategory(
+    public ResponseEntity<CursorPage<ProductDetailWithStockResponse>> getAllProductByCategory(
             @PathVariable UUID categoryId,
             @RequestParam(required = false) UUID tenantId,
             @RequestParam(required = false) String cursor,
