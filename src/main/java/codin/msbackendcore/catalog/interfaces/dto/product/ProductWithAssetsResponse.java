@@ -1,8 +1,11 @@
 package codin.msbackendcore.catalog.interfaces.dto.product;
 
+import codin.msbackendcore.catalog.application.internal.dto.MediaAssetDto;
+
+import java.util.List;
 import java.util.UUID;
 
-public record ProductWithStockResponse(
+public record ProductWithAssetsResponse(
     UUID id,
     UUID tenantId,
     String name,
@@ -10,5 +13,5 @@ public record ProductWithStockResponse(
     String description,
     boolean hasVariants,
     String status,
-    Integer stock
+    List<MediaAssetDto> mediaAssets
 ){}

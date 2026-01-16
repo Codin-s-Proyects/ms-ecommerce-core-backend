@@ -1,10 +1,13 @@
 package codin.msbackendcore.catalog.interfaces.acl;
 
+import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalCoreService;
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariantDomainService;
 import codin.msbackendcore.catalog.interfaces.dto.product.ProductResponse;
+import codin.msbackendcore.catalog.interfaces.dto.product.ProductWithAssetsResponse;
 import codin.msbackendcore.catalog.interfaces.dto.productvariant.CatalogEmbeddingResponse;
 import codin.msbackendcore.catalog.interfaces.dto.productvariant.ProductVariantResponse;
+import codin.msbackendcore.core.domain.model.valueobjects.EntityType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,23 +21,28 @@ public class CatalogContextFacade {
 
     private final ProductDomainService productDomainService;
     private final ProductVariantDomainService productVariantDomainService;
+    private final ExternalCoreService externalCoreService;
 
-    public CatalogContextFacade(ProductDomainService productDomainService, ProductVariantDomainService productVariantDomainService) {
+    public CatalogContextFacade(ProductDomainService productDomainService, ProductVariantDomainService productVariantDomainService, ExternalCoreService externalCoreService) {
         this.productDomainService = productDomainService;
         this.productVariantDomainService = productVariantDomainService;
+        this.externalCoreService = externalCoreService;
     }
 
-    public ProductResponse getProductById(UUID productId) {
+    public ProductWithAssetsResponse getProductById(UUID productId) {
         var product = productDomainService.getProductById(productId);
 
-        return new ProductResponse(
+        var mediaAssets = externalCoreService.getMediaAssetByEntityIdAndEntityType(product.getTenantId(), product.getId(), EntityType.PRODUCT);
+
+        return new ProductWithAssetsResponse(
                 product.getId(),
                 product.getTenantId(),
                 product.getName(),
                 product.getSlug(),
                 product.getDescription(),
                 product.isHasVariants(),
-                product.getStatus().name()
+                product.getStatus().name(),
+                mediaAssets
         );
     }
 

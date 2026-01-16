@@ -34,7 +34,7 @@ public class ProductVariantController {
 
         var response = productVariantQueryService.handle(query);
 
-        return ResponseEntity.status(200).body(ProductVariantDetailResponse.fromDto(response));
+        return ResponseEntity.status(200).body(response);
     }
 
     @Operation(summary = "Crear una nueva variante de un producto")
