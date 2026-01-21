@@ -6,19 +6,21 @@ import codin.msbackendcore.ordering.application.internal.outboundservices.Extern
 import codin.msbackendcore.ordering.domain.model.commands.order.CreateOrderCommand;
 import codin.msbackendcore.ordering.domain.model.commands.order.UpdateOrderStatusCommand;
 import codin.msbackendcore.ordering.domain.model.entities.Order;
+import codin.msbackendcore.ordering.domain.model.valueobjects.DocumentType;
 import codin.msbackendcore.ordering.domain.model.valueobjects.OrderChannel;
 import codin.msbackendcore.ordering.domain.model.valueobjects.OrderStatus;
 import codin.msbackendcore.ordering.domain.services.order.OrderCommandService;
 import codin.msbackendcore.ordering.domain.services.order.OrderDomainService;
 import codin.msbackendcore.ordering.domain.services.ordercounter.OrderCounterDomainService;
+import codin.msbackendcore.ordering.domain.services.ordercustomer.OrderCustomerDomainService;
 import codin.msbackendcore.ordering.domain.services.orderitem.OrderItemDomainService;
+import codin.msbackendcore.ordering.domain.services.ordershippingaddress.OrderShippingAddressDomainService;
 import codin.msbackendcore.ordering.domain.services.orderstatushistory.OrderStatusHistoryDomainService;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.Year;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateOrderNumber;
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.isValidEnum;
@@ -30,16 +32,20 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     private final OrderDomainService orderDomainService;
     private final OrderCounterDomainService orderCounterDomainService;
     private final OrderItemDomainService orderItemDomainService;
+    private final OrderCustomerDomainService orderCustomerDomainService;
+    private final OrderShippingAddressDomainService orderShippingAddressDomainService;
     private final OrderStatusHistoryDomainService orderStatusHistoryDomainService;
 
     private final ExternalCoreService externalCoreService;
     private final ExternalCatalogService externalCatalogService;
     private final ExternalIamService externalIamService;
 
-    public OrderCommandServiceImpl(OrderDomainService orderDomainService, OrderCounterDomainService orderCounterDomainService, OrderItemDomainService orderItemDomainService, OrderStatusHistoryDomainService orderStatusHistoryDomainService, ExternalCoreService externalCoreService, ExternalCatalogService externalCatalogService, ExternalIamService externalIamService) {
+    public OrderCommandServiceImpl(OrderDomainService orderDomainService, OrderCounterDomainService orderCounterDomainService, OrderItemDomainService orderItemDomainService, OrderCustomerDomainService orderCustomerDomainService, OrderShippingAddressDomainService orderShippingAddressDomainService, OrderStatusHistoryDomainService orderStatusHistoryDomainService, ExternalCoreService externalCoreService, ExternalCatalogService externalCatalogService, ExternalIamService externalIamService) {
         this.orderDomainService = orderDomainService;
         this.orderCounterDomainService = orderCounterDomainService;
         this.orderItemDomainService = orderItemDomainService;
+        this.orderCustomerDomainService = orderCustomerDomainService;
+        this.orderShippingAddressDomainService = orderShippingAddressDomainService;
         this.orderStatusHistoryDomainService = orderStatusHistoryDomainService;
         this.externalCoreService = externalCoreService;
         this.externalCatalogService = externalCatalogService;
@@ -48,10 +54,13 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
     @Override
     public Order handle(CreateOrderCommand command) {
+        if (!isValidEnum(DocumentType.class, command.customer().documentType()))
+            throw new BadRequestException("error.bad_request", new String[]{command.customer().documentType()}, "documentType");
+
         if (!isValidEnum(OrderChannel.class, command.orderChannel()))
             throw new BadRequestException("error.bad_request", new String[]{command.orderChannel()}, "orderChannel");
 
-        if (!externalIamService.existsUserById(command.userId())) {
+        if (command.userId() != null && !externalIamService.existsUserById(command.userId())) {
             throw new BadRequestException("error.bad_request", new String[]{command.userId().toString()}, "userId");
         }
 
@@ -74,6 +83,31 @@ public class OrderCommandServiceImpl implements OrderCommandService {
                 OrderChannel.valueOf(command.orderChannel()),
                 command.notes()
         );
+
+        var customer = orderCustomerDomainService.createOrderCustomer(
+                order,
+                command.customer().firstName(),
+                command.customer().lastName(),
+                command.customer().email(),
+                command.customer().phone(),
+                DocumentType.valueOf(command.customer().documentType()),
+                command.customer().documentNumber()
+        );
+
+        order.setCustomer(customer);
+
+        var shippingAddress = orderShippingAddressDomainService.createOrderShippingAddress(
+                order,
+                command.shippingAddress().department(),
+                command.shippingAddress().province(),
+                command.shippingAddress().district(),
+                command.shippingAddress().addressLine(),
+                command.shippingAddress().reference(),
+                command.shippingAddress().latitude(),
+                command.shippingAddress().longitude()
+        );
+
+        order.setShippingAddress(shippingAddress);
 
         var orderFinalPrice = BigDecimal.ZERO;
 

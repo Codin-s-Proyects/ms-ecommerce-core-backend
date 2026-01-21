@@ -1,7 +1,8 @@
-package codin.msbackendcore.ordering.interfaces.dto.order;
+package codin.msbackendcore.ordering.interfaces.dto.order.request;
 
 import codin.msbackendcore.ordering.domain.model.commands.order.CreateOrderCommand;
 import codin.msbackendcore.ordering.interfaces.dto.orderitem.OrderItemCreateRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,13 +12,20 @@ import java.util.UUID;
 
 public record OrderCreateRequest(
         @NotNull UUID tenantId,
-        @NotNull UUID userId,
+        UUID userId,
         @NotBlank String currencyCode,
         @NotNull BigDecimal subtotal,
         @NotNull BigDecimal discountTotal,
         @NotNull BigDecimal total,
         String notes,
         @NotBlank String orderChannel,
+        @Valid
+        @NotNull
+        OrderCustomerCreateRequest customer,
+        @Valid
+        @NotNull
+        OrderShippingAddressCreateRequest shippingAddress,
+        @Valid
         List<OrderItemCreateRequest> items
 ) {
     public CreateOrderCommand toCommand() {
@@ -35,6 +43,8 @@ public record OrderCreateRequest(
                 total,
                 notes,
                 orderChannel,
+                customer.toCommand(),
+                shippingAddress.toCommand(),
                 itemsCommand
         );
     }

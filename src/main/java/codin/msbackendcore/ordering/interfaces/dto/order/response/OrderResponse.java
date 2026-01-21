@@ -1,6 +1,7 @@
-package codin.msbackendcore.ordering.interfaces.dto.order;
+package codin.msbackendcore.ordering.interfaces.dto.order.response;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.UUID;
 
 public record OrderResponse(
@@ -14,6 +15,10 @@ public record OrderResponse(
         BigDecimal discountTotal,
         BigDecimal total,
         String notes,
-        String orderChannel
+        String orderChannel,
+         UUID trackingToken,
+        OrderCustomerResponse customer,
+        OrderShippingAddressResponse shippingAddress,
+        Instant createdAt
 ) {
 }

@@ -1,6 +1,8 @@
 package codin.msbackendcore.ordering.domain.model.commands.order;
 
+import codin.msbackendcore.ordering.domain.model.commands.ordercustomer.CreateOrderCustomerCommand;
 import codin.msbackendcore.ordering.domain.model.commands.orderitem.CreateOrderItemCommand;
+import codin.msbackendcore.ordering.domain.model.commands.ordershippingaddress.CreateOrderShippingAddressCommand;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,6 +17,8 @@ public record CreateOrderCommand(
         BigDecimal total,
         String notes,
         String orderChannel,
+        CreateOrderCustomerCommand customer,
+        CreateOrderShippingAddressCommand shippingAddress,
         List<CreateOrderItemCommand> items
 ) {
 }

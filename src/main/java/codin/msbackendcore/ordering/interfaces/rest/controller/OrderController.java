@@ -1,13 +1,16 @@
 package codin.msbackendcore.ordering.interfaces.rest.controller;
 
+import codin.msbackendcore.ordering.domain.model.entities.Order;
 import codin.msbackendcore.ordering.domain.model.queries.GetAllOrdersByTenantIdQuery;
 import codin.msbackendcore.ordering.domain.model.queries.GetAllOrdersByUserIdQuery;
 import codin.msbackendcore.ordering.domain.model.queries.GetOrderByIdQuery;
 import codin.msbackendcore.ordering.domain.services.order.OrderCommandService;
 import codin.msbackendcore.ordering.domain.services.order.OrderQueryService;
-import codin.msbackendcore.ordering.interfaces.dto.order.OrderCreateRequest;
-import codin.msbackendcore.ordering.interfaces.dto.order.OrderResponse;
-import codin.msbackendcore.ordering.interfaces.dto.order.OrderStatusUpdateRequest;
+import codin.msbackendcore.ordering.interfaces.dto.order.request.OrderCreateRequest;
+import codin.msbackendcore.ordering.interfaces.dto.order.response.OrderCustomerResponse;
+import codin.msbackendcore.ordering.interfaces.dto.order.response.OrderResponse;
+import codin.msbackendcore.ordering.interfaces.dto.order.request.OrderStatusUpdateRequest;
+import codin.msbackendcore.ordering.interfaces.dto.order.response.OrderShippingAddressResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -38,19 +41,7 @@ public class OrderController {
 
         var saved = orderCommandService.handle(command);
 
-        var response = new OrderResponse(
-                saved.getId(),
-                saved.getTenantId(),
-                saved.getUserId(),
-                saved.getOrderNumber(),
-                saved.getStatus().name(),
-                saved.getCurrencyCode(),
-                saved.getSubtotal(),
-                saved.getDiscountTotal(),
-                saved.getTotal(),
-                saved.getNotes(),
-                saved.getOrderChannel().name()
-        );
+        var response = entityToResponse(saved);
 
         return ResponseEntity.status(201).body(response);
     }
@@ -63,19 +54,7 @@ public class OrderController {
 
         var saved = orderCommandService.handle(command);
 
-        var response = new OrderResponse(
-                saved.getId(),
-                saved.getTenantId(),
-                saved.getUserId(),
-                saved.getOrderNumber(),
-                saved.getStatus().name(),
-                saved.getCurrencyCode(),
-                saved.getSubtotal(),
-                saved.getDiscountTotal(),
-                saved.getTotal(),
-                saved.getNotes(),
-                saved.getOrderChannel().name()
-        );
+        var response = entityToResponse(saved);
 
         return ResponseEntity.ok(response);
     }
@@ -88,19 +67,7 @@ public class OrderController {
 
         var order = orderQueryService.handle(query);
 
-        var orderResponse = new OrderResponse(
-                order.getId(),
-                order.getTenantId(),
-                order.getUserId(),
-                order.getOrderNumber(),
-                order.getStatus().name(),
-                order.getCurrencyCode(),
-                order.getSubtotal(),
-                order.getDiscountTotal(),
-                order.getTotal(),
-                order.getNotes(),
-                order.getOrderChannel().name()
-        );
+        var orderResponse = entityToResponse(order);
 
         return ResponseEntity.ok(orderResponse);
     }
@@ -113,20 +80,7 @@ public class OrderController {
 
         var getList = orderQueryService.handle(query);
 
-        var responseList = getList.stream().map(order ->
-                new OrderResponse(
-                        order.getId(),
-                        order.getTenantId(),
-                        order.getUserId(),
-                        order.getOrderNumber(),
-                        order.getStatus().name(),
-                        order.getCurrencyCode(),
-                        order.getSubtotal(),
-                        order.getDiscountTotal(),
-                        order.getTotal(),
-                        order.getNotes(),
-                        order.getOrderChannel().name()
-                )).toList();
+        var responseList = getList.stream().map(this::entityToResponse).toList();
 
         return ResponseEntity.ok(responseList);
     }
@@ -139,22 +93,47 @@ public class OrderController {
 
         var getList = orderQueryService.handle(query);
 
-        var responseList = getList.stream().map(order ->
-                new OrderResponse(
-                        order.getId(),
-                        order.getTenantId(),
-                        order.getUserId(),
-                        order.getOrderNumber(),
-                        order.getStatus().name(),
-                        order.getCurrencyCode(),
-                        order.getSubtotal(),
-                        order.getDiscountTotal(),
-                        order.getTotal(),
-                        order.getNotes(),
-                        order.getOrderChannel().name()
-                )).toList();
+        var responseList = getList.stream().map(this::entityToResponse).toList();
 
         return ResponseEntity.ok(responseList);
+    }
+
+    private OrderResponse entityToResponse(Order order) {
+
+        var customer = new OrderCustomerResponse(
+                order.getCustomer().getFirstName(),
+                order.getCustomer().getLastName(),
+                order.getCustomer().getEmail(),
+                order.getCustomer().getPhone(),
+                order.getCustomer().getDocumentType().name(),
+                order.getCustomer().getDocumentNumber()
+        );
+
+        var shippingAddress = new OrderShippingAddressResponse(
+                order.getShippingAddress().getDepartment(),
+                order.getShippingAddress().getProvince(),
+                order.getShippingAddress().getDistrict(),
+                order.getShippingAddress().getAddressLine(),
+                order.getShippingAddress().getReference()
+        );
+
+        return new OrderResponse(
+                order.getId(),
+                order.getTenantId(),
+                order.getUserId(),
+                order.getOrderNumber(),
+                order.getStatus().name(),
+                order.getCurrencyCode(),
+                order.getSubtotal(),
+                order.getDiscountTotal(),
+                order.getTotal(),
+                order.getNotes(),
+                order.getOrderChannel().name(),
+                order.getTrackingToken(),
+                customer,
+                shippingAddress,
+                order.getCreatedAt()
+        );
     }
 }
 
