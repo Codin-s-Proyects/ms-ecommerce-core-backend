@@ -1,14 +1,16 @@
 package codin.msbackendcore.ordering.application.internal.queryservice;
 
+import codin.msbackendcore.ordering.application.internal.valueobjects.OrderSearchOperation;
 import codin.msbackendcore.ordering.domain.model.entities.Order;
-import codin.msbackendcore.ordering.domain.model.queries.GetAllOrdersByTenantIdQuery;
-import codin.msbackendcore.ordering.domain.model.queries.GetAllOrdersByUserIdQuery;
-import codin.msbackendcore.ordering.domain.model.queries.GetOrderByIdQuery;
+import codin.msbackendcore.ordering.domain.model.queries.GetOrdersByAttributesQuery;
 import codin.msbackendcore.ordering.domain.services.order.OrderDomainService;
 import codin.msbackendcore.ordering.domain.services.order.OrderQueryService;
+import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.isValidEnum;
 
 @Service
 public class OrderQueryServiceImpl implements OrderQueryService {
@@ -20,17 +22,20 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     }
 
     @Override
-    public Order handle(GetOrderByIdQuery query) {
-        return orderDomainService.getOrderById(query.orderId(), query.tenantId());
-    }
+    public List<Order> handle(GetOrdersByAttributesQuery query) {
 
-    @Override
-    public List<Order> handle(GetAllOrdersByTenantIdQuery query) {
-        return orderDomainService.getOrdersByTenantId(query.tenantId());
-    }
+        if (!isValidEnum(OrderSearchOperation.class, query.operation())) {
+            throw new BadRequestException("error.bad_request", new String[]{query.operation()}, "operation");
+        }
 
-    @Override
-    public List<Order> handle(GetAllOrdersByUserIdQuery query) {
-        return orderDomainService.getOrdersByUserId(query.userId(), query.tenantId());
+        return orderDomainService.search(
+                OrderSearchOperation.valueOf(query.operation()),
+                query.id(),
+                query.tenantId(),
+                query.userId(),
+                query.orderNumber(),
+                query.documentNumber(),
+                query.trackingToken()
+        );
     }
 }

@@ -3,7 +3,7 @@ package codin.msbackendcore.ordering.application.internal.domainservice;
 import codin.msbackendcore.ordering.domain.model.entities.Order;
 import codin.msbackendcore.ordering.domain.model.entities.OrderItem;
 import codin.msbackendcore.ordering.domain.services.orderitem.OrderItemDomainService;
-import codin.msbackendcore.ordering.infrastructure.persistence.jpa.OrderItemRepository;
+import codin.msbackendcore.ordering.infrastructure.persistence.jpa.repositories.OrderItemRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 

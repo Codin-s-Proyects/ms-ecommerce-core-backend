@@ -2,7 +2,7 @@ package codin.msbackendcore.ordering.application.internal.domainservice;
 
 import codin.msbackendcore.ordering.domain.model.entities.OrderCounter;
 import codin.msbackendcore.ordering.domain.services.ordercounter.OrderCounterDomainService;
-import codin.msbackendcore.ordering.infrastructure.persistence.jpa.OrderCounterRepository;
+import codin.msbackendcore.ordering.infrastructure.persistence.jpa.repositories.OrderCounterRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.Year;
