@@ -1,4 +1,4 @@
-package codin.msbackendcore.ordering.interfaces.dto.order;
+package codin.msbackendcore.ordering.interfaces.dto.order.request;
 
 import codin.msbackendcore.ordering.domain.model.commands.order.UpdateOrderStatusCommand;
 import jakarta.validation.constraints.NotBlank;

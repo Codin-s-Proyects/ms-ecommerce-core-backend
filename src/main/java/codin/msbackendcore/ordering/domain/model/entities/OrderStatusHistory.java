@@ -31,7 +31,6 @@ public class OrderStatusHistory {
     @Column(name = "changed_at", nullable = false)
     private Instant changedAt;
 
-    @NotNull
     @Column(name = "changed_by")
     private UUID changedBy;
 

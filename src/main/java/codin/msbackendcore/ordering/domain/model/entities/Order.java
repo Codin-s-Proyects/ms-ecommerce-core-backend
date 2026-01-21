@@ -31,8 +31,7 @@ public class Order {
     @Column(name = "tenant_id", nullable = false)
     private UUID tenantId;
 
-    @NotNull
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     private UUID userId;
 
     @NotBlank
@@ -68,18 +67,40 @@ public class Order {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    @Column(name = "tracking_token", unique = true, nullable = false)
+    private UUID trackingToken;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<OrderItem> items = new HashSet<>();
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<OrderStatusHistory> statusHistory = new HashSet<>();
 
+    @OneToOne(
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            optional = false
+    )
+    private OrderCustomer customer;
+
+    @OneToOne(
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            optional = false
+    )
+    private OrderShippingAddress shippingAddress;
 
     @PrePersist
     void prePersist() {
         if (this.currencyCode == null) this.currencyCode = DEFAULT_CURRENCY_CODE;
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
+
+        if (this.trackingToken == null) {
+            this.trackingToken = UUID.randomUUID();
+        }
     }
 
     public Order addItem(OrderItem item) {
