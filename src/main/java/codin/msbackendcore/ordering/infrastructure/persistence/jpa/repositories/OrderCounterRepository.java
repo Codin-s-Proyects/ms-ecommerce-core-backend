@@ -1,4 +1,4 @@
-package codin.msbackendcore.ordering.infrastructure.persistence.jpa;
+package codin.msbackendcore.ordering.infrastructure.persistence.jpa.repositories;
 
 import codin.msbackendcore.ordering.domain.model.entities.OrderCounter;
 import org.springframework.data.jpa.repository.JpaRepository;

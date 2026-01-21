@@ -1,12 +1,15 @@
 package codin.msbackendcore.ordering.application.internal.domainservice;
 
+import codin.msbackendcore.ordering.application.internal.valueobjects.OrderSearchOperation;
 import codin.msbackendcore.ordering.domain.model.entities.Order;
 import codin.msbackendcore.ordering.domain.model.valueobjects.OrderChannel;
 import codin.msbackendcore.ordering.domain.model.valueobjects.OrderStatus;
 import codin.msbackendcore.ordering.domain.services.order.OrderDomainService;
-import codin.msbackendcore.ordering.infrastructure.persistence.jpa.OrderRepository;
+import codin.msbackendcore.ordering.infrastructure.persistence.jpa.repositories.OrderRepository;
+import codin.msbackendcore.ordering.infrastructure.persistence.jpa.specification.OrderSpecification;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -71,12 +74,65 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
-    public List<Order> getOrdersByTenantId(UUID tenantId) {
-        return orderRepository.findByTenantId(tenantId);
-    }
+    public List<Order> search(OrderSearchOperation operation, UUID id, UUID tenantId, UUID userId, String orderNumber, String documentNumber, UUID trackingToken) {
+        Specification<Order> spec = Specification.allOf();
 
-    @Override
-    public List<Order> getOrdersByUserId(UUID userId, UUID tenantId) {
-        return orderRepository.findByUserIdAndTenantId(userId, tenantId);
+        switch (operation) {
+            case BY_ID -> spec = spec.and(
+                    OrderSpecification.byId(id)
+            );
+
+            case BY_TENANT -> spec = spec.and(
+                    OrderSpecification.byTenant(tenantId)
+            );
+
+            case BY_USER -> spec = spec.and(
+                    OrderSpecification.byUser(userId)
+            );
+
+            case BY_ORDER_NUMBER -> spec = spec.and(
+                    OrderSpecification.byOrderNumber(orderNumber)
+            );
+
+            case BY_DOCUMENT_NUMBER -> spec = spec.and(
+                    OrderSpecification.byDocumentNumber(documentNumber)
+            );
+
+
+            case BY_TRACKING_TOKEN -> spec = spec.and(
+                    OrderSpecification.byTrackingToken(trackingToken)
+            );
+
+            case BY_FIELDS -> {
+                if (id != null)
+                    spec = spec.and(OrderSpecification.byId(id));
+
+                if (tenantId != null)
+                    spec = spec.and(OrderSpecification.byTenant(tenantId));
+
+                if (userId != null)
+                    spec = spec.and(OrderSpecification.byUser(userId));
+
+                if (orderNumber != null)
+                    spec = spec.and(OrderSpecification.byOrderNumber(orderNumber));
+
+                if (documentNumber != null)
+                    spec = spec.and(OrderSpecification.byDocumentNumber(documentNumber));
+
+                if (trackingToken != null)
+                    spec = spec.and(OrderSpecification.byTrackingToken(trackingToken));
+
+            }
+
+            case GET_ALL -> {}
+
+            default -> throw new BadRequestException(
+                    "error.bad_request",
+                    new String[]{"Invalid search operation"},
+                    "operation"
+            );
+        }
+
+        return orderRepository.findAll(spec);
     }
 }

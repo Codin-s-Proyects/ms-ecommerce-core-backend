@@ -1,15 +1,13 @@
 package codin.msbackendcore.ordering.interfaces.rest.controller;
 
 import codin.msbackendcore.ordering.domain.model.entities.Order;
-import codin.msbackendcore.ordering.domain.model.queries.GetAllOrdersByTenantIdQuery;
-import codin.msbackendcore.ordering.domain.model.queries.GetAllOrdersByUserIdQuery;
-import codin.msbackendcore.ordering.domain.model.queries.GetOrderByIdQuery;
 import codin.msbackendcore.ordering.domain.services.order.OrderCommandService;
 import codin.msbackendcore.ordering.domain.services.order.OrderQueryService;
 import codin.msbackendcore.ordering.interfaces.dto.order.request.OrderCreateRequest;
+import codin.msbackendcore.ordering.interfaces.dto.order.request.OrderSearchRequest;
+import codin.msbackendcore.ordering.interfaces.dto.order.request.OrderStatusUpdateRequest;
 import codin.msbackendcore.ordering.interfaces.dto.order.response.OrderCustomerResponse;
 import codin.msbackendcore.ordering.interfaces.dto.order.response.OrderResponse;
-import codin.msbackendcore.ordering.interfaces.dto.order.request.OrderStatusUpdateRequest;
 import codin.msbackendcore.ordering.interfaces.dto.order.response.OrderShippingAddressResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -59,43 +57,17 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Obtener una orden por ID", description = "Obtiene los detalles de una orden específica utilizando su ID y el ID del tenant")
-    @GetMapping("/{orderId}/tenant/{tenantId}")
-    public ResponseEntity<OrderResponse> getById(@PathVariable UUID orderId, @PathVariable UUID tenantId) {
+    @Operation(summary = "Obtener una orden o varias por atributos", description = "Obtiene una orden o varias órdenes basadas en diferentes atributos de búsqueda")
+    @PostMapping("/search")
+    public ResponseEntity<List<OrderResponse>> getOrdersByAttributes(@RequestBody OrderSearchRequest searchRequest) {
 
-        var query = new GetOrderByIdQuery(orderId, tenantId);
+        var query = searchRequest.toQuery();
 
         var order = orderQueryService.handle(query);
 
-        var orderResponse = entityToResponse(order);
-
-        return ResponseEntity.ok(orderResponse);
-    }
-
-    @Operation(summary = "Obtener todas las órdenes por ID de tenant", description = "Obtiene una lista de todas las órdenes asociadas a un ID de tenant específico")
-    @GetMapping("/tenant/{tenantId}")
-    public ResponseEntity<List<OrderResponse>> getAllByTenantId(@PathVariable UUID tenantId) {
-
-        var query = new GetAllOrdersByTenantIdQuery(tenantId);
-
-        var getList = orderQueryService.handle(query);
-
-        var responseList = getList.stream().map(this::entityToResponse).toList();
-
-        return ResponseEntity.ok(responseList);
-    }
-
-    @Operation(summary = "Obtener todas las órdenes por ID de usuario", description = "Obtiene una lista de todas las órdenes asociadas a un ID de usuario específico dentro de un tenant")
-    @GetMapping("/user/{userId}/tenant/{tenantId}")
-    public ResponseEntity<List<OrderResponse>> getAllByUserId(@PathVariable UUID userId, @PathVariable UUID tenantId) {
-
-        var query = new GetAllOrdersByUserIdQuery(tenantId, userId);
-
-        var getList = orderQueryService.handle(query);
-
-        var responseList = getList.stream().map(this::entityToResponse).toList();
-
-        return ResponseEntity.ok(responseList);
+        return ResponseEntity.ok(
+                order.stream().map(this::entityToResponse).toList()
+        );
     }
 
     private OrderResponse entityToResponse(Order order) {

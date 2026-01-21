@@ -1,8 +1,10 @@
 package codin.msbackendcore.ordering.domain.services.order;
 
+import codin.msbackendcore.ordering.application.internal.valueobjects.OrderSearchOperation;
 import codin.msbackendcore.ordering.domain.model.entities.Order;
 import codin.msbackendcore.ordering.domain.model.valueobjects.OrderChannel;
 import codin.msbackendcore.ordering.domain.model.valueobjects.OrderStatus;
+import codin.msbackendcore.ordering.interfaces.dto.order.request.OrderSearchRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,6 +15,5 @@ public interface OrderDomainService {
     Order updateOrderStatus(UUID tenantId, UUID orderId, OrderStatus orderStatus);
     Order persistOrder(Order order);
     Order getOrderById(UUID orderId, UUID tenantId);
-    List<Order> getOrdersByTenantId(UUID tenantId);
-    List<Order> getOrdersByUserId(UUID userId, UUID tenantId);
+    List<Order> search(OrderSearchOperation operation, UUID id, UUID tenantId, UUID userId, String orderNumber, String documentNumber, UUID trackingToken);
 }

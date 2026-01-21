@@ -4,7 +4,7 @@ import codin.msbackendcore.ordering.domain.model.entities.Order;
 import codin.msbackendcore.ordering.domain.model.entities.OrderStatusHistory;
 import codin.msbackendcore.ordering.domain.model.valueobjects.OrderStatus;
 import codin.msbackendcore.ordering.domain.services.orderstatushistory.OrderStatusHistoryDomainService;
-import codin.msbackendcore.ordering.infrastructure.persistence.jpa.OrderStatusHistoryRepository;
+import codin.msbackendcore.ordering.infrastructure.persistence.jpa.repositories.OrderStatusHistoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
