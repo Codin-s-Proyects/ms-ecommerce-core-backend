@@ -3,7 +3,7 @@ package codin.msbackendcore.core.application.internal.commandservice;
 import codin.msbackendcore.core.domain.model.commands.tenant.CreateTenantCommand;
 import codin.msbackendcore.core.domain.model.commands.tenant.UpdateTenantCommand;
 import codin.msbackendcore.core.domain.model.entities.Tenant;
-import codin.msbackendcore.core.domain.services.tenant.PlanDomainService;
+import codin.msbackendcore.core.domain.services.plan.PlanDomainService;
 import codin.msbackendcore.core.domain.services.tenant.TenantCommandService;
 import codin.msbackendcore.core.domain.services.tenant.TenantDomainService;
 import jakarta.transaction.Transactional;
