@@ -13,7 +13,7 @@ public interface SaleCommissionRepository extends JpaRepository<SaleCommission, 
     @Query("""
                 SELECT sc FROM SaleCommission sc
                 WHERE sc.tenantId = :tenantId
-                  AND sc.payoutStatus != 'PENDING'
+                  AND sc.payoutStatus = 'PENDING'
             """)
     List<SaleCommission> findUnpaidSaleCommissionsByTenantId(UUID tenantId);
 }

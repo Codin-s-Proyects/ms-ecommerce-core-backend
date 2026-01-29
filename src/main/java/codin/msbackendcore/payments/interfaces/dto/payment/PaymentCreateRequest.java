@@ -11,7 +11,7 @@ import java.util.UUID;
 public record PaymentCreateRequest(
         @NotNull UUID tenantId,
         @NotNull UUID orderId,
-        @NotNull UUID userId,
+        UUID userId,
         String paymentMethod,
         @NotBlank String paymentStatus,
         @NotBlank String currencyCode,

@@ -66,9 +66,15 @@ ALTER TABLE payment.sale_commissions
     ADD COLUMN IF NOT EXISTS currency_code TEXT NOT NULL;
 
 ALTER TABLE payment.payments
-    ADD COLUMN currency_code TEXT NOT NULL;
+    ADD COLUMN IF NOT EXISTS currency_code TEXT NOT NULL;
 
 CREATE INDEX IF NOT EXISTS idx_sale_commission_tenant_status
     ON payment.sale_commissions (tenant_id, payout_status);
 
+
+ALTER TABLE payment.payments
+    ALTER COLUMN user_id DROP NOT NULL;
+
+ALTER TABLE payment.sale_commissions
+    ALTER COLUMN user_id DROP NOT NULL;
 

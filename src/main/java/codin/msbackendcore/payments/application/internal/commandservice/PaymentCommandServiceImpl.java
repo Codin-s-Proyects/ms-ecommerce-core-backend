@@ -48,7 +48,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
-        if (!externalIamService.existsUserById(command.userId(), command.tenantId())) {
+        if (command.userId() != null && !externalIamService.existsUserById(command.userId(), command.tenantId())) {
             throw new BadRequestException("error.bad_request", new String[]{command.userId().toString()}, "userId");
         }
 

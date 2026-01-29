@@ -33,6 +33,7 @@ public class TenantBankAccountCommandServiceImpl implements TenantBankAccountCom
 
         var tenant = tenantDomainService.getTenantById(command.tenantId());
 
+        //TODO: Encrypt account number
         var accountNumberEncrypted = command.accountNumber();
 
         return tenantBankAccountDomainService.createTenantBankAccount(
