@@ -65,6 +65,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         }
 
         var payment = paymentDomainService.createPayment(
+                command.currencyCode(),
                 command.tenantId(),
                 command.orderId(),
                 command.userId(),
@@ -74,11 +75,11 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         );
 
 
-        if(payment.getStatus() == PaymentStatus.CONFIRMED) {
+        if(payment.getStatus() == PaymentStatus.PAID) {
             var plan = externalCoreService.getPlanByTenantId(payment.getTenantId());
 
             saleCommissionDomainService.createSaleCommission(
-                    payment.getTenantId(), payment.getOrderId(), payment, payment.getUserId(), payment.getAmount(),
+                    command.currencyCode(), payment.getTenantId(), payment.getOrderId(), payment, payment.getUserId(), payment.getAmount(),
                     plan.commissionRate(), plan.id()
             );
         }
@@ -103,11 +104,11 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
                 PaymentStatus.valueOf(command.paymentStatus())
         );
 
-        if(payment.getStatus() == PaymentStatus.CONFIRMED) {
+        if(payment.getStatus() == PaymentStatus.PAID) {
             var plan = externalCoreService.getPlanByTenantId(payment.getTenantId());
 
             saleCommissionDomainService.createSaleCommission(
-                    payment.getTenantId(), payment.getOrderId(), payment, payment.getUserId(), payment.getAmount(),
+                    payment.getCurrencyCode(), payment.getTenantId(), payment.getOrderId(), payment, payment.getUserId(), payment.getAmount(),
                     plan.commissionRate(), plan.id()
             );
         }

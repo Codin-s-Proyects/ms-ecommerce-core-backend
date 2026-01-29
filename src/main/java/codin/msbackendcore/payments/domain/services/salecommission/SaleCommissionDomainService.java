@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface SaleCommissionDomainService {
-    SaleCommission createSaleCommission(UUID tenantId, UUID orderId, Payment payment, UUID userId, BigDecimal grossAmount, BigDecimal commissionRate, UUID planId);
+    SaleCommission createSaleCommission(String currencyCode, UUID tenantId, UUID orderId, Payment payment, UUID userId, BigDecimal grossAmount, BigDecimal commissionRate, UUID planId);
     List<SaleCommission> getAllSaleCommissionByTenantId(UUID tenantId);
+    List<SaleCommission> getAllUnpaidSaleCommissionsByTenantId(UUID tenantId);
+    void markCommissionsAsPaid(SaleCommission commission);
 }

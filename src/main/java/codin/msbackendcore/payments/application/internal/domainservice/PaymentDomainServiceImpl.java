@@ -25,9 +25,9 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
     }
 
     @Override
-    public Payment createPayment(UUID tenantId, UUID orderId, UUID userId, BigDecimal amount, PaymentMethod paymentMethod, PaymentStatus paymentStatus) {
+    public Payment createPayment(String currencyCode, UUID tenantId, UUID orderId, UUID userId, BigDecimal amount, PaymentMethod paymentMethod, PaymentStatus paymentStatus) {
 
-        var confirmedAt = paymentStatus.equals(PaymentStatus.CONFIRMED) ? Instant.now() : null;
+        var confirmedAt = paymentStatus.equals(PaymentStatus.PAID) ? Instant.now() : null;
 
         var payment = Payment.builder()
                 .tenantId(tenantId)
@@ -38,6 +38,7 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
                 .transactionId(generateTransactionId(tenantId))
                 .amount(amount)
                 .confirmedAt(confirmedAt)
+                .currencyCode(currencyCode)
                 .build();
 
         return paymentRepository.save(payment);
@@ -50,7 +51,7 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
 
         payment.setPaymentMethod(paymentMethod);
         payment.setStatus(paymentStatus);
-        if(paymentStatus.equals(PaymentStatus.CONFIRMED)) {
+        if(paymentStatus.equals(PaymentStatus.PAID)) {
             payment.setConfirmedAt(Instant.now());
         }
 

@@ -1,5 +1,6 @@
 package codin.msbackendcore.payments.domain.model.entities;
 
+import codin.msbackendcore.payments.domain.model.valueobjects.PaymentStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -49,6 +50,16 @@ public class SaleCommission {
 
     @Column(name = "plan_id", nullable = false)
     private UUID planId;
+
+    @Column(name = "currency_code", columnDefinition = "TEXT")
+    private String currencyCode = "PEN";
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payout_status", nullable = false)
+    private PaymentStatus payoutStatus;
+
+    @Column(name = "paid_at")
+    private Instant paidAt;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
