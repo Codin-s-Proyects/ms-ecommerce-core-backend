@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -38,7 +39,7 @@ public class IzipayClient {
 
     @Retry(name = "izipayRetry")
     @CircuitBreaker(name = "izipayCB", fallbackMethod = "fallbackPayment")
-    public String generateToken(String transactionId, BigDecimal amount, String orderNumber) {
+    public Mono<String> generateToken(String transactionId, BigDecimal amount, String orderNumber) {
         String encoded = Base64.getEncoder().encodeToString((merchantCode + ":" + password).getBytes(StandardCharsets.UTF_8));
 
         Map<String, String> headers = new HashMap<>();
@@ -52,27 +53,36 @@ public class IzipayClient {
 
 
 
-        Map<String, Object> response = webClient.post()
+        return webClient.post()
                 .uri("/api-payment/V4/Charge/CreatePayment")
                 .headers(httpHeaders -> headers.forEach(httpHeaders::add))
                 .bodyValue(payload)
                 .retrieve()
                 .bodyToMono(Map.class)
                 .timeout(Duration.ofSeconds(10))
-                .block();
+                .flatMap(response -> {
+                    if (response == null ||
+                            !"SUCCESS".equals(response.get("status")) ||
+                            response.get("answer") == null) {
+                        return Mono.error(
+                                new ServerErrorException("error.server_error", new String[]{})
+                        );
+                    }
 
-        if (response == null || !"SUCCESS".equals(response.get("status")) || response.get("answer") == null)
-            throw new ServerErrorException("error.server_error", new String[]{});
+                    Map<String, Object> answer = (Map<String, Object>) response.get("answer");
 
+                    if (answer.get("formToken") == null) {
+                        return Mono.error(
+                                new ServerErrorException("error.server_error", new String[]{})
+                        );
+                    }
 
-        Map<String, Object> answer = (Map<String, Object>) response.get("answer");
-        if (answer.get("formToken") == null)
-            throw new ServerErrorException("error.server_error", new String[]{});
+                    return Mono.just(answer.get("formToken").toString());
+                });
 
-        return answer.get("formToken").toString();
     }
 
-    private String fallbackPayment(String transactionId, BigDecimal amount, String orderNumber, Throwable ex) {
+    private Mono<String> fallbackPayment(String transactionId, BigDecimal amount, String orderNumber, Throwable ex) {
         throw new ServerErrorException("error.izipay_unavailable", new String[]{});
     }
 }
