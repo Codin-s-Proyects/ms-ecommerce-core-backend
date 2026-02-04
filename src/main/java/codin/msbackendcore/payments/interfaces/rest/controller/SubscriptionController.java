@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/subscriptions")
+@RequestMapping("/api/v1/payments/subscriptions")
 @Tag(name = "Subscription Controller", description = "API para gestionar suscripciones")
 public class SubscriptionController {
 

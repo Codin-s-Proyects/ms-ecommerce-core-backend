@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.UUID;
@@ -55,7 +56,7 @@ public class PaymentController {
 
     @Operation(summary = "Obtener token de pago Izipay", description = "Genera un token de pago para Izipay basado en los detalles proporcionados.")
     @PostMapping("/izipay/token")
-    public ResponseEntity<IzipayTokenResponse> getIzipayToken(@Valid @RequestBody IzipayTokenRequest req) {
+    public ResponseEntity<Mono<IzipayTokenResponse>> getIzipayToken(@Valid @RequestBody IzipayTokenRequest req) {
 
         var command = req.toCommand();
 

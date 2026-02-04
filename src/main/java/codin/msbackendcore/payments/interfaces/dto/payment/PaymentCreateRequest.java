@@ -11,9 +11,10 @@ import java.util.UUID;
 public record PaymentCreateRequest(
         @NotNull UUID tenantId,
         @NotNull UUID orderId,
-        @NotNull UUID userId,
+        UUID userId,
         String paymentMethod,
         @NotBlank String paymentStatus,
+        @NotBlank String currencyCode,
         @NotBlank String orderNumber,
         @NotNull @Min(1) BigDecimal amount
 ) {
@@ -22,6 +23,7 @@ public record PaymentCreateRequest(
                 this.tenantId,
                 this.orderId,
                 this.userId,
+                this.currencyCode,
                 this.paymentMethod,
                 this.paymentStatus,
                 this.orderNumber,

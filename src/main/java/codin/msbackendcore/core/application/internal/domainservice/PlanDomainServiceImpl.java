@@ -1,7 +1,7 @@
 package codin.msbackendcore.core.application.internal.domainservice;
 
 import codin.msbackendcore.core.domain.model.entities.Plan;
-import codin.msbackendcore.core.domain.services.tenant.PlanDomainService;
+import codin.msbackendcore.core.domain.services.plan.PlanDomainService;
 import codin.msbackendcore.core.infrastructure.persistence.jpa.PlanRepository;
 import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;

@@ -7,6 +7,7 @@ public record CreatePaymentCommand(
         UUID tenantId,
         UUID orderId,
         UUID userId,
+        String currencyCode,
         String paymentMethod,
         String paymentStatus,
         String orderNumber,

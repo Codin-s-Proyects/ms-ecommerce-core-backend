@@ -83,12 +83,6 @@ public class CommonUtils {
         return "TX-" + tenantId.toString().substring(0, 6) + "-" + System.currentTimeMillis();
     }
 
-    public static String generateAmountFormat(BigDecimal amount) {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
-        symbols.setDecimalSeparator('.');
-        return new DecimalFormat("0.00", symbols).format(amount);
-    }
-
     private static String normalize(String text) {
         return text.replaceAll("[^A-Za-z0-9]", "").toUpperCase();
     }

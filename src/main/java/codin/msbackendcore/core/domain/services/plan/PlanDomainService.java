@@ -1,4 +1,4 @@
-package codin.msbackendcore.core.domain.services.tenant;
+package codin.msbackendcore.core.domain.services.plan;
 
 import codin.msbackendcore.core.domain.model.entities.Plan;
 

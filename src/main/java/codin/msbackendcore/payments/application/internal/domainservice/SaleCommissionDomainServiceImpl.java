@@ -2,6 +2,7 @@ package codin.msbackendcore.payments.application.internal.domainservice;
 
 import codin.msbackendcore.payments.domain.model.entities.Payment;
 import codin.msbackendcore.payments.domain.model.entities.SaleCommission;
+import codin.msbackendcore.payments.domain.model.valueobjects.PaymentStatus;
 import codin.msbackendcore.payments.domain.services.salecommission.SaleCommissionDomainService;
 import codin.msbackendcore.payments.infrastructure.persistence.jpa.SaleCommissionRepository;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
@@ -21,7 +22,7 @@ public class SaleCommissionDomainServiceImpl implements SaleCommissionDomainServ
     }
 
     @Override
-    public SaleCommission createSaleCommission(UUID tenantId, UUID orderId, Payment payment, UUID userId, BigDecimal grossAmount, BigDecimal commissionRate, UUID planId) {
+    public SaleCommission createSaleCommission(String currencyCode, UUID tenantId, UUID orderId, Payment payment, UUID userId, BigDecimal grossAmount, BigDecimal commissionRate, UUID planId) {
 
         if (saleCommissionRepository.existsByOrderId(orderId))
             throw new BadRequestException("error.bad_request", new String[]{orderId.toString()}, "orderId");
@@ -34,6 +35,8 @@ public class SaleCommissionDomainServiceImpl implements SaleCommissionDomainServ
                 .orderId(orderId)
                 .payment(payment)
                 .userId(userId)
+                .currencyCode(currencyCode)
+                .payoutStatus(PaymentStatus.PENDING)
                 .grossAmount(grossAmount)
                 .commissionAmount(commissionAmount)
                 .merchantAmount(merchantAmount)
@@ -47,5 +50,16 @@ public class SaleCommissionDomainServiceImpl implements SaleCommissionDomainServ
     @Override
     public List<SaleCommission> getAllSaleCommissionByTenantId(UUID tenantId) {
         return saleCommissionRepository.findAllByTenantId(tenantId);
+    }
+
+    @Override
+    public List<SaleCommission> getAllUnpaidSaleCommissionsByTenantId(UUID tenantId) {
+        return saleCommissionRepository.findUnpaidSaleCommissionsByTenantId(tenantId);
+    }
+
+    @Override
+    public void markCommissionsAsPaid(SaleCommission commission) {
+        commission.setPayoutStatus(PaymentStatus.PAID);
+        saleCommissionRepository.save(commission);
     }
 }

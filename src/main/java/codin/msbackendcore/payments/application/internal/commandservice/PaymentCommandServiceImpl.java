@@ -17,8 +17,7 @@ import codin.msbackendcore.payments.interfaces.dto.izipay.IzipayTokenResponse;
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
-import java.time.Year;
+import reactor.core.publisher.Mono;
 
 import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.*;
 
@@ -48,7 +47,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
-        if (!externalIamService.existsUserById(command.userId(), command.tenantId())) {
+        if (command.userId() != null && !externalIamService.existsUserById(command.userId(), command.tenantId())) {
             throw new BadRequestException("error.bad_request", new String[]{command.userId().toString()}, "userId");
         }
 
@@ -65,6 +64,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         }
 
         var payment = paymentDomainService.createPayment(
+                command.currencyCode(),
                 command.tenantId(),
                 command.orderId(),
                 command.userId(),
@@ -74,11 +74,11 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         );
 
 
-        if(payment.getStatus() == PaymentStatus.CONFIRMED) {
+        if (payment.getStatus() == PaymentStatus.PAID) {
             var plan = externalCoreService.getPlanByTenantId(payment.getTenantId());
 
             saleCommissionDomainService.createSaleCommission(
-                    payment.getTenantId(), payment.getOrderId(), payment, payment.getUserId(), payment.getAmount(),
+                    command.currencyCode(), payment.getTenantId(), payment.getOrderId(), payment, payment.getUserId(), payment.getAmount(),
                     plan.commissionRate(), plan.id()
             );
         }
@@ -96,18 +96,18 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
             throw new BadRequestException("error.bad_request", new String[]{command.paymentMethod()}, "paymentMethod");
         }
 
-        var payment =  paymentDomainService.updatePayment(
+        var payment = paymentDomainService.updatePayment(
                 command.paymentId(),
                 command.tenantId(),
                 command.paymentMethod() != null ? PaymentMethod.valueOf(command.paymentMethod()) : null,
                 PaymentStatus.valueOf(command.paymentStatus())
         );
 
-        if(payment.getStatus() == PaymentStatus.CONFIRMED) {
+        if (payment.getStatus() == PaymentStatus.PAID) {
             var plan = externalCoreService.getPlanByTenantId(payment.getTenantId());
 
             saleCommissionDomainService.createSaleCommission(
-                    payment.getTenantId(), payment.getOrderId(), payment, payment.getUserId(), payment.getAmount(),
+                    payment.getCurrencyCode(), payment.getTenantId(), payment.getOrderId(), payment, payment.getUserId(), payment.getAmount(),
                     plan.commissionRate(), plan.id()
             );
         }
@@ -116,19 +116,20 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     }
 
     @Override
-    public IzipayTokenResponse handle(IzipayTokenPaymentCommand command) {
+    public Mono<IzipayTokenResponse> handle(IzipayTokenPaymentCommand command) {
 
         var nextOrderNumber = externalOrderingService.getOrderCounterByTenant(command.tenantId());
 
         var transactionId = generateTransactionId(command.tenantId());
         var orderNumber = generateOrderNumber(nextOrderNumber);
 
-        String securityToken = izipayClient.generateToken(transactionId, command.amount(), orderNumber);
-
-        return new IzipayTokenResponse(
-                transactionId,
-                orderNumber,
-                securityToken
-        );
+        return izipayClient.generateToken(transactionId, command.amount(), orderNumber)
+                .map( formToken ->
+                        new IzipayTokenResponse(
+                                transactionId,
+                                orderNumber,
+                                formToken
+                        )
+                );
     }
 }

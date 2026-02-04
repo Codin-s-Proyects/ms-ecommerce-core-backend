@@ -13,10 +13,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "payments", schema = "payment")
+@Table(name = "tenant_payouts", schema = "payment")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Payment {
+public class TenantPayout {
 
     @Id
     @GeneratedValue
@@ -25,37 +25,35 @@ public class Payment {
     @Column(name = "tenant_id", nullable = false)
     private UUID tenantId;
 
-    @Column(name = "user_id")
-    private UUID userId;
-
-    @Column(name = "order_id", nullable = false)
-    private UUID orderId;
+    @Column(name = "total_amount", nullable = false)
+    private BigDecimal totalAmount;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_method")
-    private PaymentMethod paymentMethod;
+    @Column(name = "payout_method", nullable = false)
+    private PaymentMethod payoutMethod;
+
+    @Column(name = "payout_reference")
+    private String payoutReference;
+
+    @Column(name = "payout_notes")
+    private String payoutNotes;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PaymentStatus status;
 
-    @Column(name = "transaction_id", nullable = false, unique = true)
-    private String transactionId;
+    @Column(name = "executed_by", nullable = false)
+    private UUID executedBy;
 
-    @Column(name = "amount", nullable = false)
-    private BigDecimal amount;
-
-    @Column(name = "currency_code", columnDefinition = "TEXT")
-    private String currencyCode = "PEN";
+    @Column(name = "executed_at", nullable = false)
+    private Instant executedAt;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @Column(name = "confirmed_at")
-    private Instant confirmedAt;
-
     @PrePersist
     public void prePersist() {
         this.createdAt = Instant.now();
+        this.executedAt = Instant.now();
     }
 }

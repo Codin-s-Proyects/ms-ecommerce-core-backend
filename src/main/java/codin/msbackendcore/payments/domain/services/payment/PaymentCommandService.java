@@ -5,9 +5,10 @@ import codin.msbackendcore.payments.domain.model.commands.payment.CreatePaymentC
 import codin.msbackendcore.payments.domain.model.commands.payment.UpdatePaymentStatusCommand;
 import codin.msbackendcore.payments.domain.model.entities.Payment;
 import codin.msbackendcore.payments.interfaces.dto.izipay.IzipayTokenResponse;
+import reactor.core.publisher.Mono;
 
 public interface PaymentCommandService {
     Payment handle(CreatePaymentCommand command);
     Payment handle(UpdatePaymentStatusCommand command);
-    IzipayTokenResponse handle(IzipayTokenPaymentCommand command);
+    Mono<IzipayTokenResponse> handle(IzipayTokenPaymentCommand command);
 }

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/sale-commission")
+@RequestMapping("/api/v1/payments/sale-commission")
 @Tag(name = "Sale Commission Controller", description = "API para gestionar la comision de ventas")
 public class SaleCommissionController {
 
