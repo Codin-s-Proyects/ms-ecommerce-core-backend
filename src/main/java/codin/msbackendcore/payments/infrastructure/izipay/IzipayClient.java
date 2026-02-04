@@ -4,51 +4,56 @@ import codin.msbackendcore.shared.domain.exceptions.ServerErrorException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-
-import static codin.msbackendcore.shared.infrastructure.utils.CommonUtils.generateAmountFormat;
 
 @Component
 public class IzipayClient {
 
     private final WebClient webClient;
-    private final String apiKey;
     private final String merchantCode;
+    private final String publicKey;
+    private final String password;
 
     public IzipayClient(
             WebClient izipayWebClient,
-            @Value("${izipay.api-key}") String apiKey,
-            @Value("${izipay.merchant-code}") String merchantCode
+            @Value("${izipay.public-key}") String publicKey,
+            @Value("${izipay.merchant-code}") String merchantCode,
+            @Value("${izipay.password}") String password
     ) {
         this.webClient = izipayWebClient;
-        this.apiKey = apiKey;
+        this.publicKey = publicKey;
         this.merchantCode = merchantCode;
+        this.password = password;
     }
 
     @Retry(name = "izipayRetry")
     @CircuitBreaker(name = "izipayCB", fallbackMethod = "fallbackPayment")
     public String generateToken(String transactionId, BigDecimal amount, String orderNumber) {
+        String encoded = Base64.getEncoder().encodeToString((merchantCode + ":" + password).getBytes(StandardCharsets.UTF_8));
+
         Map<String, String> headers = new HashMap<>();
-        headers.put("transactionId", transactionId);
-        headers.put("Content-Type", "application/json");
+        headers.put(HttpHeaders.AUTHORIZATION, "Basic " + encoded);
+        headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         Map<String, Object> payload = new HashMap<>();
-        payload.put("requestSource", "ECOMMERCE");
-        payload.put("orderNumber", orderNumber);
-        payload.put("publicKey", apiKey);
-        payload.put("merchantCode", merchantCode);
-        payload.put("amount", generateAmountFormat(amount));
+        payload.put("orderId", transactionId);
+        payload.put("currency", "PEN");
+        payload.put("amount", amount);
 
 
 
         Map<String, Object> response = webClient.post()
-                .uri("/v1/Token/Generate")
+                .uri("/api-payment/V4/Charge/CreatePayment")
                 .headers(httpHeaders -> headers.forEach(httpHeaders::add))
                 .bodyValue(payload)
                 .retrieve()
@@ -56,49 +61,15 @@ public class IzipayClient {
                 .timeout(Duration.ofSeconds(10))
                 .block();
 
-        if (response == null || !"00".equals(response.get("code")) || response.get("response") == null)
+        if (response == null || !"SUCCESS".equals(response.get("status")) || response.get("answer") == null)
             throw new ServerErrorException("error.server_error", new String[]{});
 
 
-        Map<String, Object> answer = (Map<String, Object>) response.get("response");
-        if (answer.get("token") == null)
+        Map<String, Object> answer = (Map<String, Object>) response.get("answer");
+        if (answer.get("formToken") == null)
             throw new ServerErrorException("error.server_error", new String[]{});
 
-        return answer.get("token").toString();
-    }
-
-    /**
-     * 💳 Confirma una transacción en Izipay
-     */
-    public Map<String, Object> confirmTransaction(String transactionId) {
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("uuidTransaction", transactionId);
-        payload.put("siteId", "fafadfa");
-
-        return webClient.post()
-                .uri("/api-payment/V4/Transaction/Confirm")
-                .bodyValue(payload)
-                .retrieve()
-                .bodyToMono(Map.class)
-                .timeout(Duration.ofSeconds(15))
-                .block();
-    }
-
-    /**
-     * 🧾 Obtiene detalles de una transacción (opcional)
-     */
-    public Map<String, Object> getTransactionDetails(String transactionId) {
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("uuidTransaction", transactionId);
-        payload.put("siteId", "siteId");
-
-        return webClient.post()
-                .uri("/api-payment/V4/Transaction/Get")
-                .bodyValue(payload)
-                .retrieve()
-                .bodyToMono(Map.class)
-                .timeout(Duration.ofSeconds(15))
-                .block();
+        return answer.get("formToken").toString();
     }
 
     private String fallbackPayment(String transactionId, BigDecimal amount, String orderNumber, Throwable ex) {

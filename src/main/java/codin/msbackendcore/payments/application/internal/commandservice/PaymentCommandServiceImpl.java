@@ -124,12 +124,12 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         var transactionId = generateTransactionId(command.tenantId());
         var orderNumber = generateOrderNumber(nextOrderNumber);
 
-        String securityToken = izipayClient.generateToken(transactionId, command.amount(), orderNumber);
+        String formToken = izipayClient.generateToken(transactionId, command.amount(), orderNumber);
 
         return new IzipayTokenResponse(
                 transactionId,
                 orderNumber,
-                securityToken
+                formToken
         );
     }
 }

@@ -58,7 +58,8 @@ logging:
 
 izipay:
   api-url: ${IZIPAY_API_URL}
-  api-key: ${IZIPAY_API_KEY}
+  public-key: ${IZIPAY_PUBLIC_KEY}
+  password: ${IZIPAY_PASSWORD}
   merchant-code: ${IZIPAY_MERCHANT_CODE}
 
 resilience4j:
