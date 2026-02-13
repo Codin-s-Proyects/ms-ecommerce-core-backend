@@ -29,7 +29,7 @@ public class ProductVariantQueryServiceImpl implements ProductVariantQueryServic
 
     @Override
     public ProductVariantDetailResponse handle(GetProductVariantByProductAndTenantIdQuery query) {
-        var product = productDomainService.getProductById(query.productId());
+        var product = productDomainService.getProductById(query.productId(), query.tenantId());
         var productMediaAssets = externalCoreService.getMediaAssetByEntityIdAndEntityType(product.getTenantId(), product.getId(), EntityType.PRODUCT);
         var productVariants = productVariantDomainService.getVariantsByProductId(product, query.tenantId());
 

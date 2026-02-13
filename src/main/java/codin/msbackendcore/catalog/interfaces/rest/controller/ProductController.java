@@ -120,10 +120,10 @@ public class ProductController {
     }
 
     @Operation(summary = "Obtener todos los productos por marca y tenantId")
-    @GetMapping("/{productId}")
-    public ResponseEntity<ProductResponse> getProductById(@PathVariable UUID productId) {
+    @GetMapping("/{productId}/tenant/{tenantId}")
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable UUID productId, @PathVariable UUID tenantId) {
 
-        var query = new GetProductByIdQuery(productId);
+        var query = new GetProductByIdQuery(productId, tenantId);
 
         var getList = productQueryService.handle(query);
 

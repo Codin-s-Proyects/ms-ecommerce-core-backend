@@ -14,7 +14,7 @@ public interface ProductDomainService {
     Product createProduct(UUID tenantId, Brand brand, String name, String description, Map<String, Object> meta);
     Product updateProduct(UUID productId, UUID tenantId, Brand brand, String name, String description, Map<String, Object> meta);
     void updateHasVariant(UUID productId, boolean hasVariant);
-    Product getProductById(UUID productId);
+    Product getProductById(UUID productId, UUID tenantId);
     List<Product> getProductsByCategory(UUID tenantId, Category category);
     CursorPage<Product> getProductsByCategory(UUID tenantId, UUID categoryId, CursorPaginationQuery query);
     CursorPage<Product> getProductsByTenantId(UUID tenantId, CursorPaginationQuery query);

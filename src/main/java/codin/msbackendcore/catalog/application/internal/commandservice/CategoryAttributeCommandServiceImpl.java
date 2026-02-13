@@ -30,7 +30,7 @@ public class CategoryAttributeCommandServiceImpl implements CategoryAttributeCom
     @Override
     public CategoryAttribute handle(CreateCategoryAttributeCommand command) {
 
-        var category = categoryDomainService.getCategoryById(command.categoryId());
+        var category = categoryDomainService.getCategoryById(command.categoryId(), command.tenantId());
         var attribute = attributeDomainService.getAttributeById(command.attributeId());
 
         if (!externalCoreService.existTenantById(command.tenantId())) {

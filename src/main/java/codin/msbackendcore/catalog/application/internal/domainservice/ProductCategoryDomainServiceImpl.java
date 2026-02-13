@@ -10,6 +10,7 @@ import codin.msbackendcore.shared.domain.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -38,12 +39,12 @@ public class ProductCategoryDomainServiceImpl implements ProductCategoryDomainSe
     }
 
     @Override
-    public void deleteProductCategory(UUID tenantId, UUID productCategoryId) {
-        var productCategory = productCategoryRepository.findByTenantIdAndId(tenantId, productCategoryId)
-                .orElseThrow(
-                        () -> new NotFoundException("error.not_found", new String[]{productCategoryId.toString()}, "productCategoryId")
-                );
+    public void deleteAllByProductIdAndCategoryIds(UUID tenantId, UUID productId, Set<UUID> categoryIds) {
+        productCategoryRepository.deleteAllByTenantIdAndProductIdAndCategoryIdIn(tenantId, productId, categoryIds);
+    }
 
-        productCategoryRepository.delete(productCategory);
+    @Override
+    public Set<UUID> getProductCategoryByProductId(UUID tenantId, UUID productId) {
+        return productCategoryRepository.findProductCategoryByProductId(tenantId, productId);
     }
 }

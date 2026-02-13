@@ -21,29 +21,10 @@ public class CatalogContextFacade {
 
     private final ProductDomainService productDomainService;
     private final ProductVariantDomainService productVariantDomainService;
-    private final ExternalCoreService externalCoreService;
 
-    public CatalogContextFacade(ProductDomainService productDomainService, ProductVariantDomainService productVariantDomainService, ExternalCoreService externalCoreService) {
+    public CatalogContextFacade(ProductDomainService productDomainService, ProductVariantDomainService productVariantDomainService) {
         this.productDomainService = productDomainService;
         this.productVariantDomainService = productVariantDomainService;
-        this.externalCoreService = externalCoreService;
-    }
-
-    public ProductWithAssetsResponse getProductById(UUID productId) {
-        var product = productDomainService.getProductById(productId);
-
-        var mediaAssets = externalCoreService.getMediaAssetByEntityIdAndEntityType(product.getTenantId(), product.getId(), EntityType.PRODUCT);
-
-        return new ProductWithAssetsResponse(
-                product.getId(),
-                product.getTenantId(),
-                product.getName(),
-                product.getSlug(),
-                product.getDescription(),
-                product.isHasVariants(),
-                product.getStatus().name(),
-                mediaAssets
-        );
     }
 
     public ProductVariantResponse getProductVariantById(UUID productVariantId) {
@@ -63,7 +44,7 @@ public class CatalogContextFacade {
 
     @Transactional(readOnly = true)
     public List<CatalogEmbeddingResponse> getEmbeddingCatalogByProductId(UUID productId, UUID tenantId) {
-        var product = productDomainService.getProductById(productId);
+        var product = productDomainService.getProductById(productId, tenantId);
         var productVariantList = productVariantDomainService.getVariantsByProductId(product, tenantId);
 
         String categoryName = (product.getCategories() != null && !product.getCategories().isEmpty())
