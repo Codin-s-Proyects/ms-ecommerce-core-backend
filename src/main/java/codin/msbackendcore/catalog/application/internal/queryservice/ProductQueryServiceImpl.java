@@ -51,12 +51,12 @@ public class ProductQueryServiceImpl implements ProductQueryService {
 
     @Override
     public Product handle(GetProductByIdQuery query) {
-        return productDomainService.getProductById(query.productId());
+        return productDomainService.getProductById(query.productId(), query.tenantId());
     }
 
     @Override
     public List<ProductDetailWithStockResponse> handle(GetAllProductByCategoryAndTenantIdQuery query) {
-        var category = categoryDomainService.getCategoryById(query.categoryId());
+        var category = categoryDomainService.getCategoryById(query.categoryId(), query.tenantId());
 
 
         return productDomainService.getProductsByCategory(query.tenantId(), category)
@@ -90,7 +90,7 @@ public class ProductQueryServiceImpl implements ProductQueryService {
 
     @Override
     public CursorPage<ProductDetailWithStockResponse> handle(GetAllProductPaginatedByCategoryAndTenantIdQuery query) {
-        var category = categoryDomainService.getCategoryById(query.categoryId());
+        var category = categoryDomainService.getCategoryById(query.categoryId(), query.tenantId());
 
         var cursorProduct = productDomainService.getProductsByCategory(query.tenantId(), category.getId(), query.paginationQuery());
         var productWithStockResponse = cursorProduct.data()

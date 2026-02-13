@@ -83,8 +83,8 @@ public class ProductDomainServiceImpl implements ProductDomainService {
     }
 
     @Override
-    public Product getProductById(UUID productId) {
-        return productRepository.findById(productId)
+    public Product getProductById(UUID productId, UUID tenantId) {
+        return productRepository.findByIdAndTenantId(productId, tenantId)
                 .orElseThrow(() ->
                         new NotFoundException("error.not_found", new String[]{productId.toString()}, "productId")
                 );

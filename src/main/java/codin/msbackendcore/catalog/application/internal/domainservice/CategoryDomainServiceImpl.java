@@ -23,7 +23,7 @@ public class CategoryDomainServiceImpl implements CategoryDomainService {
 
     @Override
     public Category createCategory(UUID tenantId, UUID parentId, String name) {
-        var parentCategory = parentId != null ? getCategoryById(parentId) : null;
+        var parentCategory = parentId != null ? getCategoryById(parentId, tenantId) : null;
 
         if (categoryRepository.existsByTenantIdAndName(tenantId, name))
             throw new BadRequestException("error.already_exist", new String[]{name}, "name");
@@ -44,8 +44,8 @@ public class CategoryDomainServiceImpl implements CategoryDomainService {
     }
 
     @Override
-    public Category getCategoryById(UUID categoryId) {
-        return categoryRepository.findById(categoryId)
+    public Category getCategoryById(UUID categoryId, UUID tenantId) {
+        return categoryRepository.findByTenantIdAndId(tenantId, categoryId)
                 .orElseThrow(() ->
                         new NotFoundException("error.not_found", new String[]{categoryId.toString()}, "categoryId")
                 );
@@ -54,7 +54,7 @@ public class CategoryDomainServiceImpl implements CategoryDomainService {
 
     @Override
     public void deleteCategory(UUID categoryId, UUID tenantId) {
-        var category = categoryRepository.findAllByTenantIdAndId(tenantId, categoryId)
+        var category = categoryRepository.findByTenantIdAndId(tenantId, categoryId)
                 .orElseThrow(() ->
                         new NotFoundException("error.not_found", new String[]{categoryId.toString()}, "categoryId")
                 );

@@ -6,6 +6,7 @@ import codin.msbackendcore.catalog.domain.model.commands.product.DeleteProductBy
 import codin.msbackendcore.catalog.domain.model.commands.product.DeleteProductCommand;
 import codin.msbackendcore.catalog.domain.model.commands.product.UpdateProductCommand;
 import codin.msbackendcore.catalog.domain.model.entities.Product;
+import codin.msbackendcore.catalog.domain.model.entities.ProductCategory;
 import codin.msbackendcore.catalog.domain.services.brand.BrandDomainService;
 import codin.msbackendcore.catalog.domain.services.product.ProductCommandService;
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
@@ -14,6 +15,8 @@ import codin.msbackendcore.catalog.domain.services.productvariant.ProductVariant
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
 
 @Transactional
 @Service
@@ -90,9 +93,9 @@ public class ProductCommandServiceImpl implements ProductCommandService {
             productVariantDomainService.deactivateProductVariant(product.getTenantId(), variant.getId());
         }
 
-        for(var category : product.getCategories()){
-            productCategoryDomainService.deleteProductCategory(product.getTenantId(), category.getId());
-        }
+        var categoryIds = new HashSet<>(product.getCategories().stream().map(ProductCategory::getId).toList());
+
+            productCategoryDomainService.deleteAllByProductIdAndCategoryIds(product.getTenantId(), product.getId(), categoryIds);
 
         //TODO: Validar si desactivar todas las entidades o eliminar
 

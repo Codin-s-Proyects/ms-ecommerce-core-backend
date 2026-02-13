@@ -2,7 +2,6 @@ package codin.msbackendcore.catalog.application.internal.commandservice;
 
 import codin.msbackendcore.catalog.application.internal.outboundservices.ExternalCoreService;
 import codin.msbackendcore.catalog.domain.model.commands.productcategory.CreateProductCategoryCommand;
-import codin.msbackendcore.catalog.domain.model.entities.ProductCategory;
 import codin.msbackendcore.catalog.domain.services.category.CategoryDomainService;
 import codin.msbackendcore.catalog.domain.services.product.ProductDomainService;
 import codin.msbackendcore.catalog.domain.services.productcategory.ProductCategoryCommandService;
@@ -10,6 +9,10 @@ import codin.msbackendcore.catalog.domain.services.productcategory.ProductCatego
 import codin.msbackendcore.shared.domain.exceptions.BadRequestException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -29,19 +32,39 @@ public class ProductCategoryCommandServiceImpl implements ProductCategoryCommand
 
 
     @Override
-    public ProductCategory handle(CreateProductCategoryCommand command) {
+    public void handle(CreateProductCategoryCommand command) {
 
         if (!externalCoreService.existTenantById(command.tenantId())) {
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
-        var category = categoryDomainService.getCategoryById(command.categoryId());
-        var product = productDomainService.getProductById(command.productId());
+        var product = productDomainService.getProductById(command.productId(), command.tenantId());
 
-        return productCategoryDomainService.createProductCategory(
-                command.tenantId(),
-                product,
-                category
-        );
+        Set<UUID> current = productCategoryDomainService.getProductCategoryByProductId(command.tenantId(), command.productId());
+
+        Set<UUID> incoming = command.categoryIds();
+
+        Set<UUID> toInsert = new HashSet<>(incoming);
+        toInsert.removeAll(current);
+
+        Set<UUID> toDelete = new HashSet<>(current);
+        toDelete.removeAll(incoming);
+
+        if (!toDelete.isEmpty()) {
+            productCategoryDomainService.deleteAllByProductIdAndCategoryIds(
+                    command.tenantId(),
+                    command.productId(),
+                    toDelete
+            );
+        }
+
+        for (UUID categoryId : toInsert) {
+            var category = categoryDomainService.getCategoryById(categoryId, command.tenantId());
+            productCategoryDomainService.createProductCategory(
+                    command.tenantId(),
+                    product,
+                    category
+            );
+        }
     }
 }

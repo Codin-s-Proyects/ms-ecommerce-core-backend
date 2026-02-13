@@ -41,7 +41,7 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
-        var product = productDomainService.getProductById(command.productId());
+        var product = productDomainService.getProductById(command.productId(), command.tenantId());
 
         var productVariant = productVariantDomainService.createProductVariant(
                 command.tenantId(),
@@ -91,7 +91,7 @@ public class ProductVariantCommandServiceImpl implements ProductVariantCommandSe
             throw new BadRequestException("error.bad_request", new String[]{command.tenantId().toString()}, "tenantId");
         }
 
-        var product = productDomainService.getProductById(command.productId());
+        var product = productDomainService.getProductById(command.productId(), command.tenantId());
 
         var productVariants = productVariantDomainService.createProductVariantBulk(
                 command.tenantId(),

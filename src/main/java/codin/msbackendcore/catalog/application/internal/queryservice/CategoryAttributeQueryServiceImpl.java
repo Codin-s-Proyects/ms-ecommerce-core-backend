@@ -23,7 +23,7 @@ public class CategoryAttributeQueryServiceImpl implements CategoryAttributeQuery
     @Override
     public List<CategoryAttribute> handle(GetAllCategoryAttributeByCategoryQuery query) {
 
-        var category = categoryDomainService.getCategoryById(query.categoryId());
+        var category = categoryDomainService.getCategoryById(query.categoryId(), query.tenantId());
 
         return categoryAttributeDomainService.getCategoryAttributesByTenantIdAndCategory(query.tenantId(), category);
     }

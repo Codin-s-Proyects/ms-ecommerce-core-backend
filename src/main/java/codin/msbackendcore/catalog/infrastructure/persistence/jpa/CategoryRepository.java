@@ -11,6 +11,6 @@ import java.util.UUID;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
     List<Category> findAllByTenantId(UUID tenantId);
-    Optional<Category> findAllByTenantIdAndId(UUID tenantId, UUID id);
+    Optional<Category> findByTenantIdAndId(UUID tenantId, UUID id);
     boolean existsByTenantIdAndName(UUID tenantId, String name);
 }
