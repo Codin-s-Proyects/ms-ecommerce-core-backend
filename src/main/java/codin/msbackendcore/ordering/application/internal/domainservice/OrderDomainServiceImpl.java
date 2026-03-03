@@ -74,8 +74,9 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
+    @Transactional
     public List<Order> search(OrderSearchOperation operation, UUID id, UUID tenantId, UUID userId, String orderNumber, String documentNumber, UUID trackingToken) {
-        Specification<Order> spec = Specification.allOf();
+        Specification<Order> spec = Specification.allOf(OrderSpecification.withDetails());
 
         switch (operation) {
             case BY_ID -> spec = spec.and(

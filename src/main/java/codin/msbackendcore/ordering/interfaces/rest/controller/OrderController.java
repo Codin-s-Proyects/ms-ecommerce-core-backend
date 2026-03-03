@@ -6,9 +6,7 @@ import codin.msbackendcore.ordering.domain.services.order.OrderQueryService;
 import codin.msbackendcore.ordering.interfaces.dto.order.request.OrderCreateRequest;
 import codin.msbackendcore.ordering.interfaces.dto.order.request.OrderSearchRequest;
 import codin.msbackendcore.ordering.interfaces.dto.order.request.OrderStatusUpdateRequest;
-import codin.msbackendcore.ordering.interfaces.dto.order.response.OrderCustomerResponse;
-import codin.msbackendcore.ordering.interfaces.dto.order.response.OrderResponse;
-import codin.msbackendcore.ordering.interfaces.dto.order.response.OrderShippingAddressResponse;
+import codin.msbackendcore.ordering.interfaces.dto.order.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -59,16 +57,72 @@ public class OrderController {
 
     @Operation(summary = "Obtener una orden o varias por atributos", description = "Obtiene una orden o varias órdenes basadas en diferentes atributos de búsqueda")
     @PostMapping("/search")
-    public ResponseEntity<List<OrderResponse>> getOrdersByAttributes(@RequestBody OrderSearchRequest searchRequest) {
+    public ResponseEntity<List<OrderDetailResponse>> getOrdersByAttributes(@RequestBody OrderSearchRequest searchRequest) {
 
         var query = searchRequest.toQuery();
 
         var order = orderQueryService.handle(query);
 
         return ResponseEntity.ok(
-                order.stream().map(this::entityToResponse).toList()
+                order.stream().map(this::entityDetailToResponse).toList()
         );
     }
+
+    private OrderDetailResponse entityDetailToResponse(Order order) {
+
+        var customer = new OrderCustomerResponse(
+                order.getCustomer().getFirstName(),
+                order.getCustomer().getLastName(),
+                order.getCustomer().getEmail(),
+                order.getCustomer().getPhone(),
+                order.getCustomer().getDocumentType().name(),
+                order.getCustomer().getDocumentNumber()
+        );
+
+        var shippingAddress = new OrderShippingAddressResponse(
+                order.getShippingAddress().getDepartment(),
+                order.getShippingAddress().getProvince(),
+                order.getShippingAddress().getDistrict(),
+                order.getShippingAddress().getAddressLine(),
+                order.getShippingAddress().getReference()
+        );
+
+        var orderItems = order.getItems()
+                .stream().map(orderItem ->
+                        new OrderItemResponse(
+                                orderItem.getProductVariantId(),
+                                orderItem.getProductName(),
+                                orderItem.getSku(),
+                                orderItem.getAttributes(),
+                                orderItem.getQuantity(),
+                                orderItem.getUnitPrice(),
+                                orderItem.getDiscountPercent(),
+                                orderItem.getFinalPrice(),
+                                orderItem.getTotalPrice()
+                        )
+                )
+                .toList();
+
+        return new OrderDetailResponse(
+                order.getId(),
+                order.getTenantId(),
+                order.getUserId(),
+                order.getOrderNumber(),
+                order.getStatus().name(),
+                order.getCurrencyCode(),
+                order.getSubtotal(),
+                order.getDiscountTotal(),
+                order.getTotal(),
+                order.getNotes(),
+                order.getOrderChannel().name(),
+                order.getTrackingToken(),
+                customer,
+                shippingAddress,
+                orderItems,
+                order.getCreatedAt()
+        );
+    }
+
 
     private OrderResponse entityToResponse(Order order) {
 

@@ -2,11 +2,24 @@ package codin.msbackendcore.ordering.infrastructure.persistence.jpa.specificatio
 
 import codin.msbackendcore.ordering.domain.model.entities.Order;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.UUID;
 
 public class OrderSpecification {
+
+    public static Specification<Order> withDetails() {
+        return (root, query, cb) -> {
+            if (query != null) {
+                root.fetch("customer", JoinType.LEFT);
+                root.fetch("shippingAddress", JoinType.LEFT);
+                root.fetch("items", JoinType.LEFT);
+                query.distinct(true);
+            }
+            return cb.conjunction();
+        };
+    }
 
     public static Specification<Order> byId(UUID orderId) {
         return (root, query, cb) ->
