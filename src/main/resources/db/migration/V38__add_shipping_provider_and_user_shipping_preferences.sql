@@ -16,8 +16,6 @@ ALTER TABLE ordering.order_shipping_addresses
 CREATE TABLE ordering.user_shipping_addresses
 (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    tenant_id uuid NOT NULL
-        REFERENCES core.tenants(id) ON DELETE CASCADE,
     user_id uuid NOT NULL
         REFERENCES iam.users(id) ON DELETE CASCADE,
     label text,
@@ -41,7 +39,7 @@ CREATE TABLE ordering.user_shipping_addresses
 -- =========================================
 
 CREATE INDEX idx_user_shipping_addresses_user
-    ON ordering.user_shipping_addresses (tenant_id, user_id);
+    ON ordering.user_shipping_addresses (user_id);
 
 CREATE INDEX idx_user_shipping_default
-    ON ordering.user_shipping_addresses (tenant_id, user_id, is_default);
+    ON ordering.user_shipping_addresses (user_id, is_default);

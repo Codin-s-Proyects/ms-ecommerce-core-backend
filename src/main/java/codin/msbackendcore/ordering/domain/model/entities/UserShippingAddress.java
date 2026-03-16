@@ -25,9 +25,6 @@ public class UserShippingAddress {
     @GeneratedValue
     private UUID id;
 
-    @Column(name = "tenant_id", nullable = false)
-    private UUID tenantId;
-
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
