@@ -3,6 +3,10 @@ package codin.msbackendcore.ordering.interfaces.dto.order.request;
 import codin.msbackendcore.ordering.domain.model.commands.ordershippingaddress.CreateOrderShippingAddressCommand;
 import jakarta.validation.constraints.NotBlank;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Map;
+
 public record OrderShippingAddressCreateRequest(
 
         @NotBlank
@@ -19,7 +23,12 @@ public record OrderShippingAddressCreateRequest(
 
         String reference,
         Double latitude,
-        Double longitude
+        Double longitude,
+        String shippingProvider,
+        String shippingService,
+        BigDecimal shippingCost,
+        Map<String, Object> providerMetadata,
+        Instant shippedAt
 
 ) {
 
@@ -31,7 +40,12 @@ public record OrderShippingAddressCreateRequest(
                 addressLine,
                 reference,
                 latitude,
-                longitude
+                longitude,
+                shippingProvider,
+                shippingService,
+                shippingCost,
+                providerMetadata,
+                shippedAt
         );
     }
 }

@@ -104,7 +104,12 @@ public class OrderCommandServiceImpl implements OrderCommandService {
                 command.shippingAddress().addressLine(),
                 command.shippingAddress().reference(),
                 command.shippingAddress().latitude(),
-                command.shippingAddress().longitude()
+                command.shippingAddress().longitude(),
+                command.shippingAddress().shippingProvider(),
+                command.shippingAddress().shippingService(),
+                command.shippingAddress().shippingCost(),
+                command.shippingAddress().providerMetadata(),
+                command.shippingAddress().shippedAt()
         );
 
         order.setShippingAddress(shippingAddress);
