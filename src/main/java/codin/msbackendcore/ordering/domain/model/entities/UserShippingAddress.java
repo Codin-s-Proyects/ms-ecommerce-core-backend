@@ -16,18 +16,24 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "order_shipping_addresses", schema = "ordering")
+@Table(name = "user_shipping_addresses", schema = "ordering")
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderShippingAddress {
+public class UserShippingAddress {
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false, unique = true)
-    private Order order;
+    @Column(name = "tenant_id", nullable = false)
+    private UUID tenantId;
+
+    @Column(name = "user_id", nullable = false)
+    private UUID userId;
+
+    @NotBlank
+    @Column(name = "label", columnDefinition = "text", nullable = false)
+    private String label;
 
     @NotBlank
     @Column(name = "department", columnDefinition = "text", nullable = false)
@@ -54,27 +60,29 @@ public class OrderShippingAddress {
     @Column(name = "longitude")
     private Double longitude;
 
-    @Column(name = "shipping_provider", columnDefinition = "text")
-    private String shippingProvider;
+    @Column(name = "preferred_shipping_provider", columnDefinition = "text")
+    private String preferredShippingProvider;
 
-    @Column(name = "shipping_service", columnDefinition = "text")
-    private String shippingService;
+    @Column(name = "preferred_shipping_service", columnDefinition = "text")
+    private String preferredShippingService;
 
-    @Column(name = "shipping_cost")
-    private BigDecimal shippingCost;
-
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "provider_metadata", columnDefinition = "jsonb", nullable = false)
-    private Map<String, Object> providerMetadata = new HashMap<>();
-
-    @Column(name = "shipped_at")
-    private Instant shippedAt;
+    @Column(name = "is_default", nullable = false)
+    private Boolean isDefault;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
+
     @PrePersist
     void prePersist() {
         this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    void preUpdate() {
+        this.updatedAt = Instant.now();
     }
 }
