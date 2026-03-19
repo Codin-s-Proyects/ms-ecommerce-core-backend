@@ -1,5 +1,6 @@
 package codin.msbackendcore.ordering.interfaces.rest.controller;
 
+import codin.msbackendcore.ordering.application.internal.outboundservices.ExternalCoreService;
 import codin.msbackendcore.ordering.domain.model.entities.Order;
 import codin.msbackendcore.ordering.domain.services.order.OrderCommandService;
 import codin.msbackendcore.ordering.domain.services.order.OrderQueryService;
@@ -24,9 +25,12 @@ public class OrderController {
     private final OrderCommandService orderCommandService;
     private final OrderQueryService orderQueryService;
 
-    public OrderController(OrderCommandService orderCommandService, OrderQueryService orderQueryService) {
+    private final ExternalCoreService externalCoreService;
+
+    public OrderController(OrderCommandService orderCommandService, OrderQueryService orderQueryService, ExternalCoreService externalCoreService) {
         this.orderCommandService = orderCommandService;
         this.orderQueryService = orderQueryService;
+        this.externalCoreService = externalCoreService;
     }
 
     @Operation(summary = "Crear una nueva orden", description = "Crea una nueva orden en el sistema")
@@ -88,19 +92,22 @@ public class OrderController {
         );
 
         var orderItems = order.getItems()
-                .stream().map(orderItem ->
-                        new OrderItemResponse(
-                                orderItem.getProductVariantId(),
-                                orderItem.getProductName(),
-                                orderItem.getSku(),
-                                orderItem.getAttributes(),
-                                orderItem.getQuantity(),
-                                orderItem.getUnitPrice(),
-                                orderItem.getDiscountPercent(),
-                                orderItem.getFinalPrice(),
-                                orderItem.getTotalPrice()
-                        )
-                )
+                .stream().map(orderItem -> {
+                    var mediaAssets = externalCoreService.getMediaAssetsByProductVariant(orderItem.getTenantId(), orderItem.getProductVariantId());
+
+                    return new OrderItemResponse(
+                            orderItem.getProductVariantId(),
+                            orderItem.getProductName(),
+                            orderItem.getSku(),
+                            orderItem.getAttributes(),
+                            orderItem.getQuantity(),
+                            orderItem.getUnitPrice(),
+                            orderItem.getDiscountPercent(),
+                            orderItem.getFinalPrice(),
+                            orderItem.getTotalPrice(),
+                            mediaAssets
+                    );
+                })
                 .toList();
 
         return new OrderDetailResponse(
