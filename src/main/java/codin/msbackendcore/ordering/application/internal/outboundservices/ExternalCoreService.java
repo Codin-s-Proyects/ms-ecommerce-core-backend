@@ -20,7 +20,7 @@ public class ExternalCoreService {
         return coreContextFacade.getTenantById(tenantId) != null;
     }
 
-    public List<MediaAssetResponse> getMediaAssetsByProductVariant(UUID tenantId, UUID productVariantId) {
-        return coreContextFacade.getMediaAssetByEntityIdAndEntityType(tenantId, EntityType.PRODUCT , productVariantId);
+    public List<MediaAssetResponse> getMediaAssetsByProductVariant(UUID tenantId, UUID entityId) {
+        return coreContextFacade.getMediaAssetByEntityIdAndEntityType(tenantId, EntityType.PRODUCT , entityId);
     }
 }
