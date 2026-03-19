@@ -125,6 +125,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
                     command.tenantId(),
                     order,
                     item.productVariantId(),
+                    item.productId(),
                     item.productName(),
                     item.sku(),
                     item.attributes(),

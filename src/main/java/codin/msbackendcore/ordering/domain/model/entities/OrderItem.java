@@ -35,6 +35,10 @@ public class OrderItem {
     @Column(name = "product_variant_id", nullable = false)
     private UUID productVariantId;
 
+    @NotNull
+    @Column(name = "product_id", nullable = false)
+    private UUID productId;
+
     @Column(name = "product_name", columnDefinition = "text", nullable = false)
     private String productName;
 
