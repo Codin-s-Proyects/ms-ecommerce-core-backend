@@ -1,6 +1,9 @@
 package codin.msbackendcore.ordering.interfaces.dto.order.response;
 
+import codin.msbackendcore.core.interfaces.dto.mediaasset.MediaAssetResponse;
+
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,6 +16,7 @@ public record OrderItemResponse(
         BigDecimal unitPrice,
         BigDecimal discountPercent,
         BigDecimal finalPrice,
-        BigDecimal totalPrice
+        BigDecimal totalPrice,
+        List<MediaAssetResponse> mediaAssets
 ) {
 }
