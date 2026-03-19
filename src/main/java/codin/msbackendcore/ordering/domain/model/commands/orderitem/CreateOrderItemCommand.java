@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public record CreateOrderItemCommand(
         UUID productVariantId,
+        UUID productId,
         String productName,
         String sku,
         Map<String, Object> attributes,

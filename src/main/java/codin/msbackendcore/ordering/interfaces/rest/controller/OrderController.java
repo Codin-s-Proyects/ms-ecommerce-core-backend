@@ -93,7 +93,7 @@ public class OrderController {
 
         var orderItems = order.getItems()
                 .stream().map(orderItem -> {
-                    var mediaAssets = externalCoreService.getMediaAssetsByProductVariant(orderItem.getTenantId(), orderItem.getProductVariantId());
+                    var mediaAssets = externalCoreService.getMediaAssetsByProductVariant(orderItem.getTenantId(), orderItem.getProductId());
 
                     return new OrderItemResponse(
                             orderItem.getProductVariantId(),

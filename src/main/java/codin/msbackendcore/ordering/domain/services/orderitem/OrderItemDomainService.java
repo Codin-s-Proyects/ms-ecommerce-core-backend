@@ -8,5 +8,5 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface OrderItemDomainService {
-    OrderItem createOrderItem(UUID tenantId, Order order, UUID productVariantId, String productName, String sku, Map<String, Object> attributes, Integer quantity, BigDecimal unitPrice, BigDecimal discountPercent);
+    OrderItem createOrderItem(UUID tenantId, Order order, UUID productVariantId, UUID productId, String productName, String sku, Map<String, Object> attributes, Integer quantity, BigDecimal unitPrice, BigDecimal discountPercent);
 }

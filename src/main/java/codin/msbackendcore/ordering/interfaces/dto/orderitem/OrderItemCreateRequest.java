@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public record OrderItemCreateRequest(
+        @NotNull UUID productId,
         @NotNull UUID productVariantId,
         @NotBlank String productName,
         @NotBlank String sku,
@@ -21,6 +22,7 @@ public record OrderItemCreateRequest(
     public CreateOrderItemCommand toCommand() {
         return new CreateOrderItemCommand(
                 productVariantId,
+                productId,
                 productName,
                 sku,
                 attributes,

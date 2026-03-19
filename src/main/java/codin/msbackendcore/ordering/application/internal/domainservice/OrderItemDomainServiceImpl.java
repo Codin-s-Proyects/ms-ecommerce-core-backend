@@ -21,7 +21,7 @@ public class OrderItemDomainServiceImpl implements OrderItemDomainService {
     }
 
     @Override
-    public OrderItem createOrderItem(UUID tenantId, Order order, UUID productVariantId, String productName, String sku, Map<String, Object> attributes, Integer quantity, BigDecimal unitPrice, BigDecimal discountPercent) {
+    public OrderItem createOrderItem(UUID tenantId, Order order, UUID productId, UUID productVariantId, String productName, String sku, Map<String, Object> attributes, Integer quantity, BigDecimal unitPrice, BigDecimal discountPercent) {
 
         if (orderItemRepository.existsByOrderAndTenantIdAndProductVariantId(order, tenantId, productVariantId))
             throw new BadRequestException("error.already_exist", new String[]{productVariantId.toString()}, "productVariantId");
@@ -29,6 +29,7 @@ public class OrderItemDomainServiceImpl implements OrderItemDomainService {
         return OrderItem.builder()
                 .tenantId(tenantId)
                 .order(order)
+                .productId(productId)
                 .productVariantId(productVariantId)
                 .productName(productName)
                 .sku(sku)
