@@ -21,6 +21,6 @@ public class ExternalCoreService {
     }
 
     public List<MediaAssetResponse> getMediaAssetsByProductVariant(UUID tenantId, UUID productVariantId) {
-        return coreContextFacade.getMediaAssetByEntityIdAndEntityType(tenantId, EntityType.PRODUCT_VARIANT , productVariantId);
+        return coreContextFacade.getMediaAssetByEntityIdAndEntityType(tenantId, EntityType.PRODUCT , productVariantId);
     }
 }
