@@ -9,7 +9,7 @@ CREATE TABLE iam.user_profiles
     user_id uuid NOT NULL UNIQUE
         REFERENCES iam.users(id) ON DELETE CASCADE,
 
-    tenant_id uuid NOT NULL
+    tenant_id uuid
         REFERENCES core.tenants(id) ON DELETE CASCADE,
 
     first_name text NOT NULL,
